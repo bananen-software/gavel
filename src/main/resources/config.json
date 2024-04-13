@@ -1,0 +1,12 @@
+{
+  "analysis_context": {
+    "included_paths": [
+      "/home/dennis/workspace/github/flens-dev/pendenzenliste"
+    ],
+    "root_package": "pendenzenliste",
+    "resolve_subpackages": true
+  },
+  "output": {
+    "target_directory": "/tmp/pendenzenliste"
+  }
+}
