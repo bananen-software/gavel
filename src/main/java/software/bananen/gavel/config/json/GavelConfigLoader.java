@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
-public class ConfigLoader {
+/**
+ * A loader for the {@link GavelConfig}
+ */
+public class GavelConfigLoader {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
@@ -12,15 +15,16 @@ public class ConfigLoader {
      * Loads the configuration.
      *
      * @return The loaded configuration.
-     * @throws ConfigLoaderException Might be thrown in case that loading the
-     *                               config failed
+     * @throws GavelConfigLoaderException Might be thrown in case that loading the
+     *                                    config failed
      */
-    public GavelConfig loadConfig() throws ConfigLoaderException {
+    public GavelConfig loadConfig() throws GavelConfigLoaderException {
         try {
+            //TODO: The path should be configurable
             return MAPPER.readValue(getClass().getClassLoader().getResourceAsStream("config.json"),
                     GavelConfig.class);
         } catch (IOException e) {
-            throw new ConfigLoaderException("Failed to load the config.json file", e);
+            throw new GavelConfigLoaderException("Failed to load the config.json file", e);
         }
     }
 }

@@ -20,10 +20,10 @@ public class ComponentDependencyMetricsService {
      * @return The component dependency metrics.
      */
     public Collection<ComponentDependency> measure(final JavaPackage pkg,
-                                                   final boolean resolveSubpackages) {
-        final MetricsComponents<JavaClass> components =
+                                                   boolean resolveSubpackages) {
+        MetricsComponents<JavaClass> components =
                 MetricsComponents.fromPackages(pkg.getSubpackages());
-        final ComponentDependencyMetrics metrics = ArchitectureMetrics.componentDependencyMetrics(components);
+        ComponentDependencyMetrics metrics = ArchitectureMetrics.componentDependencyMetrics(components);
 
         final Collection<ComponentDependency> measurements = new ArrayList<>();
 

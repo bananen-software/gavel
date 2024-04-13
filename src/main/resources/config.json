@@ -4,7 +4,11 @@
       "/home/dennis/workspace/github/flens-dev/pendenzenliste"
     ],
     "root_package": "pendenzenliste",
-    "resolve_subpackages": true
+    "resolve_subpackages": true,
+    "exclusion_patterns": [
+      "/test/",
+      "/integrationTest/"
+    ]
   },
   "output": {
     "target_directory": "/tmp/pendenzenliste"

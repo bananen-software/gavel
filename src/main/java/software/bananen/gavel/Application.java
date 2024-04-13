@@ -2,8 +2,8 @@ package software.bananen.gavel;
 
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.domain.JavaPackage;
-import software.bananen.gavel.config.json.ConfigLoader;
 import software.bananen.gavel.config.json.GavelConfig;
+import software.bananen.gavel.config.json.GavelConfigLoader;
 import software.bananen.gavel.detection.CyclicDependencyDetectionService;
 import software.bananen.gavel.metrics.*;
 import software.bananen.gavel.writer.csv.CSVWriter;
@@ -17,12 +17,13 @@ import java.util.List;
 
 public class Application {
     public static void main(final String[] args) throws Throwable {
-        final GavelConfig config = new ConfigLoader().loadConfig();
+        final GavelConfig config = new GavelConfigLoader().loadConfig();
 
         File targetDirectory = new File(config.outputConfig().targetDirectory());
 
         JavaClasses javaClasses =
-                new ClassLoadingService().loadFromPaths(config.analysisContext().includedPaths(), true);
+                new ClassLoadingService().loadFromPaths(config.analysisContext().includedPaths(),
+                        config.analysisContext().exclusionPatterns());
 
         JavaPackage basePackage = javaClasses.getPackage(config.analysisContext().rootPackage());
 
@@ -58,9 +59,9 @@ public class Application {
 
     private static void recordComponentDependencyMetrics(JavaPackage basePackage,
                                                          File targetDirectory,
-                                                         boolean resolveSubPackages) throws IOException {
+                                                         boolean resolveSubpackages) throws IOException {
         final Collection<ComponentDependency> measurements =
-                new ComponentDependencyMetricsService().measure(basePackage, resolveSubPackages);
+                new ComponentDependencyMetricsService().measure(basePackage, resolveSubpackages);
 
         final File targetFile = getFileIn(targetDirectory, "component-dependency-metrics.csv");
 

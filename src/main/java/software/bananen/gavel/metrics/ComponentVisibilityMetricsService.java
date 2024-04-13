@@ -9,8 +9,20 @@ import com.tngtech.archunit.library.metrics.VisibilityMetrics;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**
+ * A service that can be used to measure the component visibility metrics.
+ */
 public class ComponentVisibilityMetricsService {
 
+    /**
+     * Measures the component visibility metrics.
+     *
+     * @param pkg                The package that the measurement should be
+     *                           performed for.
+     * @param resolveSubpackages A flag that indicates whether the subpackages
+     *                           should be resolved.
+     * @return The measurements.
+     */
     public Collection<ComponentVisibility> measure(final JavaPackage pkg,
                                                    final boolean resolveSubpackages) {
         final MetricsComponents<JavaClass> components =
