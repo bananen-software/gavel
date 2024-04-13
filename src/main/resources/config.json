@@ -7,7 +7,8 @@
     "resolve_subpackages": true,
     "exclusion_patterns": [
       "/test/",
-      "/integrationTest/"
+      "/integrationTest/",
+      "/generated/"
     ]
   },
   "output": {
