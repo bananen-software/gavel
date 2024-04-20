@@ -45,7 +45,7 @@ public final class RunAnalysisCommand implements Callable<Integer> {
     public Integer call() throws Exception {
         LOGGER.info("Loading config");
         final GavelConfig config = new GavelConfigLoader(configFile).loadConfig();
-        LOGGER.info("Loaded config");
+        LOGGER.info("Loaded config: {}", config);
 
         File targetDirectory = new File(config.outputConfig().targetDirectory());
 
@@ -66,7 +66,7 @@ public final class RunAnalysisCommand implements Callable<Integer> {
             Files.createDirectory(targetDirectory.toPath());
         }
 
-        recordCumulativeDependencyMetrics(basePackage, targetDirectory);
+        recordCumulativeDependencyMetrics(basePackage, targetDirectory, config.analysisContext().resolveSubpackages());
         recordComponentDependencyMetrics(basePackage, targetDirectory, config.analysisContext().resolveSubpackages());
         recordVisibilityMetrics(basePackage, targetDirectory, config.analysisContext().resolveSubpackages());
         recordDepthOfInheritanceTree(javaClasses, targetDirectory);
@@ -137,8 +137,11 @@ public final class RunAnalysisCommand implements Callable<Integer> {
         LOGGER.info("Written file {}", targetFile.getAbsolutePath());
     }
 
-    private static void recordCumulativeDependencyMetrics(final JavaPackage basePackage, File targetDirectory) throws IOException {
-        Collection<CumulativeComponentDependency> measurements = new CumulativeComponentDependencyMetricsService().measure(List.of(basePackage));
+    private static void recordCumulativeDependencyMetrics(final JavaPackage basePackage,
+                                                          File targetDirectory,
+                                                          boolean resolveSubpackages) throws IOException {
+        Collection<CumulativeComponentDependency> measurements =
+                new CumulativeComponentDependencyMetricsService().measure(List.of(basePackage), resolveSubpackages);
 
         File targetFile = getFileIn(targetDirectory, "cumulative-dependency-metrics.csv");
 

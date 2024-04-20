@@ -18,10 +18,14 @@ public class CumulativeComponentDependencyMetricsService {
     /**
      * Measures the cumulative component dependency for the given package.
      *
-     * @param pkg The package.
+     * @param pkg                The package.
+     * @param resolveSubpackages A flag that indicates whether the subpackages
+     *                           should be resolved.
      * @return The measurements.
      */
-    public Collection<CumulativeComponentDependency> measure(final JavaPackage pkg) {
+    public Collection<CumulativeComponentDependency> measure(
+            final JavaPackage pkg,
+            final boolean resolveSubpackages) {
         final MetricsComponents<JavaClass> components =
                 MetricsComponents.fromPackages(pkg.getSubpackages());
 
@@ -39,7 +43,9 @@ public class CumulativeComponentDependencyMetricsService {
                 Double.isNaN(metrics.getNormalizedCumulativeComponentDependency()) ? 0 : metrics.getNormalizedCumulativeComponentDependency()
         ));
 
-        measurements.addAll(measure(pkg.getSubpackages()));
+        if (resolveSubpackages) {
+            measurements.addAll(measure(pkg.getSubpackages(), resolveSubpackages));
+        }
 
         return measurements;
     }
@@ -47,15 +53,18 @@ public class CumulativeComponentDependencyMetricsService {
     /**
      * Measures the cumulative component dependency for the given packages.
      *
-     * @param packages The packages.
+     * @param packages           The packages.
+     * @param resolveSubpackages A flag that indicates whether the subpackages
+     *                           should be resolved.
      * @return The measurements.
      */
-    public Collection<CumulativeComponentDependency> measure(final Collection<JavaPackage> packages) {
+    public Collection<CumulativeComponentDependency> measure(final Collection<JavaPackage> packages,
+                                                             final boolean resolveSubpackages) {
         final Collection<CumulativeComponentDependency> measurements =
                 new ArrayList<>();
 
         for (final JavaPackage aPackage : packages) {
-            measurements.addAll(measure(aPackage));
+            measurements.addAll(measure(aPackage, resolveSubpackages));
         }
 
         return measurements;

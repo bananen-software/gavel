@@ -18,9 +18,10 @@ class CumulativeComponentDependencyMetricsServiceTest {
 
         JavaPackage pkg = javaClasses.getPackage("software.bananen.gavel.metrics.examples.cumulativecomponentdependency");
 
-        Collection<CumulativeComponentDependency> measurements = new CumulativeComponentDependencyMetricsService().measure(pkg);
+        Collection<CumulativeComponentDependency> measurements =
+                new CumulativeComponentDependencyMetricsService().measure(pkg, false);
 
-        assertThat(measurements).contains(new CumulativeComponentDependency(
+        assertThat(measurements).containsExactly(new CumulativeComponentDependency(
                 "software.bananen.gavel.metrics.examples.cumulativecomponentdependency",
                 14,
                 2.3333333333333335,
