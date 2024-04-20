@@ -9,6 +9,9 @@ import com.tngtech.archunit.library.metrics.MetricsComponents;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**
+ * A service that can be used to measure the component dependency metrics.
+ */
 public class ComponentDependencyMetricsService {
 
     /**
