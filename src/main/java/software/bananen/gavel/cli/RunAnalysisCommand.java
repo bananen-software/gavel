@@ -138,19 +138,20 @@ public final class RunAnalysisCommand implements Callable<Integer> {
     }
 
     private static void recordCumulativeDependencyMetrics(final JavaPackage basePackage, File targetDirectory) throws IOException {
-        CumulativeComponentDependency measurement = new CumulativeComponentDependencyMetricsService().measure(basePackage);
+        Collection<CumulativeComponentDependency> measurements = new CumulativeComponentDependencyMetricsService().measure(List.of(basePackage));
 
         File targetFile = getFileIn(targetDirectory, "cumulative-dependency-metrics.csv");
 
         CSVWriter out = new CSVWriter();
 
         out.write(targetFile,
-                List.of("CCD", "ACD", "RACD", "NCCD"),
-                List.of(CumulativeComponentDependency::cumulative,
+                List.of("package", "CCD", "ACD", "RACD", "NCCD"),
+                List.of(CumulativeComponentDependency::packageName,
+                        CumulativeComponentDependency::cumulative,
                         CumulativeComponentDependency::average,
                         CumulativeComponentDependency::relativeAverage,
                         CumulativeComponentDependency::normalized),
-                List.of(measurement));
+                measurements);
         LOGGER.info("Written file {}", targetFile.getAbsolutePath());
     }
 
