@@ -2,6 +2,8 @@ package software.bananen.gavel;
 
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.domain.JavaPackage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import software.bananen.gavel.config.json.GavelConfig;
 import software.bananen.gavel.config.json.GavelConfigLoader;
 import software.bananen.gavel.detection.CyclicDependencyDetectionService;
@@ -16,16 +18,28 @@ import java.util.Collection;
 import java.util.List;
 
 public class Application {
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(Application.class);
+
     public static void main(final String[] args) throws Throwable {
+        LOGGER.info("Loading config");
         final GavelConfig config = new GavelConfigLoader().loadConfig();
+        LOGGER.info("Loaded config");
 
         File targetDirectory = new File(config.outputConfig().targetDirectory());
 
+        LOGGER.info("Target directory is {}", targetDirectory.getAbsolutePath());
+
+        LOGGER.info("Loading java classes from {}",
+                config.analysisContext().includedPaths());
+        LOGGER.info("Excluding {}", config.analysisContext().exclusionPatterns());
         JavaClasses javaClasses =
                 new ClassLoadingService().loadFromPaths(config.analysisContext().includedPaths(),
                         config.analysisContext().exclusionPatterns());
+        LOGGER.info("Loaded {} classes", javaClasses.size());
 
         JavaPackage basePackage = javaClasses.getPackage(config.analysisContext().rootPackage());
+        LOGGER.info("Analyzing base package {}", basePackage.getName());
 
         if (!targetDirectory.exists()) {
             Files.createDirectory(targetDirectory.toPath());
@@ -52,6 +66,8 @@ public class Application {
                 List.of(DepthOfInheritanceTree::className,
                         DepthOfInheritanceTree::value),
                 measurements);
+        
+        LOGGER.info("Written file {}", targetFile.getAbsolutePath());
     }
 
     private static void recordVisibilityMetrics(JavaPackage basePackage,
@@ -71,6 +87,8 @@ public class Application {
                         ComponentVisibility::averageRelativeVisibility,
                         ComponentVisibility::globalRelativeVisibility),
                 measurements);
+
+        LOGGER.info("Written file {}", targetFile.getAbsolutePath());
     }
 
     private static void recordComponentDependencyMetrics(JavaPackage basePackage,
@@ -92,6 +110,8 @@ public class Application {
                         ComponentDependency::abstractness,
                         ComponentDependency::normalizedDistanceFromMainSequence),
                 measurements);
+
+        LOGGER.info("Written file {}", targetFile.getAbsolutePath());
     }
 
     private static void recordCumulativeDependencyMetrics(final JavaPackage basePackage, File targetDirectory) throws IOException {
@@ -108,6 +128,7 @@ public class Application {
                         CumulativeComponentDependency::relativeAverage,
                         CumulativeComponentDependency::normalized),
                 List.of(measurement));
+        LOGGER.info("Written file {}", targetFile.getAbsolutePath());
     }
 
     private static File getFileIn(File targetDirectory, String fileName) {
