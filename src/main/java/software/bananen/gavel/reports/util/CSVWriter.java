@@ -1,4 +1,4 @@
-package software.bananen.gavel.writer.csv;
+package software.bananen.gavel.reports.util;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -24,10 +24,10 @@ public class CSVWriter {
      * @param <T>        The type of the records.
      * @throws IOException May be thrown in case that the file could not be written.
      */
-    public <T> void write(final File file,
-                          final Collection<String> headers,
-                          final Collection<Function<T, ?>> extractors,
-                          Collection<T> records) throws IOException {
+    public static <T> void write(final File file,
+                                 final Collection<String> headers,
+                                 final Collection<Function<T, ?>> extractors,
+                                 Collection<T> records) throws IOException {
         if (headers.size() != extractors.size()) {
             throw new IllegalArgumentException("The headers and extractors do not match");
         }

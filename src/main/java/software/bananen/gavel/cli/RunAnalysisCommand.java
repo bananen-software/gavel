@@ -7,7 +7,7 @@ import software.bananen.gavel.context.ProjectContext;
 import software.bananen.gavel.context.ProjectContextLoader;
 import software.bananen.gavel.detection.CyclicDependencyDetectionService;
 import software.bananen.gavel.metrics.*;
-import software.bananen.gavel.writer.csv.CSVWriter;
+import software.bananen.gavel.reports.util.CSVWriter;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,9 +67,7 @@ public final class RunAnalysisCommand implements Callable<Integer> {
                 projectContext.targetDirectory(),
                 "depth-of-inheritance-metrics.csv");
 
-        final CSVWriter writer = new CSVWriter();
-
-        writer.write(targetFile,
+        CSVWriter.write(targetFile,
                 List.of("class", "DIT"),
                 List.of(DepthOfInheritanceTree::className,
                         DepthOfInheritanceTree::value),
@@ -87,9 +85,7 @@ public final class RunAnalysisCommand implements Callable<Integer> {
         final File targetFile = getFileIn(projectContext.targetDirectory(),
                 "visibility-metrics.csv");
 
-        final CSVWriter writer = new CSVWriter();
-
-        writer.write(targetFile,
+        CSVWriter.write(targetFile,
                 List.of("package", "RV", "ARV", "GRV"),
                 List.of(ComponentVisibility::packageName,
                         ComponentVisibility::relativeVisibility,
@@ -109,9 +105,7 @@ public final class RunAnalysisCommand implements Callable<Integer> {
                 projectContext.targetDirectory(),
                 "component-dependency-metrics.csv");
 
-        final CSVWriter writer = new CSVWriter();
-
-        writer.write(targetFile,
+        CSVWriter.write(targetFile,
                 List.of("package", "Ce", "Ca", "I", "A", "D"),
                 List.of(ComponentDependency::packageName,
                         ComponentDependency::efferentCoupling,
@@ -134,9 +128,7 @@ public final class RunAnalysisCommand implements Callable<Integer> {
                 getFileIn(projectContext.targetDirectory(),
                         "cumulative-dependency-metrics.csv");
 
-        CSVWriter out = new CSVWriter();
-
-        out.write(targetFile,
+        CSVWriter.write(targetFile,
                 List.of("package", "CCD", "ACD", "RACD", "NCCD"),
                 List.of(CumulativeComponentDependency::packageName,
                         CumulativeComponentDependency::cumulative,
