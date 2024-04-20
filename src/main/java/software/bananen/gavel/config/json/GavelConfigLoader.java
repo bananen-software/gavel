@@ -2,6 +2,7 @@ package software.bananen.gavel.config.json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -10,6 +11,17 @@ import java.io.IOException;
 public class GavelConfigLoader {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
+    private final File configFile;
+
+    /**
+     * Creates a new instance.
+     *
+     * @param configFile The config file.
+     */
+    public GavelConfigLoader(final File configFile) {
+
+        this.configFile = configFile;
+    }
 
     /**
      * Loads the configuration.
@@ -20,9 +32,7 @@ public class GavelConfigLoader {
      */
     public GavelConfig loadConfig() throws GavelConfigLoaderException {
         try {
-            //TODO: The path should be configurable
-            return MAPPER.readValue(getClass().getClassLoader().getResourceAsStream("config.json"),
-                    GavelConfig.class);
+            return MAPPER.readValue(configFile, GavelConfig.class);
         } catch (IOException e) {
             throw new GavelConfigLoaderException("Failed to load the config.json file", e);
         }

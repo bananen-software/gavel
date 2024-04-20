@@ -1,9 +1,10 @@
-package software.bananen.gavel;
+package software.bananen.gavel.cli;
 
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.domain.JavaPackage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import picocli.CommandLine;
 import software.bananen.gavel.config.json.GavelConfig;
 import software.bananen.gavel.config.json.GavelConfigLoader;
 import software.bananen.gavel.detection.CyclicDependencyDetectionService;
@@ -16,14 +17,34 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Callable;
 
-public class Application {
+/**
+ * A command that can be used to run the configured analysis.
+ */
+@CommandLine.Command(
+        name = "run-analysis",
+        mixinStandardHelpOptions = true,
+        description = "Runs the configured analysis"
+)
+public final class RunAnalysisCommand implements Callable<Integer> {
+
     private static final Logger LOGGER =
-            LoggerFactory.getLogger(Application.class);
+            LoggerFactory.getLogger(RunAnalysisCommand.class);
 
-    public static void main(final String[] args) throws Throwable {
+    @CommandLine.Parameters(
+            index = "0",
+            description = "The config file that should be used for the analysis."
+    )
+    private File configFile;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Integer call() throws Exception {
         LOGGER.info("Loading config");
-        final GavelConfig config = new GavelConfigLoader().loadConfig();
+        final GavelConfig config = new GavelConfigLoader(configFile).loadConfig();
         LOGGER.info("Loaded config");
 
         File targetDirectory = new File(config.outputConfig().targetDirectory());
@@ -51,6 +72,8 @@ public class Application {
         recordDepthOfInheritanceTree(javaClasses, targetDirectory);
 
         new CyclicDependencyDetectionService().detect(javaClasses, basePackage);
+
+        return 0;
     }
 
     private static void recordDepthOfInheritanceTree(final JavaClasses javaClasses,
@@ -66,7 +89,7 @@ public class Application {
                 List.of(DepthOfInheritanceTree::className,
                         DepthOfInheritanceTree::value),
                 measurements);
-        
+
         LOGGER.info("Written file {}", targetFile.getAbsolutePath());
     }
 

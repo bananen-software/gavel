@@ -17,6 +17,8 @@ dependencies {
     implementation 'org.apache.commons:commons-csv:1.10.0'
     implementation 'org.apache.commons:commons-lang3:3.14.0'
 
+    implementation 'info.picocli:picocli:4.7.5'
+
     implementation 'org.slf4j:slf4j-api:2.0.12'
     implementation 'org.slf4j:slf4j-simple:2.0.12'
 
@@ -38,6 +40,14 @@ test {
     useJUnitPlatform()
 }
 
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'software.bananen.gavel.cli.Application'
+        )
+    }
+}
+
 application {
-    mainClass = 'software.bananen.gavel.Application'
+    mainClass = 'software.bananen.gavel.cli.Application'
 }
