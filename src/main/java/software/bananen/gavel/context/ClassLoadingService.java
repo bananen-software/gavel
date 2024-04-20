@@ -1,4 +1,4 @@
-package software.bananen.gavel.metrics;
+package software.bananen.gavel.context;
 
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
@@ -8,7 +8,7 @@ import java.util.Collection;
 /**
  * A utility service that can be used to load classes.
  */
-public class ClassLoadingService {
+class ClassLoadingService {
 
     /**
      * Loads the classes from the given list of included paths.

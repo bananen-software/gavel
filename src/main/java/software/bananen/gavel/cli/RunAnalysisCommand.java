@@ -1,12 +1,10 @@
 package software.bananen.gavel.cli;
 
-import com.tngtech.archunit.core.domain.JavaClasses;
-import com.tngtech.archunit.core.domain.JavaPackage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
-import software.bananen.gavel.config.json.GavelConfig;
-import software.bananen.gavel.config.json.GavelConfigLoader;
+import software.bananen.gavel.context.ProjectContext;
+import software.bananen.gavel.context.ProjectContextLoader;
 import software.bananen.gavel.detection.CyclicDependencyDetectionService;
 import software.bananen.gavel.metrics.*;
 import software.bananen.gavel.writer.csv.CSVWriter;
@@ -43,44 +41,31 @@ public final class RunAnalysisCommand implements Callable<Integer> {
      */
     @Override
     public Integer call() throws Exception {
-        LOGGER.info("Loading config");
-        final GavelConfig config = new GavelConfigLoader(configFile).loadConfig();
-        LOGGER.info("Loaded config: {}", config);
+        final ProjectContext projectContext =
+                new ProjectContextLoader().loadProjectContext(configFile);
 
-        File targetDirectory = new File(config.outputConfig().targetDirectory());
-
-        LOGGER.info("Target directory is {}", targetDirectory.getAbsolutePath());
-
-        LOGGER.info("Loading java classes from {}",
-                config.analysisContext().includedPaths());
-        LOGGER.info("Excluding {}", config.analysisContext().exclusionPatterns());
-        JavaClasses javaClasses =
-                new ClassLoadingService().loadFromPaths(config.analysisContext().includedPaths(),
-                        config.analysisContext().exclusionPatterns());
-        LOGGER.info("Loaded {} classes", javaClasses.size());
-
-        JavaPackage basePackage = javaClasses.getPackage(config.analysisContext().rootPackage());
-        LOGGER.info("Analyzing base package {}", basePackage.getName());
-
-        if (!targetDirectory.exists()) {
-            Files.createDirectory(targetDirectory.toPath());
+        if (!projectContext.targetDirectory().exists()) {
+            Files.createDirectory(projectContext.targetDirectory().toPath());
         }
 
-        recordCumulativeDependencyMetrics(basePackage, targetDirectory, config.analysisContext().resolveSubpackages());
-        recordComponentDependencyMetrics(basePackage, targetDirectory, config.analysisContext().resolveSubpackages());
-        recordVisibilityMetrics(basePackage, targetDirectory, config.analysisContext().resolveSubpackages());
-        recordDepthOfInheritanceTree(javaClasses, targetDirectory);
+        recordCumulativeDependencyMetrics(projectContext);
+        recordComponentDependencyMetrics(projectContext);
+        recordVisibilityMetrics(projectContext);
+        recordDepthOfInheritanceTree(projectContext);
 
-        new CyclicDependencyDetectionService().detect(javaClasses, basePackage);
+        new CyclicDependencyDetectionService().detect(projectContext.javaClasses(),
+                projectContext.basePackage());
 
         return 0;
     }
 
-    private static void recordDepthOfInheritanceTree(final JavaClasses javaClasses,
-                                                     final File targetDirectory) throws IOException {
-        final Collection<DepthOfInheritanceTree> measurements = new DepthOfInheritanceTreeMetricsService().measure(javaClasses);
+    private static void recordDepthOfInheritanceTree(final ProjectContext projectContext) throws IOException {
+        final Collection<DepthOfInheritanceTree> measurements =
+                new DepthOfInheritanceTreeMetricsService().measure(projectContext.javaClasses());
 
-        final File targetFile = getFileIn(targetDirectory, "depth-of-inheritance-metrics.csv");
+        final File targetFile = getFileIn(
+                projectContext.targetDirectory(),
+                "depth-of-inheritance-metrics.csv");
 
         final CSVWriter writer = new CSVWriter();
 
@@ -93,13 +78,14 @@ public final class RunAnalysisCommand implements Callable<Integer> {
         LOGGER.info("Written file {}", targetFile.getAbsolutePath());
     }
 
-    private static void recordVisibilityMetrics(JavaPackage basePackage,
-                                                File targetDirectory,
-                                                boolean resolveSubpackages) throws IOException {
+    private static void recordVisibilityMetrics(final ProjectContext projectContext) throws IOException {
         final Collection<ComponentVisibility> measurements =
-                new ComponentVisibilityMetricsService().measure(basePackage, resolveSubpackages);
+                new ComponentVisibilityMetricsService().measure(
+                        projectContext.basePackage(),
+                        projectContext.config().analysisContext().resolveSubpackages());
 
-        final File targetFile = getFileIn(targetDirectory, "visibility-metrics.csv");
+        final File targetFile = getFileIn(projectContext.targetDirectory(),
+                "visibility-metrics.csv");
 
         final CSVWriter writer = new CSVWriter();
 
@@ -114,13 +100,14 @@ public final class RunAnalysisCommand implements Callable<Integer> {
         LOGGER.info("Written file {}", targetFile.getAbsolutePath());
     }
 
-    private static void recordComponentDependencyMetrics(JavaPackage basePackage,
-                                                         File targetDirectory,
-                                                         boolean resolveSubpackages) throws IOException {
+    private static void recordComponentDependencyMetrics(final ProjectContext projectContext) throws IOException {
         final Collection<ComponentDependency> measurements =
-                new ComponentDependencyMetricsService().measure(basePackage, resolveSubpackages);
+                new ComponentDependencyMetricsService().measure(projectContext.basePackage(),
+                        projectContext.config().analysisContext().resolveSubpackages());
 
-        final File targetFile = getFileIn(targetDirectory, "component-dependency-metrics.csv");
+        final File targetFile = getFileIn(
+                projectContext.targetDirectory(),
+                "component-dependency-metrics.csv");
 
         final CSVWriter writer = new CSVWriter();
 
@@ -137,13 +124,15 @@ public final class RunAnalysisCommand implements Callable<Integer> {
         LOGGER.info("Written file {}", targetFile.getAbsolutePath());
     }
 
-    private static void recordCumulativeDependencyMetrics(final JavaPackage basePackage,
-                                                          File targetDirectory,
-                                                          boolean resolveSubpackages) throws IOException {
+    private static void recordCumulativeDependencyMetrics(final ProjectContext projectContext) throws IOException {
         Collection<CumulativeComponentDependency> measurements =
-                new CumulativeComponentDependencyMetricsService().measure(List.of(basePackage), resolveSubpackages);
+                new CumulativeComponentDependencyMetricsService().measure(
+                        List.of(projectContext.basePackage()),
+                        projectContext.config().analysisContext().resolveSubpackages());
 
-        File targetFile = getFileIn(targetDirectory, "cumulative-dependency-metrics.csv");
+        File targetFile =
+                getFileIn(projectContext.targetDirectory(),
+                        "cumulative-dependency-metrics.csv");
 
         CSVWriter out = new CSVWriter();
 
