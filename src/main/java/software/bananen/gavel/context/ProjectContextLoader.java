@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import software.bananen.gavel.config.json.GavelConfig;
 import software.bananen.gavel.config.json.GavelConfigLoader;
 import software.bananen.gavel.config.json.GavelConfigLoaderException;
+import software.bananen.gavel.reports.csv.CSVReportFactory;
 
 import java.io.File;
 
@@ -39,11 +40,14 @@ public class ProjectContextLoader {
             JavaPackage basePackage = javaClasses.getPackage(config.analysisContext().rootPackage());
             LOGGER.info("Analyzing base package {}", basePackage.getName());
 
+            final CSVReportFactory reportFactory = new CSVReportFactory(targetDirectory);
+
             return new ProjectContext(
                     config,
                     targetDirectory,
                     basePackage,
-                    javaClasses
+                    javaClasses,
+                    reportFactory
             );
         } catch (final GavelConfigLoaderException e) {
             LOGGER.error("Failed to load config", e);

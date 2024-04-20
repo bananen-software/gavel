@@ -1,4 +1,4 @@
-package software.bananen.gavel.reports.util;
+package software.bananen.gavel.reports.csv;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -6,13 +6,14 @@ import org.apache.commons.csv.CSVPrinter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.function.Function;
 
 /**
  * A helper class that can be used to write content to CSV files.
  */
-public class CSVWriter {
+class CSVWriter {
 
     /**
      * Writes the given data to a file in CSV format.
@@ -24,10 +25,10 @@ public class CSVWriter {
      * @param <T>        The type of the records.
      * @throws IOException May be thrown in case that the file could not be written.
      */
-    public static <T> void write(final File file,
-                                 final Collection<String> headers,
-                                 final Collection<Function<T, ?>> extractors,
-                                 Collection<T> records) throws IOException {
+    static <T> void write(final File file,
+                          final Collection<String> headers,
+                          final Collection<Function<T, ?>> extractors,
+                          final Collection<T> records) throws IOException {
         if (headers.size() != extractors.size()) {
             throw new IllegalArgumentException("The headers and extractors do not match");
         }
@@ -45,5 +46,18 @@ public class CSVWriter {
                 }
             }
         }
+    }
+
+    /**
+     * Retrieves a new file in the given directory.
+     * Note: This does not create the file.
+     *
+     * @param targetDirectory The target directory.
+     * @param fileName        The name of the file.
+     * @return The file.
+     */
+    static File getFileIn(final File targetDirectory,
+                          final String fileName) {
+        return Paths.get(targetDirectory.getPath(), fileName).toFile();
     }
 }
