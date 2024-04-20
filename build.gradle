@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
 group = 'bananen.software.gavel'
@@ -35,4 +36,8 @@ java {
 
 test {
     useJUnitPlatform()
+}
+
+application {
+    mainClass = 'software.bananen.gavel.Application'
 }
