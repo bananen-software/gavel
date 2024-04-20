@@ -34,8 +34,24 @@ public class Application {
         recordCumulativeDependencyMetrics(basePackage, targetDirectory);
         recordComponentDependencyMetrics(basePackage, targetDirectory, config.analysisContext().resolveSubpackages());
         recordVisibilityMetrics(basePackage, targetDirectory, config.analysisContext().resolveSubpackages());
+        recordDepthOfInheritanceTree(javaClasses, targetDirectory);
 
         new CyclicDependencyDetectionService().detect(javaClasses, basePackage);
+    }
+
+    private static void recordDepthOfInheritanceTree(final JavaClasses javaClasses,
+                                                     final File targetDirectory) throws IOException {
+        final Collection<DepthOfInheritanceTree> measurements = new DepthOfInheritanceTreeMetricsService().measure(javaClasses);
+
+        final File targetFile = getFileIn(targetDirectory, "depth-of-inheritance-metrics.csv");
+
+        final CSVWriter writer = new CSVWriter();
+
+        writer.write(targetFile,
+                List.of("class", "DIT"),
+                List.of(DepthOfInheritanceTree::className,
+                        DepthOfInheritanceTree::value),
+                measurements);
     }
 
     private static void recordVisibilityMetrics(JavaPackage basePackage,
