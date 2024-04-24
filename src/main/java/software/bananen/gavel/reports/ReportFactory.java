@@ -1,9 +1,6 @@
 package software.bananen.gavel.reports;
 
-import software.bananen.gavel.metrics.ComponentDependency;
-import software.bananen.gavel.metrics.ComponentVisibility;
-import software.bananen.gavel.metrics.CumulativeComponentDependency;
-import software.bananen.gavel.metrics.DepthOfInheritanceTree;
+import software.bananen.gavel.metrics.*;
 
 import java.util.Collection;
 
@@ -39,4 +36,11 @@ public interface ReportFactory {
      * @return The report.
      */
     Report<Collection<ComponentVisibility>> createComponentVisibilityReport();
+
+    /**
+     * Creates a relational cohesion report.
+     *
+     * @return The report.
+     */
+    Report<Collection<RelationalCohesion>> createRelationalCohesionReport();
 }

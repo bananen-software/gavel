@@ -4,10 +4,7 @@ import picocli.CommandLine;
 import software.bananen.gavel.context.ProjectContext;
 import software.bananen.gavel.context.ProjectContextLoader;
 import software.bananen.gavel.detection.CyclicDependencyDetectionService;
-import software.bananen.gavel.metrics.ComponentDependencyMetricsService;
-import software.bananen.gavel.metrics.ComponentVisibilityMetricsService;
-import software.bananen.gavel.metrics.CumulativeComponentDependencyMetricsService;
-import software.bananen.gavel.metrics.DepthOfInheritanceTreeMetricsService;
+import software.bananen.gavel.metrics.*;
 import software.bananen.gavel.reports.ReportChain;
 import software.bananen.gavel.reports.ReportException;
 
@@ -48,6 +45,7 @@ public final class RunAnalysisCommand implements Callable<Integer> {
         recordComponentDependencyMetrics(projectContext);
         recordVisibilityMetrics(projectContext);
         recordDepthOfInheritanceTree(projectContext);
+        recordRelationalCohesionMetrics(projectContext);
 
         new CyclicDependencyDetectionService().detect(projectContext.javaClasses(),
                 projectContext.basePackage());
@@ -93,5 +91,15 @@ public final class RunAnalysisCommand implements Callable<Integer> {
                                 List.of(projectContext.basePackage()),
                                 projectContext.config().analysisContext().resolveSubpackages()))
                 .andReport(projectContext.reportFactory().createCumulativeComponentDependencyReport());
+    }
+
+    private static void recordRelationalCohesionMetrics(final ProjectContext projectContext)
+            throws ReportException {
+        final RelationalCohesionMetricsService service = new RelationalCohesionMetricsService();
+
+        ReportChain.measure(() ->
+                        service.measure(
+                                List.of(projectContext.basePackage())))
+                .andReport(projectContext.reportFactory().createRelationalCohesionReport());
     }
 }

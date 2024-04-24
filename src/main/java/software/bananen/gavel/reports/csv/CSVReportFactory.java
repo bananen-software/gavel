@@ -1,9 +1,6 @@
 package software.bananen.gavel.reports.csv;
 
-import software.bananen.gavel.metrics.ComponentDependency;
-import software.bananen.gavel.metrics.ComponentVisibility;
-import software.bananen.gavel.metrics.CumulativeComponentDependency;
-import software.bananen.gavel.metrics.DepthOfInheritanceTree;
+import software.bananen.gavel.metrics.*;
 import software.bananen.gavel.reports.Report;
 import software.bananen.gavel.reports.ReportFactory;
 
@@ -60,5 +57,13 @@ public final class CSVReportFactory implements ReportFactory {
     @Override
     public Report<Collection<ComponentVisibility>> createComponentVisibilityReport() {
         return new CSVVisibilityMetricsReport(targetDirectory);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Report<Collection<RelationalCohesion>> createRelationalCohesionReport() {
+        return new CSVRelationalCohesionReport(targetDirectory);
     }
 }
