@@ -201,7 +201,8 @@ public final class RunAnalysisCommand implements Callable<Integer> {
             throws ReportException {
         final DepthOfInheritanceTreeMetricsService service = new DepthOfInheritanceTreeMetricsService();
 
-        ReportChain.measure(() -> service.measure(projectContext.javaClasses()))
+        ReportChain.measure(() -> service.measure(projectContext.javaClasses(),
+                        projectContext.config().analysisContext().metricsConfig().depthOfInheritanceConfig().threshold()))
                 .andReport(projectContext.reportFactory().createDepthOfInheritanceTreeReport());
     }
 

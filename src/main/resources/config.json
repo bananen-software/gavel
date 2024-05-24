@@ -10,6 +10,11 @@
       "/integrationTest/",
       "/generated/"
     ],
+    "metrics": {
+      "depth_of_inheritance": {
+        "threshold": 7
+      }
+    },
     "git": {
       "analyzed_months": 6,
       "included_file_extensions": [

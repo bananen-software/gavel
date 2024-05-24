@@ -14,11 +14,13 @@ import java.util.Collection;
  * @param exclusionPatterns  A list of patterns that should be excluded from the
  *                           analysis.
  * @param gitConfig          The git configuration.
+ * @param metricsConfig      The configuration for the metrics.
  */
 public record AnalysisContext(
         @JsonProperty("included_paths") Collection<String> includedPaths,
         @JsonProperty("root_package") String rootPackage,
         @JsonProperty("resolve_subpackages") boolean resolveSubpackages,
         @JsonProperty("exclusion_patterns") Collection<String> exclusionPatterns,
-        @JsonProperty("git") GitConfig gitConfig) {
+        @JsonProperty("git") GitConfig gitConfig,
+        @JsonProperty("metrics") MetricsConfig metricsConfig) {
 }
