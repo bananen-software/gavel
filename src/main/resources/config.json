@@ -11,6 +11,7 @@
       "/generated/"
     ],
     "git": {
+      "analyzed_months": 6,
       "included_file_extensions": [
         "java",
         "ts",

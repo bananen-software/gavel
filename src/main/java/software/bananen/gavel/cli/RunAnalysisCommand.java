@@ -5,6 +5,8 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 import software.bananen.gavel.config.json.GitConfig;
 import software.bananen.gavel.context.ProjectContext;
@@ -35,6 +37,9 @@ import static software.bananen.gavel.metrics.git.GitUtil.loadMailmap;
         description = "Runs the configured analysis"
 )
 public final class RunAnalysisCommand implements Callable<Integer> {
+
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(RunAnalysisCommand.class);
 
     @CommandLine.Parameters(
             index = "0",
@@ -95,6 +100,8 @@ public final class RunAnalysisCommand implements Callable<Integer> {
 
                 final Mailmap mailmap = loadMailmap(path);
 
+                LOGGER.info(".mailmap loaded with {} entries", mailmap.size());
+
                 final Git git = new Git(repository);
 
                 final RevCommit latestCommit = new Git(repository).
@@ -108,12 +115,18 @@ public final class RunAnalysisCommand implements Callable<Integer> {
                         GitUtil.extractTimestampFrom(latestCommit);
 
                 final LocalDateTime startTimestamp =
-                        endTimestamp.minusMonths(6);
+                        endTimestamp.minusMonths(projectContext.config().analysisContext().gitConfig().analyzedMonths());
 
-                for (final RevCommit commit : GitUtil.getCommitsFromOldToNew(git)
+                LOGGER.info("Analyzing commits from {} to {}", startTimestamp, endTimestamp);
+
+                final List<RevCommit> commits = GitUtil.getCommitsFromOldToNew(git)
                         .stream()
                         .filter(commit -> GitUtil.between(commit, startTimestamp, endTimestamp))
-                        .toList()) {
+                        .toList();
+
+                LOGGER.info("Found {} commits for the time period", commits.size());
+
+                for (final RevCommit commit : commits) {
                     final Author author = mailmap.map(GitUtil.extractAuthor(commit));
 
                     final List<String> touchedFiles = new ArrayList<>();
