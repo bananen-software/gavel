@@ -12,6 +12,8 @@ import java.util.Collection;
  */
 public class DepthOfInheritanceTreeMetricsService {
 
+    private static final int DEFAULT_THRESHOLD = 7;
+
     /**
      * Measures the metrics for the given classes.
      *
@@ -23,10 +25,12 @@ public class DepthOfInheritanceTreeMetricsService {
                 new ArrayList<>();
 
         for (final JavaClass aClass : classes) {
-            measurements.add(new DepthOfInheritanceTree(
-                    aClass.getName(),
-                    aClass.getClassHierarchy().size()
-            ));
+            if (aClass.getClassHierarchy().size() >= DEFAULT_THRESHOLD) {
+                measurements.add(new DepthOfInheritanceTree(
+                        aClass.getName(),
+                        aClass.getClassHierarchy().size()
+                ));
+            }
         }
 
         return measurements;
