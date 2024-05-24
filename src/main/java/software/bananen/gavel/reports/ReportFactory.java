@@ -57,4 +57,11 @@ public interface ReportFactory {
      * @return The report.
      */
     Report<Collection<CodeHotspot>> createCodeHotspotReport();
+
+    /**
+     * Creates a change coupling metric report.
+     *
+     * @return The report.
+     */
+    Report<Collection<ChangeCouplingMetric>> createChangeCouplingMetricReport();
 }

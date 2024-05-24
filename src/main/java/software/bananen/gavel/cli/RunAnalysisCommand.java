@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -84,6 +85,7 @@ public final class RunAnalysisCommand implements Callable<Integer> {
                 new AuthorComplexityHistory();
 
         final FileComplexityHistory history = new FileComplexityHistory();
+        final ChangeCouplingStore changeCouplingStore = new ChangeCouplingStore();
 
         for (final Path path :
                 hotspotMetricsService.locateGitRepositories(projectContext.config().analysisContext().includedPaths())) {
@@ -94,12 +96,17 @@ public final class RunAnalysisCommand implements Callable<Integer> {
 
                 final Git git = new Git(repository);
 
+
                 for (final RevCommit commit : GitUtil.getCommitsFromOldToNew(git)) {
                     final Author author = mailmap.map(GitUtil.extractAuthor(commit));
+
+                    final List<String> touchedFiles = new ArrayList<>();
 
                     for (final DiffEntry diff : GitUtil.extractDiffEntries(repository, commit)) {
                         final GitConfig gitConfig =
                                 projectContext.config().analysisContext().gitConfig();
+
+                        touchedFiles.add(diff.getNewPath());
 
                         if (isNotExcludedFileType(diff, gitConfig)) {
                             final String content =
@@ -126,17 +133,31 @@ public final class RunAnalysisCommand implements Callable<Integer> {
                             );
                         }
                     }
+
+                    for (int i = 0; i < touchedFiles.size(); i++) {
+                        for (int j = 0; j < touchedFiles.size(); j++) {
+                            if (i != j) {
+                                changeCouplingStore.record(
+                                        touchedFiles.get(i),
+                                        touchedFiles.get(j)
+                                );
+                            }
+                        }
+                    }
                 }
             }
         }
 
-        //TODO: Report file complexity history
+        //TODO: Report origin complexity history
 
         ReportChain.measure(history::listHotspots)
                 .andReport(projectContext.reportFactory().createCodeHotspotReport());
 
         ReportChain.measure(authorComplexityHistory::list)
                 .andReport(projectContext.reportFactory().createAuthorComplexityHistoryReport());
+
+        ReportChain.measure(changeCouplingStore::list)
+                .andReport(projectContext.reportFactory().createChangeCouplingMetricReport());
     }
 
 

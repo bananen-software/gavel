@@ -82,4 +82,12 @@ public final class CSVReportFactory implements ReportFactory {
     public Report<Collection<CodeHotspot>> createCodeHotspotReport() {
         return new CSVCodeHotspotReport(targetDirectory);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Report<Collection<ChangeCouplingMetric>> createChangeCouplingMetricReport() {
+        return new CSVChangeCouplingReport(targetDirectory);
+    }
 }

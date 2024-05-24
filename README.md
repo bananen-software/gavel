@@ -17,3 +17,4 @@ bringing in a lot of tools.
 * File Complexity History
 * Relational Cohesion
 * Author Complexity History
+* Change Coupling
