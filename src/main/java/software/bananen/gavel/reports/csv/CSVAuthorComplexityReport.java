@@ -44,7 +44,7 @@ public final class CSVAuthorComplexityReport
 
             CSVWriter.write(targetFile,
                     List.of("author", "complexity delta", "number of changes", "relative complexity added"),
-                    List.of((e) -> e.author().name() + "<" + e.author().email() + ">",
+                    List.of((e) -> e.author().name() + " <" + e.author().email() + ">",
                             AuthorComplexityHistoryEntry::complexityDelta,
                             AuthorComplexityHistoryEntry::numberOfChanges,
                             AuthorComplexityHistoryEntry::relativeComplexityAdded),
