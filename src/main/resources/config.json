@@ -13,6 +13,10 @@
     "metrics": {
       "depth_of_inheritance": {
         "threshold": 7
+      },
+      "change_coupling": {
+        "min_changes_threshold": 10,
+        "percentage_threshold": 0.5
       }
     },
     "git": {

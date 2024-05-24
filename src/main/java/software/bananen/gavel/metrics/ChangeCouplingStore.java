@@ -44,9 +44,12 @@ public final class ChangeCouplingStore {
      * This enforces a threshold for files that are coupled by 50% or more and
      * have at least changed 10 times.
      *
+     * @param minimalChangesThreshold The minimal changes threshold
+     * @param percentageThreshold     The percentage threshold
      * @return The change coupling metrics.
      */
-    public Collection<ChangeCouplingMetric> list() {
+    public Collection<ChangeCouplingMetric> list(final int minimalChangesThreshold,
+                                                 final double percentageThreshold) {
         final Collection<ChangeCouplingMetric> result = new ArrayList<>();
 
         for (final Map.Entry<ChangeCouplingInstance, Integer> entry : couplingStore.entrySet()) {
@@ -61,7 +64,8 @@ public final class ChangeCouplingStore {
         }
 
         return result.stream()
-                .filter(m -> m.totalChanges() >= 10)
-                .filter(m -> m.coupling() >= 0.5).toList();
+                .filter(m -> m.totalChanges() >= minimalChangesThreshold)
+                .filter(m -> m.coupling() >= percentageThreshold)
+                .toList();
     }
 }

@@ -185,7 +185,8 @@ public final class RunAnalysisCommand implements Callable<Integer> {
         ReportChain.measure(authorComplexityHistory::list)
                 .andReport(projectContext.reportFactory().createAuthorComplexityHistoryReport());
 
-        ReportChain.measure(changeCouplingStore::list)
+        ReportChain.measure(() -> changeCouplingStore.list(projectContext.config().analysisContext().metricsConfig().changeCouplingConfig().mininmalNumberOfChanges(),
+                        projectContext.config().analysisContext().metricsConfig().changeCouplingConfig().percentageThreshold()))
                 .andReport(projectContext.reportFactory().createChangeCouplingMetricReport());
     }
 
