@@ -9,7 +9,14 @@
       "/test/",
       "/integrationTest/",
       "/generated/"
-    ]
+    ],
+    "git": {
+      "included_file_extensions": [
+        "java",
+        "ts",
+        "js"
+      ]
+    }
   },
   "output": {
     "target_directory": "/tmp/pendenzenliste"

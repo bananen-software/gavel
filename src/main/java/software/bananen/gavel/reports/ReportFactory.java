@@ -43,4 +43,18 @@ public interface ReportFactory {
      * @return The report.
      */
     Report<Collection<RelationalCohesion>> createRelationalCohesionReport();
+
+    /**
+     * Creates an author complexity history report.
+     *
+     * @return The report.
+     */
+    Report<Collection<AuthorComplexityHistoryEntry>> createAuthorComplexityHistoryReport();
+
+    /**
+     * Creates a code hotspot report.
+     *
+     * @return The report.
+     */
+    Report<Collection<CodeHotspot>> createCodeHotspotReport();
 }

@@ -13,10 +13,12 @@ import java.util.Collection;
  *                           resolved in the analysis.
  * @param exclusionPatterns  A list of patterns that should be excluded from the
  *                           analysis.
+ * @param gitConfig          The git configuration.
  */
 public record AnalysisContext(
         @JsonProperty("included_paths") Collection<String> includedPaths,
         @JsonProperty("root_package") String rootPackage,
         @JsonProperty("resolve_subpackages") boolean resolveSubpackages,
-        @JsonProperty("exclusion_patterns") Collection<String> exclusionPatterns) {
+        @JsonProperty("exclusion_patterns") Collection<String> exclusionPatterns,
+        @JsonProperty("git") GitConfig gitConfig) {
 }

@@ -66,4 +66,20 @@ public final class CSVReportFactory implements ReportFactory {
     public Report<Collection<RelationalCohesion>> createRelationalCohesionReport() {
         return new CSVRelationalCohesionReport(targetDirectory);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Report<Collection<AuthorComplexityHistoryEntry>> createAuthorComplexityHistoryReport() {
+        return new CSVAuthorComplexityReport(targetDirectory);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Report<Collection<CodeHotspot>> createCodeHotspotReport() {
+        return new CSVCodeHotspotReport(targetDirectory);
+    }
 }
