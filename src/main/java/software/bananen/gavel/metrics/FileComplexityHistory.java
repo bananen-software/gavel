@@ -72,31 +72,4 @@ public final class FileComplexityHistory {
                 .map(e -> new CodeHotspot(e.getKey(), e.getValue().size()))
                 .toList();
     }
-
-    @Override
-    public String toString() {
-        final StringBuilder builder = new StringBuilder();
-
-        for (final Map.Entry<String, Collection<FileComplexityHistoryEntry>> file : store.entrySet()) {
-            builder.append(file.getKey())
-                    .append("\n-------------------\n");
-
-            for (final FileComplexityHistoryEntry entry : file.getValue()) {
-                builder.append(entry.timestamp()).append(": ")
-                        .append("LOC[")
-                        .append(entry.fileComplexity().linesOfCode())
-                        .append(" <")
-                        .append(entry.linesOfCodeDelta())
-                        .append(">] COM[")
-                        .append(entry.fileComplexity().complexity())
-                        .append(" <")
-                        .append(entry.complexityDelta())
-                        .append(">]\n");
-            }
-
-            builder.append("\n-------------------\n\n");
-        }
-
-        return builder.toString();
-    }
 }
