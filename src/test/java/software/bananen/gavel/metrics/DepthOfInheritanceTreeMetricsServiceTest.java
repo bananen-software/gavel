@@ -18,8 +18,7 @@ class DepthOfInheritanceTreeMetricsServiceTest {
         final Collection<DepthOfInheritanceTree> measurements = new DepthOfInheritanceTreeMetricsService().measure(javaClasses);
 
         assertThat(measurements).containsOnly(
-                new DepthOfInheritanceTree("software.bananen.gavel.metrics.examples.depthofinheritancetree.A", 2),
-                new DepthOfInheritanceTree("software.bananen.gavel.metrics.examples.depthofinheritancetree.B", 3),
-                new DepthOfInheritanceTree("software.bananen.gavel.metrics.examples.depthofinheritancetree.C", 4));
+                new DepthOfInheritanceTree("software.bananen.gavel.metrics.examples.depthofinheritancetree.F", 7),
+                new DepthOfInheritanceTree("software.bananen.gavel.metrics.examples.depthofinheritancetree.G", 8));
     }
 }
