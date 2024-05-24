@@ -215,4 +215,21 @@ public final class GitUtil {
         }
         return mailmap;
     }
+
+    /**
+     * Checks whether the given commit is between the two timestamps.
+     *
+     * @param commit         The commit.
+     * @param startTimestamp The start timestamp.
+     * @param endTimestamp   The end timestamp.
+     * @return True if the commit is between the two timestamps, otherwise
+     * false.
+     */
+    public static boolean between(final RevCommit commit,
+                                  final LocalDateTime startTimestamp,
+                                  final LocalDateTime endTimestamp) {
+        final LocalDateTime timestamp = GitUtil.extractTimestampFrom(commit);
+
+        return timestamp.isAfter(startTimestamp) && timestamp.isBefore(endTimestamp);
+    }
 }

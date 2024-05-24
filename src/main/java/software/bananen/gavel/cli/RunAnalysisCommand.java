@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -96,8 +97,23 @@ public final class RunAnalysisCommand implements Callable<Integer> {
 
                 final Git git = new Git(repository);
 
+                final RevCommit latestCommit = new Git(repository).
+                        log().
+                        setMaxCount(1).
+                        call().
+                        iterator().
+                        next();
 
-                for (final RevCommit commit : GitUtil.getCommitsFromOldToNew(git)) {
+                final LocalDateTime endTimestamp =
+                        GitUtil.extractTimestampFrom(latestCommit);
+
+                final LocalDateTime startTimestamp =
+                        endTimestamp.minusMonths(6);
+
+                for (final RevCommit commit : GitUtil.getCommitsFromOldToNew(git)
+                        .stream()
+                        .filter(commit -> GitUtil.between(commit, startTimestamp, endTimestamp))
+                        .toList()) {
                     final Author author = mailmap.map(GitUtil.extractAuthor(commit));
 
                     final List<String> touchedFiles = new ArrayList<>();
