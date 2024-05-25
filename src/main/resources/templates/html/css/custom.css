@@ -13,3 +13,15 @@
 .axis text {
     fill: var(--axis-color);
 }
+
+#green-components {
+    color: var(--pico-color-green-450);
+}
+
+#yellow-components {
+    color: var(--pico-color-yellow-450);
+}
+
+#red-components {
+    color: var(--pico-color-red-450);
+}

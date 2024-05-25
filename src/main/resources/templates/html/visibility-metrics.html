@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gavel - Visibility Metrics</title>
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.colors.min.css"/>
+
+    <script src="https://d3js.org/d3.v4.js"></script>
+
+    <link rel="stylesheet" href="css/custom.css"/>
+
+    <script src="js/table-helpers.js"></script>
+    <script src="js/math-helpers.js"></script>
+</head>
+<body>
+<div class="container">
+    <nav>
+        <ul>
+            <li>
+                <strong>Gavel</strong>
+            </li>
+        </ul>
+    </nav>
+
+    <nav aria-label="breadcrumb">
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li>Visibility Metrics</li>
+        </ul>
+    </nav>
+
+    <h1>Key Insights</h1>
+
+    <div class="grid">
+        <article id="green-components">
+        </article>
+        <article id="yellow-components">
+        </article>
+        <article id="red-components">
+        </article>
+    </div>
+
+    <h1>Description</h1>
+
+    <p>
+    </p>
+
+    <h1>Graph</h1>
+
+    <article>
+        <div id="visibility-metrics-chart"></div>
+    </article>
+
+    <h1>Table</h1>
+
+    <article>
+        <table class="overflow-auto" id="visibility-metrics-table">
+            <thead>
+            <tr>
+                <th scope="col">package</th>
+                <th scope="col">RV</th>
+                <th scope="col">ARV</th>
+                <th scope="col">GRV</th>
+            </tr>
+            </thead>
+        </table>
+    </article>
+</div>
+<script>
+    const chart = d3.select("#visibility-metrics-chart");
+    const table = document.getElementById("visibility-metrics-table");
+
+    d3.csv("data/visibility-metrics.csv", (dataSet) => {
+        dataSet.forEach(data => table.appendChild(createRow([data.package, data.RV, data.ARV, data.GRV])));
+    })
+</script>
+</body>
+</html>
