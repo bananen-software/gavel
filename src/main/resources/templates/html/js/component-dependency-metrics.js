@@ -145,5 +145,7 @@ function renderComponentDependencyMetricsGraph(chart, table) {
             .attr("r", 7)
             .style("opacity", 0.3)
             .style("fill", determineColor())
+            .append("svg:title").text((d, i) =>
+            `${d.package}\nInstability: ${d.I}\nAbstractness: ${d.A}\nDistance: ${d.D}\nCa: ${d.Ca}\nCe: ${d.Ce}`)
     };
 }
