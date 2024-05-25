@@ -1,0 +1,15 @@
+:root {
+    --axis-color: currentColor;
+}
+
+.axis line {
+    stroke: var(--axis-color);
+}
+
+.axis path {
+    stroke: var(--axis-color);
+}
+
+.axis text {
+    fill: var(--axis-color);
+}

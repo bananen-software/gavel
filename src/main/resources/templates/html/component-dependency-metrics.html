@@ -1,0 +1,112 @@
+<html lang="en">
+<head>
+    <title>Gavel - Component Dependency Metrics</title>
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.colors.min.css"/>
+
+    <script src="https://d3js.org/d3.v4.js"></script>
+
+    <link rel="stylesheet" href="css/custom.css"/>
+
+    <script src="js/table-helpers.js"></script>
+    <script src="js/component-dependency-metrics.js"></script>
+    <script src="js/math-helpers.js"></script>
+
+    <style>
+        #green-components {
+            color: var(--pico-color-green-450);
+        }
+
+        #yellow-components {
+            color: var(--pico-color-yellow-450);
+        }
+
+        #red-components {
+            color: var(--pico-color-red-450);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <nav>
+        <ul>
+            <li>
+                <strong>Gavel</strong>
+            </li>
+        </ul>
+    </nav>
+
+    <nav aria-label="breadcrumb">
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li>Component Dependency Metrics</li>
+        </ul>
+    </nav>
+
+    <h1>Key Insights</h1>
+
+    <div class="grid">
+        <article id="green-components">
+        </article>
+        <article id="yellow-components">
+        </article>
+        <article id="red-components">
+        </article>
+    </div>
+
+    <h1>Description</h1>
+
+    <p>The Component Dependency Metrics provide measurements for the dependencies between components within the code
+        base. They evaluate the <i>afferent coupling</i> (Ca) and <i>efferent coupling</i> (Ce) for each
+        package and derives the <i>Instability</i> (I) from them. A component is considered to be unstable, when a lot
+        of other components are coupled to its behavior. The second factor that is considered by the Component
+        Dependency Metrics is the <i>Abstractness</i> (A). It
+        describes how many classes within the package are abstract or interfaces.</p>
+    <p>The Abstractness and Instability of the packages are used to divide the code base into multiple zones. The
+        packages that are close to the main sequence between the points (1, 0) and (0, 1) are considered to be <i>healthy</i>.
+        Some packages are not very close to the main sequence, but are not yet problematic, they are <i>okayish</i>.
+    </p>
+    <p>
+        Problematic packages will orbit around the points (0, 0) and (1, 1). Packages that are close to the point (0, 0)
+        are considered to be problematic, because they are in the <i>Zone of Pain</i>. They are very concrete and yet
+        highly unstable, because other components rely on it.
+    </p>
+    <p> Packages that are close to the point (1, 1) are considered to be problematic, because they are in the <i>Zone of
+        Uselessness</i>. They are very abstract and stable, because very few components rely on them. In extreme cases
+        the classes from these packages could simply be deleted, because they are not used by any other component.
+    </p>
+
+    <h1>Graph</h1>
+
+    <article>
+        <div id="component-dependency-metrics-chart"></div>
+    </article>
+
+    <h1>Table</h1>
+
+    <article>
+        <table class="overflow-auto" id="component-dependency-metrics-table">
+            <thead>
+            <tr>
+                <th scope="col">package</th>
+                <th scope="col">Status</th>
+                <th scope="col">Ce</th>
+                <th scope="col">Ca</th>
+                <th scope="col">I</th>
+                <th scope="col">A</th>
+                <th scope="col">D</th>
+            </tr>
+            </thead>
+        </table>
+    </article>
+</div>
+<script>
+    const chart = d3.select("#component-dependency-metrics-chart");
+    const table = document.getElementById("component-dependency-metrics-table");
+
+    d3.csv("data/component-dependency-metrics.csv", renderComponentDependencyMetricsGraph(chart, table))
+</script>
+</body>
+</html>
