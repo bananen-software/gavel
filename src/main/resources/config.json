@@ -15,7 +15,7 @@
         "threshold": 7
       },
       "change_coupling": {
-        "min_changes_threshold": 10,
+        "min_changes_threshold": 20,
         "percentage_threshold": 0.5
       }
     },
