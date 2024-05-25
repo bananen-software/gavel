@@ -2,3 +2,4 @@ gavel.iml
 /build/
 /.idea/
 /.gradle/
+/src/main/resources/templates/html/data
