@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Gavel - Visibility Metrics</title>
+    <title>Gavel - Relational Cohesion Metrics</title>
     <meta charset="utf-8">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"/>
@@ -28,7 +28,7 @@
     <nav aria-label="breadcrumb">
         <ul>
             <li><a href="index.html">Home</a></li>
-            <li>Visibility Metrics</li>
+            <li>Relational Cohesion Metrics</li>
         </ul>
     </nav>
 
@@ -51,30 +51,30 @@
     <h1>Graph</h1>
 
     <article>
-        <div id="visibility-metrics-chart"></div>
+        <div id="relational-cohesion-metrics-chart"></div>
     </article>
 
     <h1>Table</h1>
 
     <article>
-        <table class="overflow-auto" id="visibility-metrics-table">
+        <table class="overflow-auto" id="relational-cohesion-metrics-table">
             <thead>
             <tr>
                 <th scope="col">package</th>
-                <th scope="col">RV</th>
-                <th scope="col">ARV</th>
-                <th scope="col">GRV</th>
+                <th scope="col">Number of types</th>
+                <th scope="col">Number of internal relationships</th>
+                <th scope="col">Relational cohesion</th>
             </tr>
             </thead>
         </table>
     </article>
 </div>
 <script>
-    const chart = d3.select("#visibility-metrics-chart");
-    const table = document.getElementById("visibility-metrics-table");
+    const chart = d3.select("#relational-cohesion-metrics-chart");
+    const table = document.getElementById("relational-cohesion-metrics-table");
 
-    d3.csv("data/visibility-metrics.csv", (dataSet) => {
-        dataSet.forEach(data => table.appendChild(createRow([data.package, data.RV, data.ARV, data.GRV])));
+    d3.csv("data/relational-cohesion.csv", (dataSet) => {
+        dataSet.forEach(data => table.appendChild(createRow([data.package, data["Number of types"], data["Number of internal relationships"], data["Relational cohesion"]])));
     })
 </script>
 </body>
