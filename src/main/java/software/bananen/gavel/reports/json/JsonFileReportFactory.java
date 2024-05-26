@@ -1,4 +1,4 @@
-package software.bananen.gavel.reports.csv;
+package software.bananen.gavel.reports.json;
 
 import software.bananen.gavel.metrics.*;
 import software.bananen.gavel.reports.Report;
@@ -10,9 +10,9 @@ import java.util.Collection;
 import static java.util.Objects.requireNonNull;
 
 /**
- * A {@link ReportFactory} that generates CSV based reports.
+ * A {@link ReportFactory} that can be used to generate JSON based report files.
  */
-public final class CSVReportFactory implements ReportFactory {
+public final class JsonFileReportFactory implements ReportFactory {
 
     private final File targetDirectory;
 
@@ -21,7 +21,7 @@ public final class CSVReportFactory implements ReportFactory {
      *
      * @param targetDirectory The target directory.
      */
-    public CSVReportFactory(final File targetDirectory) {
+    public JsonFileReportFactory(final File targetDirectory) {
 
         this.targetDirectory =
                 requireNonNull(targetDirectory, "The target directory may not be null");
@@ -32,7 +32,7 @@ public final class CSVReportFactory implements ReportFactory {
      */
     @Override
     public Report<Collection<ComponentDependency>> createComponentDependencyReport() {
-        return new CSVComponentDependencyReport(targetDirectory);
+        return new GenericJsonFileReport<>(targetDirectory, "component-dependencies.json");
     }
 
     /**
@@ -40,7 +40,7 @@ public final class CSVReportFactory implements ReportFactory {
      */
     @Override
     public Report<Collection<CumulativeComponentDependency>> createCumulativeComponentDependencyReport() {
-        return new CSVCumulativeComponentDependencyReport(targetDirectory);
+        return new GenericJsonFileReport<>(targetDirectory, "cumulative-component-dependencies.json");
     }
 
     /**
@@ -48,7 +48,7 @@ public final class CSVReportFactory implements ReportFactory {
      */
     @Override
     public Report<Collection<DepthOfInheritanceTree>> createDepthOfInheritanceTreeReport() {
-        return new CSVDepthOfInheritanceTreeReport(targetDirectory);
+        return new GenericJsonFileReport<>(targetDirectory, "depth-of-inheritance-tree.json");
     }
 
     /**
@@ -56,7 +56,7 @@ public final class CSVReportFactory implements ReportFactory {
      */
     @Override
     public Report<Collection<ComponentVisibility>> createComponentVisibilityReport() {
-        return new CSVVisibilityMetricsReport(targetDirectory);
+        return new GenericJsonFileReport<>(targetDirectory, "component-visibility.json");
     }
 
     /**
@@ -64,7 +64,7 @@ public final class CSVReportFactory implements ReportFactory {
      */
     @Override
     public Report<Collection<RelationalCohesion>> createRelationalCohesionReport() {
-        return new CSVRelationalCohesionReport(targetDirectory);
+        return new GenericJsonFileReport<>(targetDirectory, "relational-cohesion.json");
     }
 
     /**
@@ -72,7 +72,7 @@ public final class CSVReportFactory implements ReportFactory {
      */
     @Override
     public Report<Collection<AuthorComplexityHistoryEntry>> createAuthorComplexityHistoryReport() {
-        return new CSVAuthorComplexityReport(targetDirectory);
+        return new GenericJsonFileReport<>(targetDirectory, "author-comlexity-history.json");
     }
 
     /**
@@ -80,7 +80,7 @@ public final class CSVReportFactory implements ReportFactory {
      */
     @Override
     public Report<Collection<CodeHotspot>> createCodeHotspotReport() {
-        return new CSVCodeHotspotReport(targetDirectory);
+        return new GenericJsonFileReport<>(targetDirectory, "code-hotspots.json");
     }
 
     /**
@@ -88,6 +88,6 @@ public final class CSVReportFactory implements ReportFactory {
      */
     @Override
     public Report<Collection<ChangeCouplingMetric>> createChangeCouplingMetricReport() {
-        return new CSVChangeCouplingReport(targetDirectory);
+        return new GenericJsonFileReport<>(targetDirectory, "change-coupling.json");
     }
 }
