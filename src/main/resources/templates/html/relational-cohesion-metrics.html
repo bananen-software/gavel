@@ -12,6 +12,7 @@
 
     <link rel="stylesheet" href="css/custom.css"/>
 
+    <script src="js/relational-cohesion.js"></script>
     <script src="js/table-helpers.js"></script>
     <script src="js/math-helpers.js"></script>
 </head>
@@ -61,9 +62,10 @@
             <thead>
             <tr>
                 <th scope="col">package</th>
+                <th scope="col">Status</th>
+                <th scope="col">Relational cohesion</th>
                 <th scope="col">Number of types</th>
                 <th scope="col">Number of internal relationships</th>
-                <th scope="col">Relational cohesion</th>
             </tr>
             </thead>
         </table>
@@ -74,7 +76,35 @@
     const table = document.getElementById("relational-cohesion-metrics-table");
 
     d3.csv("data/relational-cohesion.csv", (dataSet) => {
-        dataSet.forEach(data => table.appendChild(createRow([data.package, data["Number of types"], data["Number of internal relationships"], data["Relational cohesion"]])));
+        const cumulatedMeasurements = {
+            "Ok": 0,
+            "Low Cohesion": 0,
+            "High Cohesion": 0,
+            "Total": 0
+        }
+
+        dataSet.forEach(data => {
+            const status = determineStatus(data);
+
+            cumulatedMeasurements[status] = cumulatedMeasurements[status] + 1;
+            cumulatedMeasurements["Total"] = cumulatedMeasurements["Total"] + 1
+
+            table.appendChild(createRow([
+                data.package,
+                status,
+                data["Relational cohesion"],
+                data["Number of types"],
+                data["Number of internal relationships"]]))
+        });
+
+        const sum = cumulatedMeasurements["Total"];
+
+        document.getElementById("green-components").innerText =
+            toPercent(cumulatedMeasurements["Ok"], sum) + "% components with good cohesion";
+        document.getElementById("yellow-components").innerText =
+            toPercent(cumulatedMeasurements["Low Cohesion"], sum) + "% components with too low cohesion";
+        document.getElementById("red-components").innerText =
+            toPercent(cumulatedMeasurements["High Cohesion"], sum) + "% components with too high cohesion";
     })
 </script>
 </body>
