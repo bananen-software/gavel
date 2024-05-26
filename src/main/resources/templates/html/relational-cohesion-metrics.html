@@ -75,7 +75,7 @@
     const chart = d3.select("#relational-cohesion-metrics-chart");
     const table = document.getElementById("relational-cohesion-metrics-table");
 
-    d3.csv("data/relational-cohesion.csv", (dataSet) => {
+    d3.json("data/relational-cohesion.json", (dataSet) => {
         const cumulatedMeasurements = {
             "Ok": 0,
             "Low Cohesion": 0,
@@ -90,11 +90,11 @@
             cumulatedMeasurements["Total"] = cumulatedMeasurements["Total"] + 1
 
             table.appendChild(createRow([
-                data.package,
+                data.packageName,
                 status,
-                data["Relational cohesion"],
-                data["Number of types"],
-                data["Number of internal relationships"]]))
+                data.relationalCohesion,
+                data.numberOfTypes,
+                data.numberOfInternalRelationships]))
         });
 
         const sum = cumulatedMeasurements["Total"];

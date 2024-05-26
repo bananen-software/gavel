@@ -11,9 +11,9 @@
  * @returns {string}
  */
 function determineStatus(measurement) {
-    if (measurement["Relational cohesion"] < 1.5) {
+    if (measurement.relationalCohesion < 1.5) {
         return "Low Cohesion";
-    } else if (measurement["Relational cohesion"] > 4) {
+    } else if (measurement.relationalCohesion > 4) {
         return "High Cohesion";
     } else {
         return "Ok";

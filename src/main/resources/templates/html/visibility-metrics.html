@@ -73,8 +73,13 @@
     const chart = d3.select("#visibility-metrics-chart");
     const table = document.getElementById("visibility-metrics-table");
 
-    d3.csv("data/visibility-metrics.csv", (dataSet) => {
-        dataSet.forEach(data => table.appendChild(createRow([data.package, data.RV, data.ARV, data.GRV])));
+    d3.json("data/component-visibility.json", (dataSet) => {
+        dataSet.forEach(data => table.appendChild(createRow([
+            data.packageName,
+            toPercentString(data.relativeVisibility),
+            toPercentString(data.averageRelativeVisibility),
+            toPercentString(data.globalRelativeVisibility)]))
+        );
     })
 </script>
 </body>

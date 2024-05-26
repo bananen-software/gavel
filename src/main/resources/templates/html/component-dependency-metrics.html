@@ -93,7 +93,7 @@
     const chart = d3.select("#component-dependency-metrics-chart");
     const table = document.getElementById("component-dependency-metrics-table");
 
-    d3.csv("data/component-dependency-metrics.csv", renderComponentDependencyMetricsGraph(chart, table))
+    d3.json("data/component-dependencies.json", renderComponentDependencyMetricsGraph(chart, table))
 </script>
 </body>
 </html>

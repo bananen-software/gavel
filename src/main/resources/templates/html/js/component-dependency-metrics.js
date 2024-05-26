@@ -30,7 +30,7 @@ function determineZone(measurement) {
     let match = green;
 
     for (const zone of zones) {
-        if (measurement.D <= zone.upperBound) {
+        if (measurement.normalizedDistanceFromMainSequence <= zone.upperBound) {
             match = zone;
         }
     }
@@ -74,13 +74,13 @@ function renderComponentDependencyMetricsGraph(chart, table) {
             cumulatedMetrics["sum"] = cumulatedMetrics["sum"] ? cumulatedMetrics["sum"] + 1 : 1;
 
             table.appendChild(createRow([
-                d.package,
+                d.packageName,
                 determineStatus(d),
-                d.Ce,
-                d.Ca,
-                d.I,
-                d.A,
-                d.D
+                d.efferentCoupling,
+                d.afferentCoupling,
+                d.instability,
+                d.abstractness,
+                d.normalizedDistanceFromMainSequence
             ]));
         }
 
@@ -137,15 +137,15 @@ function renderComponentDependencyMetricsGraph(chart, table) {
             .enter()
             .append("circle")
             .attr("cx", function (d) {
-                return x(d.I);
+                return x(d.instability);
             })
             .attr("cy", function (d) {
-                return y(d.A);
+                return y(d.abstractness);
             })
             .attr("r", 7)
             .style("opacity", 0.3)
             .style("fill", determineColor())
             .append("svg:title").text((d, i) =>
-            `${d.package}\nInstability: ${d.I}\nAbstractness: ${d.A}\nDistance: ${d.D}\nCa: ${d.Ca}\nCe: ${d.Ce}`)
+            `${d.packageName}\nInstability: ${d.instability}\nAbstractness: ${d.abstractness}\nDistance: ${d.normalizedDistanceFromMainSequence}\nCa: ${d.afferentCoupling}\nCe: ${d.efferentCouplin}`)
     };
 }

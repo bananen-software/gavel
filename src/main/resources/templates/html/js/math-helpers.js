@@ -7,3 +7,7 @@
 function toPercent(dividend, divisor) {
     return Math.round((dividend / divisor) * 100);
 }
+
+function toPercentString(value) {
+    return Math.round(value * 100) + "%"
+}
