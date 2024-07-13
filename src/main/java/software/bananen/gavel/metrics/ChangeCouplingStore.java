@@ -32,10 +32,13 @@ public final class ChangeCouplingStore {
      * @param changeCouplingInstance The change coupling instance.
      */
     private void record(final ChangeCouplingInstance changeCouplingInstance) {
-        couplingStore.put(changeCouplingInstance,
-                couplingStore.getOrDefault(changeCouplingInstance, 0) + 1);
-        fileChangeStore.put(changeCouplingInstance.origin(),
-                fileChangeStore.getOrDefault(changeCouplingInstance.origin(), 0) + 1);
+        // Filter out files that are coupled to deleted files
+        if (!"/dev/null".equals(changeCouplingInstance.target())) {
+            couplingStore.put(changeCouplingInstance,
+                    couplingStore.getOrDefault(changeCouplingInstance, 0) + 1);
+            fileChangeStore.put(changeCouplingInstance.origin(),
+                    fileChangeStore.getOrDefault(changeCouplingInstance.origin(), 0) + 1);
+        }
     }
 
     /**
