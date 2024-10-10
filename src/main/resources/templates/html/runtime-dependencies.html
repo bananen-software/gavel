@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gavel - Runtime Dependencies</title>
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.colors.min.css"/>
+
+    <script src="https://d3js.org/d3.v4.js"></script>
+
+    <link rel="stylesheet" href="css/custom.css"/>
+
+    <script type="module" src="js/runtime-dependencies.js"></script>
+    <script src="js/table-helpers.js"></script>
+    <script src="js/math-helpers.js"></script>
+</head>
+<body>
+<div class="container">
+    <nav>
+        <ul>
+            <li>
+                <strong>Gavel</strong>
+            </li>
+        </ul>
+    </nav>
+
+    <nav aria-label="breadcrumb">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li>Runtime Dependencies</li>
+        </ul>
+    </nav>
+
+    <h1>Key Insights</h1>
+
+    <div class="grid">
+        <article id="green-components">
+        </article>
+        <article id="yellow-components">
+        </article>
+        <article id="red-components">
+        </article>
+    </div>
+
+    <h1>Description</h1>
+
+    <p>
+    </p>
+
+    <h1>Graph</h1>
+
+    <article>
+        <svg width="100%" height="1600px" id="runtime-dependencies-chart"></svg>
+    </article>
+
+    <h1>Table</h1>
+
+    <article>
+    </article>
+</div>
+<script>
+    const chart = d3.select("#runtime-dependencies-chart");
+    const table = document.getElementById("runtime-dependencies-table");
+
+    d3.json("data/dependencies.json", (dataSet) => {
+        const svg = chart
+            .attr("style", "max-width: 100%; height: auto; height: intrinsic;")
+            .attr("font-family", "sans-serif")
+            .attr("font-size", 6)
+            .attr("text-anchor", "middle")
+            .call(d3.zoom().on("zoom", function () {
+                svg.attr("transform", d3.event.transform)
+            }))//Set the size of the diagram;
+
+        var packLayout = d3.pack()
+            .size([1024, 1600])
+            .padding(10);
+        // Convert the data to a hierarchical format
+        var hierarchyData = d3.hierarchy(dataSet)
+            .sum(function (d) {
+                return d.size;
+            });
+
+        packLayout(hierarchyData);
+
+        var nodes = svg.selectAll('g')
+            .data(hierarchyData.descendants())
+            .enter()
+            .append('g')
+            .attr('transform', function (d) {
+                return 'translate(' + [d.x, d.y] + ')'
+            })
+
+        nodes.append('circle')
+            .attr('r', function (d) {
+                return d.r
+            })
+            .attr("cx", 100)
+            .attr("cy", 100)
+            .attr('stroke', 'black')
+            .attr('fill', 'grey')
+            .attr('cursor', "pointer")
+
+        nodes.append('text')
+            .attr('text-anchor', 'left')
+            .text(function (d) {
+                console.log(d)
+                return d.data.name
+            });
+    })
+</script>
+</body>
+</html>

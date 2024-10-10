@@ -15,6 +15,7 @@ public class Application {
      */
     public static void main(final String[] args) throws Throwable {
         final int exitCode = new CommandLine(new RunAnalysisCommand()).execute(args);
+        System.out.println(Runtime.getRuntime().totalMemory());
         System.exit(exitCode);
     }
 }

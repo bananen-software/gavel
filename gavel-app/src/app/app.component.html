@@ -1,0 +1,12 @@
+<style>
+</style>
+
+<div class="card">
+  <p-menubar [model]="items">
+    <ng-template pTemplate="end">
+      <p-button icon="pi pi-play" (click)="runAnalysis()"/>
+    </ng-template>
+  </p-menubar>
+</div>
+
+<router-outlet/>

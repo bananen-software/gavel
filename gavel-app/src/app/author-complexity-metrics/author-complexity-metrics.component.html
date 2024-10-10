@@ -1,0 +1,43 @@
+<app-view-layout>
+  <p-card header="Raw data">
+    <p-table [value]="metrics()"
+             [rows]="10"
+             [rowsPerPageOptions]="[10, 25, 50]"
+             [paginator]="true"
+             [loading]="loading()"
+             sortField="relativeComplexityAdded"
+             [sortOrder]="-1">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="author.name">
+            Author
+            <p-sortIcon field="author.name"></p-sortIcon>
+          </th>
+          <th pSortableColumn="complexityDelta">
+            Complexity Delta
+            <p-sortIcon field="complexityDelta"></p-sortIcon>
+          </th>
+          <th pSortableColumn="numberOfChanges">
+            Number of Changes
+            <p-sortIcon field="numberOfChanges"></p-sortIcon>
+          </th>
+          <th pSortableColumn="relativeComplexityAdded">
+            Average Complexity Added
+            <p-sortIcon field="relativeComplexityAdded"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-metric>
+        <tr>
+          <td>
+            {{ metric.author.name }}<br/>
+            <span class="author-email">{{ metric.author.email }}</span>
+          </td>
+          <td class="numeric">{{ metric.complexityDelta }}</td>
+          <td class="numeric">{{ metric.numberOfChanges }}</td>
+          <td class="numeric">{{ metric.relativeComplexityAdded }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</app-view-layout>

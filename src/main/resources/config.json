@@ -1,9 +1,9 @@
 {
   "analysis_context": {
     "included_paths": [
-      "/home/dennis/workspace/github/flens-dev/pendenzenliste"
+      "/home/dennis/workspace/lemarit"
     ],
-    "root_package": "pendenzenliste",
+    "root_package": "com.lemarit",
     "resolve_subpackages": true,
     "exclusion_patterns": [
       "/test/",
@@ -25,6 +25,11 @@
         "java",
         "ts",
         "js"
+      ]
+    },
+    "runtime_dependencies": {
+      "exclusions": [
+        "java"
       ]
     }
   },

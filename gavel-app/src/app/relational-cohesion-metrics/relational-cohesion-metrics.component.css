@@ -1,0 +1,9 @@
+.key-insights {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 20px;
+}
+
+td.numeric {
+  text-align: right;
+}

@@ -1,0 +1,95 @@
+<app-view-layout>
+  <div class="key-insights">
+    <p-card header="Zone of pain" class="zone-of-pain">
+      {{ keyInsights().zoneOfPainPercentage }}
+    </p-card>
+
+    <p-card header="Zone of uselessness" class="zone-of-uselessness">
+      {{ keyInsights().zoneOfUselessnessPercentage }}
+    </p-card>
+
+    <p-card header="Gray Area" class="gray-area">
+      {{ keyInsights().grayAreaPercentage }}
+    </p-card>
+  </div>
+
+  <p-card header="Description">
+    <p>The Component Dependency Metrics provide measurements for the dependencies between components within the code
+      base. They evaluate the <i>afferent coupling</i> (Ca) and <i>efferent coupling</i> (Ce) for each
+      package and derives the <i>Instability</i> (I) from them. A component is considered to be unstable, when a lot
+      of other components are coupled to its behavior. The second factor that is considered by the Component
+      Dependency Metrics is the <i>Abstractness</i> (A). It
+      describes how many classes within the package are abstract or interfaces.</p>
+    <p>The Abstractness and Instability of the packages are used to divide the code base into multiple zones. The
+      packages that are close to the main sequence between the points (1, 0) and (0, 1) are considered to be
+      <i>healthy</i>.
+      Some packages are not very close to the main sequence, but are not yet problematic, they are <i>okayish</i>.
+    </p>
+    <p>
+      Problematic packages will orbit around the points (0, 0) and (1, 1). Packages that are close to the point (0, 0)
+      are considered to be problematic, because they are in the <i>Zone of Pain</i>. They are very concrete and yet
+      highly unstable, because other components rely on it.
+    </p>
+    <p> Packages that are close to the point (1, 1) are considered to be problematic, because they are in the <i>Zone of
+      Uselessness</i>. They are very abstract and stable, because very few components rely on them. In extreme cases
+      the classes from these packages could simply be deleted, because they are not used by any other component.
+    </p>
+  </p-card>
+
+  <p-card header="Graph">
+    <div id="component-dependency-metrics-chart">
+      
+    </div>
+  </p-card>
+
+  <p-card header="Raw data">
+    <p-table [value]="metrics()"
+             [rows]="10"
+             [rowsPerPageOptions]="[10, 25, 50]"
+             [paginator]="true"
+             [loading]="loading()"
+             sortField="normalizedDistanceFromMainSequence"
+             [sortOrder]="-1">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="packageName">
+            package
+            <p-sortIcon field="packageName"></p-sortIcon>
+          </th>
+          <th>Zone</th>
+          <th pSortableColumn="efferentCoupling">
+            Ce
+            <p-sortIcon field="efferentCoupling"></p-sortIcon>
+          </th>
+          <th pSortableColumn="afferentCoupling">
+            Ca
+            <p-sortIcon field="afferentCoupling"></p-sortIcon>
+          </th>
+          <th pSortableColumn="instability">
+            Instability
+            <p-sortIcon field="instability"></p-sortIcon>
+          </th>
+          <th pSortableColumn="abstractness">
+            Abstractness
+            <p-sortIcon field="abstractness"></p-sortIcon>
+          </th>
+          <th pSortableColumn="normalizedDistanceFromMainSequence">
+            Distance
+            <p-sortIcon field="normalizedDistanceFromMainSequence"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-metric>
+        <tr>
+          <td>{{ metric.packageName }}</td>
+          <td>{{ determineZone(metric) }}</td>
+          <td class="numeric">{{ metric.efferentCoupling }}</td>
+          <td class="numeric">{{ metric.afferentCoupling }}</td>
+          <td class="numeric">{{ calculatePercentString(metric.instability, 1) }}</td>
+          <td class="numeric">{{ calculatePercentString(metric.abstractness, 1) }}</td>
+          <td class="numeric">{{ calculatePercentString(metric.normalizedDistanceFromMainSequence, 1) }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</app-view-layout>

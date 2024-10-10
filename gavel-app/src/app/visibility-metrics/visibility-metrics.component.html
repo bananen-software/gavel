@@ -1,0 +1,31 @@
+<app-view-layout>
+  <p-card header="Raw data">
+    <p-table [value]="metrics()"
+             [rows]="10"
+             [rowsPerPageOptions]="[10, 25, 50]"
+             [paginator]="true"
+             [loading]="loading()">
+      <ng-template pTemplate="header">
+        <tr>
+          <th scope="col">package</th>
+          <th scope="col">Relative Visibility (RV)</th>
+          <th scope="col">Average Relative Visibility (ARV)</th>
+          <th scope="col">Global Relative Visibility (GRV)</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-metric>
+        <tr>
+          <td>{{ metric.packageName }}</td>
+          <td class="numeric">{{ toPercentString(toPercent(metric.relativeVisibility, 1)) }}</td>
+          <td class="numeric">{{ toPercentString(toPercent(metric.averageRelativeVisibility, 1)) }}</td>
+          <td class="numeric">{{ toPercentString(toPercent(metric.globalRelativeVisibility, 1)) }}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="4">No metrics found.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</app-view-layout>

@@ -1,0 +1,21 @@
+.key-insights {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 20px;
+}
+
+td.numeric {
+  text-align: right;
+}
+
+p-card.gray-area {
+  --p-card-background: var(--p-gray-500);
+}
+
+p-card.zone-of-pain {
+  --p-card-background: var(--p-red-700);
+}
+
+p-card.zone-of-uselessness {
+  --p-card-background: var(--p-yellow-700);
+}

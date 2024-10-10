@@ -1,0 +1,43 @@
+<app-view-layout>
+  <div class="key-insights">
+    <p-card header="green">
+
+    </p-card>
+
+    <p-card header="yellow">
+
+    </p-card>
+
+    <p-card header="red">
+
+    </p-card>
+  </div>
+
+
+  <p-card header="Raw data">
+    <p-table [value]="metrics()"
+             [rows]="10"
+             [rowsPerPageOptions]="[10, 25, 50]"
+             [paginator]="true"
+             [loading]="loading()">
+      <ng-template pTemplate="header">
+        <tr>
+          <th scope="col">package</th>
+          <th scope="col">CCD</th>
+          <th scope="col">ACD</th>
+          <th scope="col">RACD</th>
+          <th scope="col">NCCD</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-metric>
+        <tr>
+          <td>{{ metric.packageName }}</td>
+          <td>{{ metric.cumulative }}</td>
+          <td>{{ metric.average }}</td>
+          <td>{{ metric.relativeAverage }}</td>
+          <td>{{ metric.normalized }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</app-view-layout>

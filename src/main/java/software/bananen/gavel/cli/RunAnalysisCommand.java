@@ -16,6 +16,9 @@ import software.bananen.gavel.metrics.git.GitUtil;
 import software.bananen.gavel.metrics.git.Mailmap;
 import software.bananen.gavel.reports.ReportChain;
 import software.bananen.gavel.reports.ReportException;
+import software.bananen.gavel.reports.json.GenericJsonFileReport;
+import software.bananen.gavel.tracing.JsonNode;
+import software.bananen.gavel.tracing.RuntimeDependencyTracingService;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,15 +62,6 @@ public final class RunAnalysisCommand implements Callable<Integer> {
             Files.createDirectory(projectContext.targetDirectory().toPath());
         }
 
-        recordCumulativeDependencyMetrics(projectContext);
-        recordComponentDependencyMetrics(projectContext);
-        recordVisibilityMetrics(projectContext);
-        recordDepthOfInheritanceTree(projectContext);
-        recordRelationalCohesionMetrics(projectContext);
-
-        /*new CyclicDependencyDetectionService().detect(projectContext.javaClasses(),
-                projectContext.basePackage());*/
-
         measureGitBasedMetrics(projectContext);
 
         return 0;
@@ -84,7 +78,7 @@ public final class RunAnalysisCommand implements Callable<Integer> {
      * @throws ReportException Might be thrown in case that the report could
      *                         not be written.
      */
-    private static void measureGitBasedMetrics(ProjectContext projectContext) throws IOException, GitAPIException, ReportException {
+    private static void measureGitBasedMetrics(final ProjectContext projectContext) throws IOException, GitAPIException, ReportException {
         final HotspotMetricsService hotspotMetricsService = new HotspotMetricsService();
 
         final AuthorComplexityHistory authorComplexityHistory =
@@ -188,6 +182,15 @@ public final class RunAnalysisCommand implements Callable<Integer> {
         ReportChain.measure(() -> changeCouplingStore.list(projectContext.config().analysisContext().metricsConfig().changeCouplingConfig().mininmalNumberOfChanges(),
                         projectContext.config().analysisContext().metricsConfig().changeCouplingConfig().percentageThreshold()))
                 .andReport(projectContext.reportFactory().createChangeCouplingMetricReport());
+
+        final JsonNode dependencies = new RuntimeDependencyTracingService().traceRuntimeDependencies(
+                projectContext.javaClasses(),
+                projectContext.config().analysisContext().runtimeDependenciesConfig());
+
+        final GenericJsonFileReport<JsonNode> report =
+                new GenericJsonFileReport<>(new File("/tmp/"), "dependencies.json");
+
+        report.report(dependencies);
     }
 
 
@@ -196,56 +199,5 @@ public final class RunAnalysisCommand implements Callable<Integer> {
         return gitConfig.includedFileExtensions()
                 .stream()
                 .anyMatch(ext -> diff.getNewPath().endsWith("." + ext));
-    }
-
-    private static void recordDepthOfInheritanceTree(final ProjectContext projectContext)
-            throws ReportException {
-        final DepthOfInheritanceTreeMetricsService service = new DepthOfInheritanceTreeMetricsService();
-
-        ReportChain.measure(() -> service.measure(projectContext.javaClasses(),
-                        projectContext.config().analysisContext().metricsConfig().depthOfInheritanceConfig().threshold()))
-                .andReport(projectContext.reportFactory().createDepthOfInheritanceTreeReport());
-    }
-
-    private static void recordVisibilityMetrics(final ProjectContext projectContext)
-            throws ReportException {
-        final ComponentVisibilityMetricsService service = new ComponentVisibilityMetricsService();
-
-        ReportChain.measure(() ->
-                        service.measure(
-                                projectContext.basePackage(),
-                                projectContext.config().analysisContext().resolveSubpackages()))
-                .andReport(projectContext.reportFactory().createComponentVisibilityReport());
-    }
-
-    private static void recordComponentDependencyMetrics(final ProjectContext projectContext)
-            throws ReportException {
-        final ComponentDependencyMetricsService service = new ComponentDependencyMetricsService();
-
-        ReportChain.measure(() ->
-                        service.measure(projectContext.basePackage(),
-                                projectContext.config().analysisContext().resolveSubpackages()))
-                .andReport(projectContext.reportFactory().createComponentDependencyReport());
-    }
-
-    private static void recordCumulativeDependencyMetrics(final ProjectContext projectContext)
-            throws ReportException {
-        final CumulativeComponentDependencyMetricsService service = new CumulativeComponentDependencyMetricsService();
-
-        ReportChain.measure(() ->
-                        service.measure(
-                                List.of(projectContext.basePackage()),
-                                projectContext.config().analysisContext().resolveSubpackages()))
-                .andReport(projectContext.reportFactory().createCumulativeComponentDependencyReport());
-    }
-
-    private static void recordRelationalCohesionMetrics(final ProjectContext projectContext)
-            throws ReportException {
-        final RelationalCohesionMetricsService service = new RelationalCohesionMetricsService();
-
-        ReportChain.measure(() ->
-                        service.measure(
-                                List.of(projectContext.basePackage())))
-                .andReport(projectContext.reportFactory().createRelationalCohesionReport());
     }
 }

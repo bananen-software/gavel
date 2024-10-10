@@ -1,0 +1,8 @@
+td.numeric {
+  text-align: right;
+}
+
+span.author-email {
+  font-weight: lighter;
+  font-size: small;
+}

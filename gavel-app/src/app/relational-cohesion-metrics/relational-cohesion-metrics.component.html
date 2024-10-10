@@ -1,0 +1,73 @@
+<app-view-layout>
+  <div class="key-insights">
+    <p-card header="{{keyInsights().goodPercentage}} of components show good cohesion">
+
+    </p-card>
+
+    <p-card header="{{keyInsights().lowCohesionPercentage}} of components show low cohesion">
+
+    </p-card>
+
+    <p-card header="{{keyInsights().highCohesionPercentage}} of components show high cohesion">
+
+    </p-card>
+  </div>
+
+  <p-card header="Raw data">
+    <p-table
+      #relationalCohesionMetricsTable
+      [value]="metrics()"
+      [globalFilterFields]="['packageName']"
+      [rows]="10"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [paginator]="true"
+      [loading]="loading()">
+      <ng-template pTemplate="caption">
+        <div class="flex">
+          <p-iconfield iconPosition="left" class="ml-auto">
+            <p-inputicon>
+              <i class="pi pi-search"></i>
+            </p-inputicon>
+            <input
+              #relationalCohesionSearchFilter
+              pInputText
+              type="text"
+              (input)="relationalCohesionMetricsTable.filterGlobal(relationalCohesionSearchFilter.value, 'contains')"
+              placeholder="Search keyword"/>
+          </p-iconfield>
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="packageName" scope="col">
+            package
+            <p-sortIcon field="packageName"/>
+          </th>
+          <th>Status</th>
+          <th pSortableColumn="relationalCohesion">
+            Relational cohesion
+            <p-sortIcon field="relationalCohesion"/>
+          </th>
+          <th pSortableColumn="numberOfTypes">
+            Number of types
+            <p-sortIcon field="numberOfTypes"/>
+          </th>
+          <th pSortableColumn="numberOfInternalRelationships">
+            Number of internal relationships
+            <p-sortIcon field="numberOfInternalRelationships"/>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-metric>
+        <tr>
+          <td>{{ metric.packageName }}</td>
+          <td>{{ determineStatus(metric) }}</td>
+          <td class="numeric">{{ metric.relationalCohesion }}</td>
+          <td class="numeric">{{ metric.numberOfTypes }}</td>
+          <td class="numeric">{{ metric.numberOfInternalRelationships }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</app-view-layout>
