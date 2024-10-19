@@ -49,7 +49,7 @@ public class LCOM4MetricsService {
      * LCOM4 value, and clusters of methods based on their access to fields
      */
     public LCOM4Metric measure(final JavaClass javaClass) {
-        Graph<Node, DefaultEdge> graph
+        final Graph<Node, DefaultEdge> graph
                 = new SimpleDirectedGraph<>(DefaultEdge.class);
 
         for (final JavaField field : javaClass.getFields()) {
