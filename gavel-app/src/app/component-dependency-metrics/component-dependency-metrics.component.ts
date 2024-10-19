@@ -13,6 +13,9 @@ import {FormsModule} from "@angular/forms";
 import {ProgressBarModule} from "primeng/progressbar";
 import {MeterGroupModule} from "primeng/metergroup";
 import {NgForOf} from "@angular/common";
+import {
+  ComponentDependencyMetricsDiagramComponent
+} from "../component-dependency-metrics-diagram/component-dependency-metrics-diagram.component";
 
 class KeyInsights {
   constructor(public grayAreaCount: number,
@@ -39,7 +42,8 @@ class KeyInsights {
     FormsModule,
     ProgressBarModule,
     MeterGroupModule,
-    NgForOf
+    NgForOf,
+    ComponentDependencyMetricsDiagramComponent
   ],
   templateUrl: './component-dependency-metrics.component.html',
   styleUrl: './component-dependency-metrics.component.css'
