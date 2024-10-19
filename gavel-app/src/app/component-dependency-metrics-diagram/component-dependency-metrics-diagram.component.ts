@@ -9,20 +9,33 @@ import {
 import * as d3 from 'd3';
 import { ComponentDependency } from '../component-dependency-metrics/component-dependency-metrics.service';
 
-class Zone {
-  constructor(
-    public upperBound: number,
-    public lowerBound: number,
-    public color: string,
-    public name: 'Green' | 'Yellow' | 'Red'
-  ) {}
-}
+type Zone = {
+  upperBound: number;
+  lowerBound: number;
+  color: string;
+  name: 'Green' | 'Yellow' | 'Red';
+};
 
-const green = new Zone(0.3, 0, 'green', 'Green');
+const green: Zone = {
+  upperBound: 0.3,
+  lowerBound: 0,
+  color: 'green',
+  name: 'Green',
+};
 
-const yellow = new Zone(0.6, 0.3, 'yellow', 'Yellow');
+const yellow: Zone = {
+  upperBound: 0.6,
+  lowerBound: 0.3,
+  color: 'yellow',
+  name: 'Yellow',
+};
 
-const red = new Zone(1, 0.6, 'red', 'Red');
+const red: Zone = {
+  upperBound: 1,
+  lowerBound: 0.6,
+  color: 'red',
+  name: 'Red',
+};
 
 const zones: Zone[] = [red, yellow, green];
 
