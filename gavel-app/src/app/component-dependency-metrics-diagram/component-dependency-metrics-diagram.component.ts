@@ -1,155 +1,204 @@
-import {afterRender, Component, input} from '@angular/core';
+import {
+  afterRender,
+  Component,
+  computed,
+  ElementRef,
+  input,
+  viewChild,
+} from '@angular/core';
 import * as d3 from 'd3';
-import {ComponentDependency} from "../component-dependency-metrics/component-dependency-metrics.service";
+import { ComponentDependency } from '../component-dependency-metrics/component-dependency-metrics.service';
 
-class Zone {
-  constructor(public upperBound: number,
-              public lowerBound: number,
-              public color: string,
-              public name: "Green" | "Yellow" | "Red") {
-  }
+type Zone = {
+  upperBound: number;
+  lowerBound: number;
+  color: string;
+  name: 'Green' | 'Yellow' | 'Red';
+};
 
-}
+const green: Zone = {
+  upperBound: 0.3,
+  lowerBound: 0,
+  color: 'green',
+  name: 'Green',
+};
 
-const green = new Zone(
-  0.3,
-  0,
-  "green",
-  "Green"
-);
+const yellow: Zone = {
+  upperBound: 0.6,
+  lowerBound: 0.3,
+  color: 'yellow',
+  name: 'Yellow',
+};
 
-const yellow = new Zone(
-  0.6,
-  0.3,
-  "yellow",
-  "Yellow"
-);
-
-const red = new Zone(
-  1,
-  0.6,
-  "red",
-  "Red"
-);
+const red: Zone = {
+  upperBound: 1,
+  lowerBound: 0.6,
+  color: 'red',
+  name: 'Red',
+};
 
 const zones: Zone[] = [red, yellow, green];
+
+type Spec = {
+  width: number;
+  height: number;
+  margin: {
+    left: number;
+    top: number;
+    right: number;
+    bottom: number;
+  };
+};
+
+function createSvg(
+  spec: Spec
+): [
+  d3.Selection<SVGSVGElement, undefined, null, undefined>,
+  d3.Selection<SVGGElement, undefined, null, undefined>
+] {
+  const x = d3.scaleLinear().domain([0, 1]).range([0, spec.width]);
+  const y = d3.scaleLinear().domain([0, 1]).range([spec.height, 0]);
+
+  const svg = d3
+    .create('svg')
+    .attr('width', spec.width + spec.margin.left + spec.margin.right)
+    .attr('height', spec.height + spec.margin.top + spec.margin.bottom);
+
+  const inner = svg
+    .append('g')
+    .attr(
+      'transform',
+      'translate(' + spec.margin.left + ',' + spec.margin.top + ')'
+    );
+
+  inner
+    .append('text')
+    .attr('text-anchor', 'end')
+    .attr('x', spec.width)
+    .attr('y', spec.height + spec.margin.top + 25)
+    .style('fill', 'var(--p-card-color)')
+    .text('Abstractness');
+
+  inner
+    .append('g')
+    .attr('transform', 'translate(0,' + spec.height + ')')
+    .attr('class', 'axis')
+    .call(d3.axisBottom(x));
+
+  inner
+    .append('text')
+    .attr('text-anchor', 'end')
+    .attr('transform', 'rotate(-90)')
+    .style('fill', 'var(--p-card-color)')
+    .attr('y', -spec.margin.left + 20)
+    .attr('x', -spec.margin.top)
+    .text('Instability');
+
+  inner.append('g').attr('class', 'axis').call(d3.axisLeft(y));
+
+  return [svg, inner];
+}
+
+/**
+ * Determines the zone for the given measurement.
+ * @param measurement The measurement.
+ * @returns {{color: string, upperBound: number, name: string, lowerBound: number}}
+ */
+function determineZone(measurement: ComponentDependency) {
+  let match = green;
+
+  for (const zone of zones) {
+    if (measurement.normalizedDistanceFromMainSequence <= zone.upperBound) {
+      match = zone;
+    }
+  }
+
+  return match;
+}
+
+/**
+ * Determines the color for the measurement.
+ * @returns {function(*): string}
+ */
+function determineColor() {
+  return (d: ComponentDependency) => determineZone(d).color;
+}
+
+function renderGraph(
+  inner: d3.Selection<SVGGElement, undefined, null, undefined>,
+  metrics: ComponentDependency[],
+  width: number,
+  height: number
+) {
+  const x = d3.scaleLinear().domain([0, 1]).range([0, width]);
+  const y = d3.scaleLinear().domain([0, 1]).range([height, 0]);
+
+  inner
+    .append('g')
+    .selectAll('dot')
+    .data(metrics)
+    .enter()
+    .append('circle')
+    .attr('cx', (d: ComponentDependency) => x(d.instability))
+    .attr('cy', (d: ComponentDependency) => y(d.abstractness))
+    .attr('r', 7)
+    .style('opacity', 0.3)
+    .style('fill', determineColor())
+    .append('svg:title')
+    .text(
+      (d: ComponentDependency, i: number) =>
+        `${d.packageName}\nInstability: ${d.instability}\nAbstractness: ${d.abstractness}\nDistance: ${d.normalizedDistanceFromMainSequence}\nCa: ${d.afferentCoupling}\nCe: ${d.efferentCoupling}`
+    );
+}
 
 @Component({
   selector: 'app-component-dependency-metrics-diagram',
   standalone: true,
   imports: [],
-  templateUrl: './component-dependency-metrics-diagram.component.html',
-  styleUrl: './component-dependency-metrics-diagram.component.css'
+  template: `<figure #cdmmetrics></figure>`,
 })
 export class ComponentDependencyMetricsDiagramComponent {
   readonly metrics = input<ComponentDependency[]>([]);
 
-  private svg: any;
-  private margin = {top: 10, right: 30, bottom: 40, left: 60};
-  private width = 800 - this.margin.left - this.margin.right;
-  private height = 800 - this.margin.top - this.margin.bottom;
+  protected readonly figure = viewChild('cdmmetrics', {
+    read: ElementRef,
+  });
+
+  readonly #totalSize = computed(() => 800);
+  readonly #margin = computed(() => ({
+    top: 10,
+    right: 30,
+    bottom: 40,
+    left: 60,
+  }));
+  readonly #width = computed(
+    () => this.#totalSize() - this.#margin().left - this.#margin().right
+  );
+  readonly #height = computed(
+    () => this.#totalSize() - this.#margin().top - this.#margin().bottom
+  );
+  readonly #spec = computed(() => ({
+    width: this.#width(),
+    height: this.#height(),
+    margin: this.#margin(),
+  }));
 
   constructor() {
     afterRender({
       write: () => {
-        if (this.svg == null) {
-          this.createSvg();
-        } else {
-          this.svg.innerHTML = ''
+        const figure = this.figure();
+        if (figure == null) {
+          return;
         }
 
-        this.renderGraph();
-      }
-    })
-  }
+        const spec = this.#spec();
+        const metrics = this.metrics();
 
-  private createSvg(): void {
-    this.svg = d3.select("figure#cdm-metrics")
-      .append("svg")
-      .attr("width", this.width + this.margin.left + this.margin.right)
-      .attr("height", this.height + this.margin.top + this.margin.bottom)
-      .append("g")
-      .attr("transform",
-        "translate(" + this.margin.left + "," + this.margin.top + ")");
+        const [svg, inner] = createSvg(spec);
+        renderGraph(inner, metrics, spec.width, spec.height);
 
-    const x = d3.scaleLinear().domain([0, 1]).range([0, this.width])
-
-    this.svg.append("text")
-      .attr("text-anchor", "end")
-      .attr("x", this.width)
-      .attr("y", this.height + this.margin.top + 25)
-      .style("fill", "var(--p-card-color)")
-      .text("Abstractness");
-
-    this.svg.append("g")
-      .attr("transform", "translate(0," + this.height + ")")
-      .attr("class", "axis")
-      .call(d3.axisBottom(x));
-
-    const y = d3.scaleLinear().domain([0, 1]).range([this.height, 0]);
-
-    this.svg.append("text")
-      .attr("text-anchor", "end")
-      .attr("transform", "rotate(-90)")
-      .style("fill", "var(--p-card-color)")
-      .attr("y", -this.margin.left + 20)
-      .attr("x", -this.margin.top)
-      .text("Instability")
-
-    this.svg.append("g")
-      .attr("class", "axis")
-      .call(d3.axisLeft(y));
-  }
-
-  private renderGraph() {
-    const x = d3.scaleLinear().domain([0, 1]).range([0, this.width])
-    const y = d3.scaleLinear().domain([0, 1]).range([this.height, 0]);
-
-    this.svg.append('g')
-      .selectAll("dot")
-      .data(this.metrics())
-      .enter()
-      .append("circle")
-      .attr("cx", function (d: ComponentDependency) {
-        return x(d.instability);
-      })
-      .attr("cy", function (d: ComponentDependency) {
-        return y(d.abstractness);
-      })
-      .attr("r", 7)
-      .style("opacity", 0.3)
-      .style("fill", this.determineColor())
-      .append("svg:title")
-      .text((d: ComponentDependency, i: number) =>
-        `${d.packageName}\nInstability: ${d.instability}\nAbstractness: ${d.abstractness}\nDistance: ${d.normalizedDistanceFromMainSequence}\nCa: ${d.afferentCoupling}\nCe: ${d.efferentCoupling}`)
-  }
-
-  /**
-   * Determines the color for the measurement.
-   * @returns {function(*): string}
-   */
-  determineColor() {
-    const component = this;
-
-    return function (d: ComponentDependency) {
-      return component.determineZone(d).color;
-    };
-  }
-
-  /**
-   * Determines the zone for the given measurement.
-   * @param measurement The measurement.
-   * @returns {{color: string, upperBound: number, name: string, lowerBound: number}}
-   */
-  determineZone(measurement: ComponentDependency) {
-    let match = green;
-
-    for (const zone of zones) {
-      if (measurement.normalizedDistanceFromMainSequence <= zone.upperBound) {
-        match = zone;
-      }
-    }
-
-    return match;
+        figure.nativeElement.replaceChildren(svg.node());
+      },
+    });
   }
 }
