@@ -37,7 +37,12 @@ type Spec = {
   };
 };
 
-function createSvg(spec: Spec) {
+function createSvg(
+  spec: Spec
+): [
+  d3.Selection<SVGSVGElement, undefined, null, undefined>,
+  d3.Selection<SVGGElement, undefined, null, undefined>
+] {
   const x = d3.scaleLinear().domain([0, 1]).range([0, spec.width]);
   const y = d3.scaleLinear().domain([0, 1]).range([spec.height, 0]);
 
@@ -46,14 +51,14 @@ function createSvg(spec: Spec) {
     .attr('width', spec.width + spec.margin.left + spec.margin.right)
     .attr('height', spec.height + spec.margin.top + spec.margin.bottom);
 
-  svg
+  const inner = svg
     .append('g')
     .attr(
       'transform',
       'translate(' + spec.margin.left + ',' + spec.margin.top + ')'
     );
 
-  svg
+  inner
     .append('text')
     .attr('text-anchor', 'end')
     .attr('x', spec.width)
@@ -61,13 +66,13 @@ function createSvg(spec: Spec) {
     .style('fill', 'var(--p-card-color)')
     .text('Abstractness');
 
-  svg
+  inner
     .append('g')
     .attr('transform', 'translate(0,' + spec.height + ')')
     .attr('class', 'axis')
     .call(d3.axisBottom(x));
 
-  svg
+  inner
     .append('text')
     .attr('text-anchor', 'end')
     .attr('transform', 'rotate(-90)')
@@ -76,9 +81,9 @@ function createSvg(spec: Spec) {
     .attr('x', -spec.margin.top)
     .text('Instability');
 
-  svg.append('g').attr('class', 'axis').call(d3.axisLeft(y));
+  inner.append('g').attr('class', 'axis').call(d3.axisLeft(y));
 
-  return svg;
+  return [svg, inner];
 }
 
 /**
@@ -107,7 +112,7 @@ function determineColor() {
 }
 
 function renderGraph(
-  svg: d3.Selection<SVGSVGElement, undefined, null, undefined>,
+  inner: d3.Selection<SVGGElement, undefined, null, undefined>,
   metrics: ComponentDependency[],
   width: number,
   height: number
@@ -115,7 +120,7 @@ function renderGraph(
   const x = d3.scaleLinear().domain([0, 1]).range([0, width]);
   const y = d3.scaleLinear().domain([0, 1]).range([height, 0]);
 
-  svg
+  inner
     .append('g')
     .selectAll('dot')
     .data(metrics)
@@ -176,8 +181,8 @@ export class ComponentDependencyMetricsDiagramComponent {
         const spec = this.#spec();
         const metrics = this.metrics();
 
-        const svg = createSvg(spec);
-        renderGraph(svg, metrics, spec.width, spec.height);
+        const [svg, inner] = createSvg(spec);
+        renderGraph(inner, metrics, spec.width, spec.height);
 
         figure.nativeElement.replaceChildren(svg.node());
       },
