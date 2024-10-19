@@ -9,9 +9,9 @@
              [sortOrder]="-1">
       <ng-template pTemplate="header">
         <tr>
-          <th pSortableColumn="author.name">
+          <th pSortableColumn="name">
             Author
-            <p-sortIcon field="author.name"></p-sortIcon>
+            <p-sortIcon field="name"></p-sortIcon>
           </th>
           <th pSortableColumn="complexityDelta">
             Complexity Delta
@@ -30,12 +30,12 @@
       <ng-template pTemplate="body" let-metric>
         <tr>
           <td>
-            {{ metric.author.name }}<br/>
-            <span class="author-email">{{ metric.author.email }}</span>
+            {{ metric.name }}<br/>
+            <span class="author-email">{{ metric.email }}</span>
           </td>
           <td class="numeric">{{ metric.complexityDelta }}</td>
           <td class="numeric">{{ metric.numberOfChanges }}</td>
-          <td class="numeric">{{ metric.relativeComplexityAdded }}</td>
+          <td class="numeric">{{ metric.averageComplexityAdded }}</td>
         </tr>
       </ng-template>
     </p-table>

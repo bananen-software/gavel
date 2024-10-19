@@ -1,0 +1,58 @@
+<app-view-layout>
+  <p-card header="Raw data">
+    <p-table [value]="metrics()"
+             [rows]="10"
+             [rowsPerPageOptions]="[10, 25, 50]"
+             [paginator]="true"
+             [loading]="loading()"
+             selectionMode="single"
+             sortField="complexity"
+             [sortOrder]="-1">
+      <ng-template pTemplate="header">
+        <tr>
+          <th scope="col" pSortableColumn="className">
+            class
+            <p-sortIcon field="className"></p-sortIcon>
+          </th>
+          <th scope="col" pSortableColumn="complexity">
+            Complexity Rating
+            <p-sortIcon field="complexity"></p-sortIcon>
+          </th>
+          <th scope="col" pSortableColumn="lastModified">
+            Last modified
+            <p-sortIcon field="lastModified"></p-sortIcon>
+          </th>
+          <th scope="col" pSortableColumn="numberOfChanges">
+            Number of Changes
+            <p-sortIcon field="numberOfChanges"></p-sortIcon>
+          </th>
+          <th scope="col" pSortableColumn="numberOfAuthors">
+            Number of Authors
+            <p-sortIcon field="numberOfAuthors"></p-sortIcon>
+          </th>
+          <th scope="col" pSortableColumn="commentToCodeRatio">
+            Comment to Code ratio
+            <p-sortIcon field="commentToCodeRatio"></p-sortIcon>
+          </th>
+          <th scope="col" pSortableColumn="classCohesion">
+            LCOM4
+            <p-sortIcon field="classCohesion"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-metric>
+        <tr>
+          <td>{{ metric.className }}</td>
+          <td>{{ metric.complexityRating }} ({{ metric.complexity }})</td>
+          <td>{{ metric.lastModified }}</td>
+          <td>{{ metric.numberOfChanges }}</td>
+          <td>{{ metric.numberOfAuthors }}</td>
+          <td>{{ toPercentString(toPercent(metric.commentToCodeRatio, 1)) }} ({{ metric.totalLinesOfComments }}
+            /{{ metric.totalLinesOfCode }})
+          </td>
+          <td>{{ metric.classCohesion }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</app-view-layout>

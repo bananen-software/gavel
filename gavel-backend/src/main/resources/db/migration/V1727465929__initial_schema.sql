@@ -1,3 +1,5 @@
+-- This is still a WIP I may update it at any time when I feel like it
+
 -- Create metadata tables
 create table "programming_languages"
 (
@@ -10,8 +12,11 @@ create table "programming_languages"
 -- Create workspace related tables
 create table "workspaces"
 (
-    "id"   bigint GENERATED ALWAYS AS IDENTITY,
-    "name" text not null unique,
+    "id"            bigint GENERATED ALWAYS AS IDENTITY,
+    "name"          text   not null unique,
+    "path"          text   not null,
+    "base_package"  text   not null,
+    "excluded_path" text[] not null,
 
     primary key ("id")
 );
@@ -20,6 +25,7 @@ create table "projects"
 (
     "id"        bigint GENERATED ALWAYS AS IDENTITY,
     "name"      text not null,
+    "path"      text not null,
     "workspace" bigint references workspaces ("id"),
 
     primary key ("id")
@@ -27,20 +33,53 @@ create table "projects"
 
 create table "packages"
 (
-    "id"      bigint GENERATED ALWAYS AS IDENTITY,
-    "package" text not null unique,
-    "project" bigint references projects ("id"),
+    "id"                                   bigint GENERATED ALWAYS AS IDENTITY,
+    "package"                              text             not null,
+    "project"                              bigint references projects ("id"),
+    "size"                                 int              not null,
+    "complexity_rating"                    int              not null,
+    "number_of_types"                      int              not null,
+    "complexity"                           int              not null,
+    "lines_of_code"                        int              not null,
+    "lines_of_comments"                    int              not null,
+    "comment_to_code_ratio"                double precision not null default (0),
+    "number_of_low_complexity_types"       int              not null default (0),
+    "number_of_medium_complexity_types"    int              not null default (0),
+    "number_of_high_complexity_types"      int              not null default (0),
+    "number_of_very_high_complexity_types" int              not null default (0),
 
     primary key ("id")
 );
 
+create unique index on "packages" ("package", "project");
+
 create table "classes"
 (
-    "id"                   bigint GENERATED ALWAYS AS IDENTITY,
-    "name"                 text                     not null,
-    "package"              bigint references packages ("id"),
-    "programming_language" bigint references "programming_languages" ("id"),
-    "last_modified"        timestamp with time zone not null,
+    "id"                         bigint GENERATED ALWAYS AS IDENTITY,
+    "name"                       text                     not null,
+    "package"                    bigint references packages ("id"),
+    "programming_language"       bigint references "programming_languages" ("id"),
+    "last_modified"              timestamp with time zone not null,
+    "number_of_authors"          int                      not null default (0),
+    "number_of_changes"          int                      not null default (0),
+    "complexity"                 int                      not null default (0),
+    "complexity_rating"          int                      not null default (0),
+    "size"                       int                      not null default (0),
+    "total_lines_of_code"        int                      not null default (0),
+    "total_lines_of_comments"    int                      not null default (0),
+    "comment_to_code_ratio"      double precision         not null default (0),
+    "number_of_responsibilities" int                      not null default (0),
+    "status"                     int                      not null default (0),
+
+    primary key ("id")
+);
+
+create table "project_files"
+(
+    "id"      bigint GENERATED ALWAYS AS IDENTITY,
+    "path"    text not null,
+    "project" bigint references "projects" ("id"),
+    "class"   bigint references "classes" ("id"),
 
     primary key ("id")
 );
@@ -84,7 +123,7 @@ create table "relational_cohesion_metrics"
 (
     "id"                               bigint GENERATED ALWAYS AS IDENTITY,
     "package"                          bigint           not null references "packages" ("id"),
-    "status"                           text             not null,
+    "rating"                           int              not null,
     "number_of_internal_relationships" int              not null default (0),
     "number_of_types"                  int              not null default (0),
     "relational_cohesion"              double precision not null default (0),
@@ -129,6 +168,7 @@ create table "class_complexity"
     "contribution"      bigint not null references "class_contributions" ("id"),
     "complexity"        int    not null default (0),
     "complexity_rating" int    not null,
+    "added_complexity"  int    not null default (0),
 
     primary key ("id")
 );
@@ -141,6 +181,17 @@ create table "class_lines_of_code"
     "total_lines_of_comment" int              not null default (0),
     "comment_to_code_ratio"  double precision not null default (0),
     "size"                   int              not null,
+    "added_lines_of_code"    int              not null default (0),
+    "added_lines_of_comment" int              not null default (0),
+
+    primary key ("id")
+);
+
+create table "class_cohesion"
+(
+    "id"    bigint GENERATED ALWAYS AS IDENTITY,
+    "class" bigint not null references "classes" ("id"),
+    "lcom4" int    not null default (0),
 
     primary key ("id")
 );

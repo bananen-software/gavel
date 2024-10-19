@@ -2,6 +2,7 @@ package software.bananen.gavel.backend.entity;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
+import software.bananen.gavel.backend.domain.RelationalCohesionRating;
 
 @Entity
 @Table(name = "relational_cohesion_metrics")
@@ -15,8 +16,8 @@ public class RelationalCohesionMetricEntity {
     @JoinColumn(name = "package", nullable = false)
     private PackageEntity packageField;
 
-    @Column(name = "status", nullable = false, length = Integer.MAX_VALUE)
-    private String status;
+    @Column(name = "rating", nullable = false, length = Integer.MAX_VALUE)
+    private RelationalCohesionRating rating;
 
     @ColumnDefault("0")
     @Column(name = "number_of_types", nullable = false)
@@ -46,12 +47,12 @@ public class RelationalCohesionMetricEntity {
         this.packageField = packageField;
     }
 
-    public String getStatus() {
-        return status;
+    public RelationalCohesionRating getRating() {
+        return rating;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setRating(RelationalCohesionRating status) {
+        this.rating = status;
     }
 
     public Integer getNumberOfInternalRelationships() {

@@ -1,6 +1,5 @@
 package software.bananen.gavel.backend.services.analysis;
 
-import software.bananen.gavel.backend.domain.ProjectAggregate;
 import software.bananen.gavel.backend.entity.ProjectEntity;
 import software.bananen.gavel.contextloader.ProjectContext;
 import software.bananen.gavel.staticanalysis.DepthOfInheritanceTree;
@@ -39,16 +38,9 @@ public class AnalyzeDepthOfInheritanceTreeStep extends AbstractAnalysisStep {
      */
     @Override
     protected void runAnalysis() {
-        final ProjectAggregate projectAggregate = new ProjectAggregate(project);
-
         for (final DepthOfInheritanceTree measurement :
                 service.measure(projectContext.javaClasses(), 0)) {
-            projectAggregate.findPackage(measurement.packageName())
-                    .flatMap(packageAggregate -> packageAggregate.findClass(measurement.className()))
-                    .ifPresent(classAggregate -> {
-                        classAggregate.measureDepthOfInheritanceTree(measurement.value());
-                        //TODO: Store results in database
-                    });
+            //TODO: Record in database
         }
     }
 }

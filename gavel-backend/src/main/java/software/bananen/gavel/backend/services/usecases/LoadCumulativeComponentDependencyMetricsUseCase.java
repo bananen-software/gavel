@@ -2,6 +2,7 @@ package software.bananen.gavel.backend.services.usecases;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import software.bananen.gavel.backend.entity.CumulativeComponentDependencyEntity;
 import software.bananen.gavel.backend.entity.PackageEntity;
 import software.bananen.gavel.backend.entity.ProjectEntity;
@@ -22,6 +23,7 @@ public class LoadCumulativeComponentDependencyMetricsUseCase {
         this.workspaceRepository = workspaceRepository;
     }
 
+    @Transactional
     public Optional<Collection<LoadCumulativeComponentDependencyMetricsResponseModel>> load() {
         //TODO: Support multiple workspaces
         final Optional<WorkspaceEntity> workspace =

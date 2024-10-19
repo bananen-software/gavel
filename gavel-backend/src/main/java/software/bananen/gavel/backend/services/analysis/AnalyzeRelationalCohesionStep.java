@@ -2,14 +2,13 @@ package software.bananen.gavel.backend.services.analysis;
 
 import software.bananen.gavel.backend.entity.PackageEntity;
 import software.bananen.gavel.backend.entity.ProjectEntity;
-import software.bananen.gavel.backend.entity.RelationalCohesionMetricEntity;
+import software.bananen.gavel.backend.services.domain.PackageRelationalCohesionMetricsService;
+import software.bananen.gavel.backend.services.domain.PackageService;
 import software.bananen.gavel.contextloader.ProjectContext;
 import software.bananen.gavel.staticanalysis.RelationalCohesion;
 import software.bananen.gavel.staticanalysis.RelationalCohesionMetricsService;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 
@@ -19,6 +18,8 @@ public class AnalyzeRelationalCohesionStep extends AbstractAnalysisStep {
     private final RelationalCohesionMetricsService service;
     private final ProjectContext projectContext;
     private final ProjectEntity project;
+    private final PackageService packageService;
+    private final PackageRelationalCohesionMetricsService relationalCohesionService;
 
     /**
      * Creates a new instance.
@@ -31,40 +32,29 @@ public class AnalyzeRelationalCohesionStep extends AbstractAnalysisStep {
             final String taskId,
             final RelationalCohesionMetricsService service,
             final ProjectContext projectContext,
-            final ProjectEntity project) {
+            final ProjectEntity project,
+            final PackageService packageService,
+            final PackageRelationalCohesionMetricsService relationalCohesionService) {
         super(taskId, STEP_NAME);
         this.service = requireNonNull(service, "The service may not be null");
         this.projectContext =
                 requireNonNull(projectContext, "The project context may not be null");
         this.project = project;
+        this.packageService = packageService;
+        this.relationalCohesionService = relationalCohesionService;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void runAnalysis() {
-        //TODO: Store results in database
-        final Set<PackageEntity> packages = project.getPackages();
-
         for (final RelationalCohesion measurement :
                 service.measure(List.of(projectContext.basePackage()))) {
-            final PackageEntity matchingPackage =
-                    findPackageByName(packages, measurement.packageName(), project);
+            final PackageEntity packageEntity =
+                    packageService.findOrCreatePackage(project, measurement.packageName());
 
-            final RelationalCohesionMetricEntity entity =
-                    matchingPackage.getRelationalCohesionMetrics()
-                            .stream()
-                            .findFirst()
-                            .orElse(new RelationalCohesionMetricEntity());
-
-            entity.setStatus("UNKNOWN");
-            entity.setRelationalCohesion(measurement.relationalCohesion());
-            entity.setNumberOfInternalRelationships(measurement.numberOfInternalRelationships());
-            entity.setNumberOfTypes(measurement.numberOfTypes());
-
-            entity.setPackageField(matchingPackage);
-
-            matchingPackage.setRelationalCohesionMetrics(new HashSet<>(List.of(entity)));
+            relationalCohesionService.createOrUpdate(packageEntity, measurement);
         }
-
-        project.setPackages(packages);
     }
 }

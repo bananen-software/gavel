@@ -10,7 +10,6 @@ import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -37,7 +36,9 @@ public class LCOM4MetricsService {
      * @return a collection of LCOM4 metrics corresponding to the input classes
      */
     public Collection<LCOM4Metric> measure(final JavaClasses classes) {
-        return classes.stream().map(this::measure).toList();
+        return classes.stream()
+                .filter(isClass())
+                .map(this::measure).toList();
     }
 
     /**
@@ -66,27 +67,37 @@ public class LCOM4MetricsService {
         final ConnectivityInspector<Node, DefaultEdge> inspector =
                 new ConnectivityInspector<>(graph);
 
-        final List<Set<Node>> connectedSets = inspector.connectedSets();
-
-        final int lcom4 = connectedSets.size();
-
-        final Set<Set<String>> methodClusters =
-                connectedSets.stream()
+        final Set<Set<String>> clusters =
+                inspector.connectedSets().stream()
                         .map(subgraph -> subgraph.stream()
                                 .filter(isMethod())
                                 .map(Node::name)
                                 .collect(Collectors.toSet()))
+                        .filter(set -> !set.isEmpty())
                         .collect(Collectors.toSet());
 
         return new LCOM4Metric(
                 javaClass.getPackageName(),
                 javaClass.getSimpleName(),
-                lcom4,
-                methodClusters
+                clusters.size(),
+                clusters
         );
     }
 
     private static Predicate<Node> isMethod() {
         return n -> Objects.equals(n.type, NodeType.METHOD);
+    }
+
+
+    /**
+     * Checks whether the given class is a class.
+     *
+     * @return The predicate
+     */
+    private Predicate<? super JavaClass> isClass() {
+        return javaClass ->
+                !javaClass.isInterface() &&
+                        !javaClass.isEnum() &&
+                        !javaClass.isRecord();
     }
 }

@@ -23,6 +23,10 @@ public class ClassComplexityEntity {
     @Column(name = "complexity_rating", nullable = false)
     private ComplexityRating complexityRating;
 
+    @ColumnDefault("0")
+    @Column(name = "added_complexity")
+    private Integer addedComplexity;
+
     public ClassContributionEntity getContribution() {
         return contribution;
     }
@@ -53,5 +57,13 @@ public class ClassComplexityEntity {
 
     public void setComplexityRating(ComplexityRating complexityRating) {
         this.complexityRating = complexityRating;
+    }
+
+    public Integer getAddedComplexity() {
+        return addedComplexity;
+    }
+
+    public void setAddedComplexity(Integer addedComplexity) {
+        this.addedComplexity = addedComplexity;
     }
 }

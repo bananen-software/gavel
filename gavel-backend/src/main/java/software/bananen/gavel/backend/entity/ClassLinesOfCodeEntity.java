@@ -31,6 +31,14 @@ public class ClassLinesOfCodeEntity {
     @Column(name = "size", nullable = false)
     private Size size;
 
+    @ColumnDefault("0")
+    @Column(name = "added_lines_of_code")
+    private Integer addedLinesOfCode;
+
+    @ColumnDefault("0")
+    @Column(name = "added_lines_of_comment")
+    private Integer addedLinesOfComment;
+
     public ClassContributionEntity getContribution() {
         return contribution;
     }
@@ -77,5 +85,21 @@ public class ClassLinesOfCodeEntity {
 
     public void setSize(Size size) {
         this.size = size;
+    }
+
+    public Integer getAddedLinesOfCode() {
+        return addedLinesOfCode;
+    }
+
+    public void setAddedLinesOfCode(Integer addedLinesOfCode) {
+        this.addedLinesOfCode = addedLinesOfCode;
+    }
+
+    public Integer getAddedLinesOfComment() {
+        return addedLinesOfComment;
+    }
+
+    public void setAddedLinesOfComment(Integer addedLinesOfComment) {
+        this.addedLinesOfComment = addedLinesOfComment;
     }
 }

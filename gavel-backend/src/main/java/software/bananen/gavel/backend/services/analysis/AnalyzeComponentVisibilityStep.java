@@ -2,14 +2,11 @@ package software.bananen.gavel.backend.services.analysis;
 
 import software.bananen.gavel.backend.entity.PackageEntity;
 import software.bananen.gavel.backend.entity.ProjectEntity;
-import software.bananen.gavel.backend.entity.VisibilityMetricEntity;
+import software.bananen.gavel.backend.services.domain.PackageService;
+import software.bananen.gavel.backend.services.domain.PackageVisibilityMetricsService;
 import software.bananen.gavel.contextloader.ProjectContext;
 import software.bananen.gavel.staticanalysis.ComponentVisibility;
 import software.bananen.gavel.staticanalysis.ComponentVisibilityMetricsService;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 
@@ -18,6 +15,8 @@ public class AnalyzeComponentVisibilityStep extends AbstractAnalysisStep {
     private final ComponentVisibilityMetricsService service;
     private final ProjectContext projectContext;
     private final ProjectEntity project;
+    private final PackageService packageService;
+    private final PackageVisibilityMetricsService visibilityService;
 
     private static final String STEP_NAME = "Analyze component visibility";
 
@@ -32,12 +31,16 @@ public class AnalyzeComponentVisibilityStep extends AbstractAnalysisStep {
             final String taskId,
             final ComponentVisibilityMetricsService service,
             final ProjectContext projectContext,
-            final ProjectEntity project) {
+            final ProjectEntity project,
+            final PackageService packageService,
+            final PackageVisibilityMetricsService visibilityService) {
         super(taskId, STEP_NAME);
         this.service = requireNonNull(service, "The service may not be null");
         this.projectContext =
                 requireNonNull(projectContext, "The project context may not be null");
         this.project = project;
+        this.packageService = packageService;
+        this.visibilityService = visibilityService;
     }
 
     /**
@@ -45,27 +48,12 @@ public class AnalyzeComponentVisibilityStep extends AbstractAnalysisStep {
      */
     @Override
     protected void runAnalysis() {
-        final Set<PackageEntity> packages = project.getPackages();
-
         for (final ComponentVisibility measurement :
                 service.measure(projectContext.basePackage(), true)) {
             final PackageEntity existingPackage =
-                    findPackageByName(packages, measurement.packageName(), project);
+                    packageService.findOrCreatePackage(project, measurement.packageName());
 
-            final VisibilityMetricEntity entity =
-                    existingPackage.getVisibilityMetrics()
-                            .stream()
-                            .findFirst()
-                            .orElse(new VisibilityMetricEntity());
-
-            entity.setAverageRelativeVisibility(measurement.averageRelativeVisibility());
-            entity.setGlobalRelativeVisibility(measurement.globalRelativeVisibility());
-            entity.setRelativeVisibility(measurement.relativeVisibility());
-
-            entity.setPackageField(existingPackage);
-            existingPackage.setVisibilityMetrics(new HashSet<>(List.of(entity)));
+            visibilityService.saveOrUpdate(existingPackage, measurement);
         }
-
-        project.setPackages(packages);
     }
 }

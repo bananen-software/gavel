@@ -5,7 +5,6 @@ import com.tngtech.archunit.core.domain.JavaPackage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -16,21 +15,16 @@ public class ProjectContextLoader {
     private static final Logger LOGGER =
             LoggerFactory.getLogger(ProjectContextLoader.class);
 
-    public ProjectContext loadProjectContext()
+    public ProjectContext loadProjectContext(final ProjectContextData projectContextData)
             throws ProjectContextLoaderException {
-        final Collection<String> includedPaths = List.of("/home/dennis/workspace/github/flens-dev/pendenzenliste/");
-        final Collection<String> exclusionPatterns = List.of("/test/",
-                "/integrationTest/",
-                "/generated/");
-        final String rootPackage = "pendenzenliste";
 
-        LOGGER.info("Loading java classes from {}", includedPaths);
-        LOGGER.info("Excluding {}", exclusionPatterns);
+        LOGGER.info("Loading java classes from {}", projectContextData.includedPath());
+        LOGGER.info("Excluding {}", projectContextData.excludedPaths());
         JavaClasses javaClasses =
-                new ClassLoadingService().loadFromPaths(includedPaths, exclusionPatterns);
+                new ClassLoadingService().loadFromPaths(List.of(projectContextData.includedPath()), projectContextData.excludedPaths());
         LOGGER.info("Loaded {} classes", javaClasses.size());
 
-        JavaPackage basePackage = javaClasses.getPackage(rootPackage);
+        final JavaPackage basePackage = javaClasses.getPackage(projectContextData.rootPackage());
         LOGGER.info("Analyzing base package {}", basePackage.getName());
 
         return new ProjectContext(

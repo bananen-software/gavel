@@ -12,6 +12,8 @@ import {VisibilityMetricsComponent} from "./visibility-metrics/visibility-metric
 import {AuthorComplexityMetricsComponent} from "./author-complexity-metrics/author-complexity-metrics.component";
 import {CodeHotspotMetricsComponent} from "./code-hotspot-metrics/code-hotspot-metrics.component";
 import {ProjectSettingsComponent} from "./project-settings/project-settings.component";
+import {PackageOverviewComponent} from "./package-overview/package-overview.component";
+import {PackageClassesOverviewComponent} from "./package-classes-overview/package-classes-overview.component";
 
 export const routes: Routes = [
   {
@@ -49,5 +51,13 @@ export const routes: Routes = [
   {
     path: "project-settings",
     component: ProjectSettingsComponent
+  },
+  {
+    path: "package-overview",
+    component: PackageOverviewComponent
+  },
+  {
+    path: "package-classes-overview/:packageName",
+    component: PackageClassesOverviewComponent
   }
 ];

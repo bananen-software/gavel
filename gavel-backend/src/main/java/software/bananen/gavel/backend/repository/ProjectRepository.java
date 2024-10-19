@@ -5,10 +5,10 @@ import org.springframework.stereotype.Repository;
 import software.bananen.gavel.backend.entity.ProjectEntity;
 import software.bananen.gavel.backend.entity.WorkspaceEntity;
 
-import java.util.Set;
+import java.util.Optional;
 
 @Repository
 public interface ProjectRepository extends JpaRepository<ProjectEntity, Long> {
 
-    Set<ProjectEntity> findAllByWorkspace(WorkspaceEntity workspace);
+    Optional<ProjectEntity> findByWorkspaceAndName(WorkspaceEntity workspace, String name);
 }

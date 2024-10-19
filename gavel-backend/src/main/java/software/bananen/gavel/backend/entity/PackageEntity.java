@@ -1,6 +1,8 @@
 package software.bananen.gavel.backend.entity;
 
 import jakarta.persistence.*;
+import software.bananen.gavel.backend.domain.PackageComplexity;
+import software.bananen.gavel.backend.domain.Size;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -40,6 +42,39 @@ public class PackageEntity {
 
     @OneToMany(mappedBy = "packageField", cascade = CascadeType.PERSIST)
     private Set<PackageLinesOfCodeEntity> packageLinesOfCodeEntities = new LinkedHashSet<>();
+
+    @Column(name = "size")
+    private Size size;
+
+    @Column(name = "complexity_rating")
+    private PackageComplexity complexityRating;
+
+    @Column(name = "lines_of_code")
+    private Integer linesOfCode;
+
+    @Column(name = "lines_of_comments")
+    private Integer linesOfComments;
+
+    @Column(name = "comment_to_code_ratio")
+    private Double commentToCodeRatio;
+
+    @Column(name = "number_of_types")
+    private Integer numberOfTypes;
+
+    @Column(name = "complexity")
+    private Integer complexity;
+
+    @Column(name = "number_of_low_complexity_types")
+    private Integer numberOfLowComplexityTypes;
+
+    @Column(name = "number_of_medium_complexity_types")
+    private Integer numberOfMediumComplexityTypes;
+
+    @Column(name = "number_of_high_complexity_types")
+    private Integer numberOfHighComplexityTypes;
+
+    @Column(name = "number_of_very_high_complexity_types")
+    private Integer numberOfVeryHighComplexityTypes;
 
     public Set<VisibilityMetricEntity> getVisibilityMetrics() {
         return visibilityMetrics;
@@ -119,5 +154,93 @@ public class PackageEntity {
 
     public void setPackageLinesOfCodeEntities(Set<PackageLinesOfCodeEntity> packageLinesOfCodeEntities) {
         this.packageLinesOfCodeEntities = packageLinesOfCodeEntities;
+    }
+
+    public Size getSize() {
+        return size;
+    }
+
+    public void setSize(Size size) {
+        this.size = size;
+    }
+
+    public PackageComplexity getComplexityRating() {
+        return complexityRating;
+    }
+
+    public void setComplexityRating(PackageComplexity complexityRating) {
+        this.complexityRating = complexityRating;
+    }
+
+    public Integer getLinesOfCode() {
+        return linesOfCode;
+    }
+
+    public void setLinesOfCode(Integer linesOfCode) {
+        this.linesOfCode = linesOfCode;
+    }
+
+    public Integer getLinesOfComments() {
+        return linesOfComments;
+    }
+
+    public void setLinesOfComments(Integer linesOfComments) {
+        this.linesOfComments = linesOfComments;
+    }
+
+    public Double getCommentToCodeRatio() {
+        return commentToCodeRatio;
+    }
+
+    public void setCommentToCodeRatio(Double commentToCodeRatio) {
+        this.commentToCodeRatio = commentToCodeRatio;
+    }
+
+    public Integer getNumberOfTypes() {
+        return numberOfTypes;
+    }
+
+    public void setNumberOfTypes(Integer numberOfTypes) {
+        this.numberOfTypes = numberOfTypes;
+    }
+
+    public Integer getComplexity() {
+        return complexity;
+    }
+
+    public void setComplexity(Integer complexity) {
+        this.complexity = complexity;
+    }
+
+    public Integer getNumberOfLowComplexityTypes() {
+        return numberOfLowComplexityTypes;
+    }
+
+    public void setNumberOfLowComplexityTypes(Integer numberOfLowComplexityTypes) {
+        this.numberOfLowComplexityTypes = numberOfLowComplexityTypes;
+    }
+
+    public Integer getNumberOfMediumComplexityTypes() {
+        return numberOfMediumComplexityTypes;
+    }
+
+    public void setNumberOfMediumComplexityTypes(Integer numberOfMediumComplexityTypes) {
+        this.numberOfMediumComplexityTypes = numberOfMediumComplexityTypes;
+    }
+
+    public Integer getNumberOfHighComplexityTypes() {
+        return numberOfHighComplexityTypes;
+    }
+
+    public void setNumberOfHighComplexityTypes(Integer numberOfHighComplexityTypes) {
+        this.numberOfHighComplexityTypes = numberOfHighComplexityTypes;
+    }
+
+    public Integer getNumberOfVeryHighComplexityTypes() {
+        return numberOfVeryHighComplexityTypes;
+    }
+
+    public void setNumberOfVeryHighComplexityTypes(Integer numberOfVeryHighComplexityTypes) {
+        this.numberOfVeryHighComplexityTypes = numberOfVeryHighComplexityTypes;
     }
 }

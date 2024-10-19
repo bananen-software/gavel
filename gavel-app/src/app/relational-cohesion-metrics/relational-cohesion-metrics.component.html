@@ -21,7 +21,9 @@
       [rows]="10"
       [rowsPerPageOptions]="[10, 25, 50]"
       [paginator]="true"
-      [loading]="loading()">
+      [loading]="loading()"
+      sortField="relationalCohesion"
+      [sortOrder]="-1">
       <ng-template pTemplate="caption">
         <div class="flex">
           <p-iconfield iconPosition="left" class="ml-auto">
@@ -62,7 +64,7 @@
       <ng-template pTemplate="body" let-metric>
         <tr>
           <td>{{ metric.packageName }}</td>
-          <td>{{ determineStatus(metric) }}</td>
+          <td>{{ metric.rating }}</td>
           <td class="numeric">{{ metric.relationalCohesion }}</td>
           <td class="numeric">{{ metric.numberOfTypes }}</td>
           <td class="numeric">{{ metric.numberOfInternalRelationships }}</td>

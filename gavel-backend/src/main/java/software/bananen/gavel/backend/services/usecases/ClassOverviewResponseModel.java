@@ -10,5 +10,9 @@ public record ClassOverviewResponseModel(String packageName,
                                          int numberOfChanges,
                                          int numberOfAuthors,
                                          Integer complexity,
-                                         ComplexityRating complexityRating) {
+                                         ComplexityRating complexityRating,
+                                         Integer totalLinesOfCode,
+                                         Integer totalLinesOfComments,
+                                         Double commentToCodeRatio,
+                                         Integer classCohesion) {
 }

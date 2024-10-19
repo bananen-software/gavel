@@ -1,0 +1,54 @@
+<app-view-layout>
+  <p-card header="Raw data">
+    <p-table [value]="metrics()"
+             [rows]="10"
+             [rowsPerPageOptions]="[10, 25, 50]"
+             [paginator]="true"
+             [loading]="loading()"
+             selectionMode="single"
+             (onRowSelect)="viewPackageDetail($event)"
+             sortField="packageComplexityOrdinal"
+             [sortOrder]="-1">
+      <ng-template pTemplate="header">
+        <tr>
+          <th scope="col" pSortableColumn="packageName">
+            package
+            <p-sortIcon field="packageName"></p-sortIcon>
+          </th>
+          <th scope="col" pSortableColumn="totalLinesOfCode">
+            Size
+            <p-sortIcon field="totalLinesOfCode"></p-sortIcon>
+          </th>
+          <th scope="col" pSortableColumn="packageComplexityOrdinal">
+            Complexity Rating
+            <p-sortIcon field="packageComplexity"></p-sortIcon>
+          </th>
+          <th scope="col" pSortableColumn="numberOfTypes">
+            Number of Types
+            <p-sortIcon field="numberOfTypes"></p-sortIcon>
+          </th>
+          <th scope="col" pSortableColumn="complexity">
+            Complexity
+            <p-sortIcon field="complexity"></p-sortIcon>
+          </th>
+          <th scope="col" pSortableColumn="commentToCodeRatio">
+            Comment to Code Ratio
+            <p-sortIcon field="commentToCodeRatio"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-metric>
+        <tr [pSelectableRow]="metric">
+          <td>{{ metric.packageName }}</td>
+          <td>{{ metric.size }}</td>
+          <td>{{ metric.packageComplexity }}</td>
+          <td>{{ metric.numberOfTypes }}</td>
+          <td>{{ metric.complexity }}</td>
+          <td>{{ toPercentString(toPercent(metric.commentToCodeRatio, 1)) }} ({{ metric.totalLinesOfComments }}
+            / {{ metric.totalLinesOfCode }})
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</app-view-layout>

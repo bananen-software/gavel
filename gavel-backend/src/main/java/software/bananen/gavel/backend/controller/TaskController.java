@@ -11,9 +11,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import software.bananen.gavel.backend.services.analysis.TaskService;
 import software.bananen.gavel.backend.tasks.TaskResponse;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import static java.util.Objects.requireNonNull;
 
 
@@ -22,9 +19,6 @@ import static java.util.Objects.requireNonNull;
 public class TaskController {
 
     private final TaskService taskService;
-
-    private static final ExecutorService TASK_EXECUTOR =
-            Executors.newFixedThreadPool(1);
 
     /**
      * Creates a new instance.
@@ -42,7 +36,7 @@ public class TaskController {
         final UriComponents progressURL =
                 uriBuilder.path("/tasks/{id}/progress").buildAndExpand(taskId);
 
-        TASK_EXECUTOR.submit(() -> taskService.runAnalysis(taskId));
+        taskService.runAnalysis(taskId);
 
         return ResponseEntity.accepted().location(progressURL.toUri()).build();
     }

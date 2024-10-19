@@ -23,6 +23,17 @@ public class ProjectEntity {
     @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST)
     private Set<PackageEntity> packages = new LinkedHashSet<>();
 
+    @Column(name = "path", nullable = false, length = Integer.MAX_VALUE)
+    private String path;
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
     public Set<PackageEntity> getPackages() {
         return packages;
     }

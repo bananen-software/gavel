@@ -1,37 +1,24 @@
-import {Observable, of} from "rxjs";
-import {randomizedDelay} from "../../util/fakes";
+import {Observable} from "rxjs";
 import {Injectable} from "@angular/core";
+import {HttpClient} from "@angular/common/http";
 
-export class Author {
-  constructor(public name: string,
-              public email: string) {
-  }
-}
-
-export class AuthorComplexity {
-  constructor(public author: Author,
-              public complexityDelta: number,
-              public numberOfChanges: number,
-              public relativeComplexityAdded: number) {
-  }
+export type AuthorComplexity = {
+  name: string;
+  email: string;
+  complexityDelta: number;
+  numberOfChanges: number;
+  averageComplexityAdded: number;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export default class AuthorComplexityMetricsService {
-
-  private metrics: AuthorComplexity[] = [{
-    "author": {
-      "name": "Dennis Reichenberg",
-      "email": "9849919+soylentbob@users.noreply.github.com"
-    },
-    "complexityDelta": 37892,
-    "numberOfChanges": 233,
-    "relativeComplexityAdded": 162.62660944206007
-  }]
+  constructor(private httpClient: HttpClient) {
+  }
 
   public loadMetrics(): Observable<AuthorComplexity[]> {
-    return of(this.metrics).pipe(randomizedDelay());
+    //TODO: Handle errors
+    return this.httpClient.get<AuthorComplexity[]>("http://127.0.0.1:8080/author-complexity-metrics");
   }
 }

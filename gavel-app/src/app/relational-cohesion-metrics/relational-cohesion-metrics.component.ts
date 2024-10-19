@@ -1,9 +1,6 @@
 import {Component, computed, inject, Signal} from '@angular/core';
 import {ViewLayoutComponent} from "../view-layout/view-layout.component";
-import RelationalCohesionMetricsService, {
-  RelationalCohesion,
-  RelationalCohesionLevel
-} from "./relational-cohesion-metrics.service";
+import RelationalCohesionMetricsService, {RelationalCohesion} from "./relational-cohesion-metrics.service";
 import {CardModule} from "primeng/card";
 import {TableModule} from "primeng/table";
 import {toSignal} from "@angular/core/rxjs-interop";
@@ -60,16 +57,15 @@ export class RelationalCohesionMetricsComponent {
       let highCohesionCount: number = 0;
 
       this.metrics()
-        .map(metric => this.#service.determineRelationalCohesionLevel(metric))
-        .forEach(cohesionLevel => {
-          switch (cohesionLevel) {
-            case RelationalCohesionLevel.Good:
+        .forEach(value => {
+          switch (value.rating) {
+            case "GOOD":
               goodCohesionCount++;
               break;
-            case RelationalCohesionLevel.Low:
+            case "LOW":
               lowCohesionCount++;
               break;
-            case RelationalCohesionLevel.High:
+            case "HIGH":
               highCohesionCount++;
               break;
           }
@@ -86,9 +82,4 @@ export class RelationalCohesionMetricsComponent {
       );
     }
   });
-
-  public determineStatus(measurement: RelationalCohesion): string {
-    //TODO: This should probably be part of the data loaded from the service
-    return RelationalCohesionLevel[this.#service.determineRelationalCohesionLevel(measurement)];
-  }
 }

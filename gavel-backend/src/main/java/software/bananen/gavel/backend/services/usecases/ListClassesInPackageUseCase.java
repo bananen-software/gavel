@@ -2,12 +2,17 @@ package software.bananen.gavel.backend.services.usecases;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.backend.domain.ComplexityRating;
-import software.bananen.gavel.backend.entity.*;
+import org.springframework.transaction.annotation.Transactional;
+import software.bananen.gavel.backend.domain.ClassStatus;
+import software.bananen.gavel.backend.entity.ClassEntity;
+import software.bananen.gavel.backend.entity.PackageEntity;
+import software.bananen.gavel.backend.entity.ProjectEntity;
 import software.bananen.gavel.backend.repository.ProjectRepository;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class ListClassesInPackageUseCase {
@@ -19,6 +24,7 @@ public class ListClassesInPackageUseCase {
         this.projectRepository = projectRepository;
     }
 
+    @Transactional
     public Optional<Collection<ClassOverviewResponseModel>> list(final String packageName) {
         final Optional<ProjectEntity> project =
                 projectRepository.findAll().stream().findFirst();
@@ -39,31 +45,20 @@ public class ListClassesInPackageUseCase {
 
         final Collection<ClassOverviewResponseModel> result = new ArrayList<>();
 
-        for (final ClassEntity classEntity : matchingPackage.get().getClasses()) {
+        for (final ClassEntity classEntity :
+                matchingPackage.get().getClasses().stream().filter(e -> ClassStatus.ACTIVE.equals(e.getStatus())).toList()) {
             result.add(new ClassOverviewResponseModel(
                     matchingPackage.get().getPackageName(),
                     classEntity.getName(),
                     classEntity.getLastModified(),
-                    classEntity.getClassContributions().size(),
-                    classEntity.getClassContributions()
-                            .stream()
-                            .map(ClassContributionEntity::getAuthor)
-                            .collect(Collectors.toSet())
-                            .size(),
-                    classEntity.getClassContributions()
-                            .stream()
-                            .max(Comparator.comparing(ClassContributionEntity::getTimestamp))
-                            .map(ClassContributionEntity::getClassComplexities)
-                            .flatMap(c -> c.stream().findFirst())
-                            .map(ClassComplexityEntity::getComplexity)
-                            .orElse(0),
-                    classEntity.getClassContributions()
-                            .stream()
-                            .max(Comparator.comparing(ClassContributionEntity::getTimestamp))
-                            .map(ClassContributionEntity::getClassComplexities)
-                            .flatMap(c -> c.stream().findFirst())
-                            .map(ClassComplexityEntity::getComplexityRating)
-                            .orElse(ComplexityRating.UNKNOWN)
+                    classEntity.getNumberOfChanges(),
+                    classEntity.getNumberOfAuthors(),
+                    classEntity.getComplexity(),
+                    classEntity.getComplexityRating(),
+                    classEntity.getTotalLinesOfCode(),
+                    classEntity.getTotalLinesOfComments(),
+                    classEntity.getCommentToCodeRatio(),
+                    classEntity.getNumberOfResponsibilities()
             ));
         }
 

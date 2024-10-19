@@ -67,6 +67,11 @@ export class AppComponent implements OnInit {
             label: 'Visibility Metrics',
             icon: PrimeIcons.PENCIL,
             routerLink: "visibility-metrics"
+          },
+          {
+            label: 'Package Overview',
+            icon: PrimeIcons.PENCIL,
+            routerLink: "package-overview"
           }
         ]
       },

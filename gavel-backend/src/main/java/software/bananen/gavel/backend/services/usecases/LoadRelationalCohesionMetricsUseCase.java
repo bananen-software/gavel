@@ -45,7 +45,8 @@ public class LoadRelationalCohesionMetricsUseCase {
                                     pkg.getPackageName(),
                                     value.getRelationalCohesion(),
                                     value.getNumberOfTypes(),
-                                    value.getNumberOfInternalRelationships()
+                                    value.getNumberOfInternalRelationships(),
+                                    value.getRating()
                             )));
                 }
             }
