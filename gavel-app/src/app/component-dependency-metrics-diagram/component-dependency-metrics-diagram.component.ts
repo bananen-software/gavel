@@ -38,17 +38,20 @@ type Spec = {
 };
 
 function createSvg(spec: Spec) {
+  const x = d3.scaleLinear().domain([0, 1]).range([0, spec.width]);
+  const y = d3.scaleLinear().domain([0, 1]).range([spec.height, 0]);
+
   const svg = d3
     .create('svg')
     .attr('width', spec.width + spec.margin.left + spec.margin.right)
-    .attr('height', spec.height + spec.margin.top + spec.margin.bottom)
+    .attr('height', spec.height + spec.margin.top + spec.margin.bottom);
+
+  svg
     .append('g')
     .attr(
       'transform',
       'translate(' + spec.margin.left + ',' + spec.margin.top + ')'
     );
-
-  const x = d3.scaleLinear().domain([0, 1]).range([0, spec.width]);
 
   svg
     .append('text')
@@ -63,8 +66,6 @@ function createSvg(spec: Spec) {
     .attr('transform', 'translate(0,' + spec.height + ')')
     .attr('class', 'axis')
     .call(d3.axisBottom(x));
-
-  const y = d3.scaleLinear().domain([0, 1]).range([spec.height, 0]);
 
   svg
     .append('text')
@@ -102,13 +103,11 @@ function determineZone(measurement: ComponentDependency) {
  * @returns {function(*): string}
  */
 function determineColor() {
-  return function (d: ComponentDependency) {
-    return determineZone(d).color;
-  };
+  return (d: ComponentDependency) => determineZone(d).color;
 }
 
 function renderGraph(
-  svg: d3.Selection<SVGGElement, undefined, null, undefined>,
+  svg: d3.Selection<SVGSVGElement, undefined, null, undefined>,
   metrics: ComponentDependency[],
   width: number,
   height: number
@@ -122,12 +121,8 @@ function renderGraph(
     .data(metrics)
     .enter()
     .append('circle')
-    .attr('cx', function (d: ComponentDependency) {
-      return x(d.instability);
-    })
-    .attr('cy', function (d: ComponentDependency) {
-      return y(d.abstractness);
-    })
+    .attr('cx', (d: ComponentDependency) => x(d.instability))
+    .attr('cy', (d: ComponentDependency) => y(d.abstractness))
     .attr('r', 7)
     .style('opacity', 0.3)
     .style('fill', determineColor())
@@ -136,20 +131,20 @@ function renderGraph(
       (d: ComponentDependency, i: number) =>
         `${d.packageName}\nInstability: ${d.instability}\nAbstractness: ${d.abstractness}\nDistance: ${d.normalizedDistanceFromMainSequence}\nCa: ${d.afferentCoupling}\nCe: ${d.efferentCoupling}`
     );
-
-  return svg;
 }
 
 @Component({
   selector: 'app-component-dependency-metrics-diagram',
   standalone: true,
   imports: [],
-  template: `<figure id="cdm-metrics"></figure>`,
+  template: `<figure #cdmmetrics></figure>`,
 })
 export class ComponentDependencyMetricsDiagramComponent {
   readonly metrics = input<ComponentDependency[]>([]);
 
-  protected readonly figure = viewChild('#cdm-metrics', { read: ElementRef });
+  protected readonly figure = viewChild('cdmmetrics', {
+    read: ElementRef,
+  });
 
   readonly #totalSize = computed(() => 800);
   readonly #margin = computed(() => ({
@@ -173,7 +168,7 @@ export class ComponentDependencyMetricsDiagramComponent {
   constructor() {
     afterRender({
       write: () => {
-        const figure = this.figure()?.nativeElement;
+        const figure = this.figure();
         if (figure == null) {
           return;
         }
@@ -181,14 +176,10 @@ export class ComponentDependencyMetricsDiagramComponent {
         const spec = this.#spec();
         const metrics = this.metrics();
 
-        const svg = renderGraph(
-          createSvg(spec),
-          metrics,
-          spec.width,
-          spec.height
-        );
+        const svg = createSvg(spec);
+        renderGraph(svg, metrics, spec.width, spec.height);
 
-        figure.replaceChildren(svg.node());
+        figure.nativeElement.replaceChildren(svg.node());
       },
     });
   }
