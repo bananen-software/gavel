@@ -16,7 +16,7 @@ public class ProgrammingLanguageEntity {
     @Column(name = "name", nullable = false, length = Integer.MAX_VALUE)
     private String name;
 
-    @OneToMany(mappedBy = "programmingLanguage", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "programmingLanguage", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private Set<ClassEntity> classes = new LinkedHashSet<>();
 
     public Set<ClassEntity> getClasses() {

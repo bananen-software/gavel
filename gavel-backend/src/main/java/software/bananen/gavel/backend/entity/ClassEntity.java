@@ -29,16 +29,16 @@ public class ClassEntity {
     @JoinColumn(name = "programming_language")
     private ProgrammingLanguageEntity programmingLanguage;
 
-    @OneToMany(mappedBy = "classField", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "classField", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private Set<MethodEntity> methods = new LinkedHashSet<>();
 
     @Column(name = "last_modified", nullable = false)
     private LocalDateTime lastModified;
 
-    @OneToMany(mappedBy = "classField", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "classField", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private Set<ClassContributionEntity> classContributionEntities = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "classField", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "classField", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private Set<ClassCohesionEntity> classCohesionEntities = new LinkedHashSet<>();
 
     @ColumnDefault("0")

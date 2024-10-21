@@ -19,7 +19,7 @@ public class WorkspaceEntity {
     @Column(name = "name", nullable = false, length = Integer.MAX_VALUE)
     private String name;
 
-    @OneToMany(mappedBy = "workspace", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "workspace", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private Set<ProjectEntity> projects = new LinkedHashSet<>();
 
     @Column(name = "path", nullable = false, length = Integer.MAX_VALUE)

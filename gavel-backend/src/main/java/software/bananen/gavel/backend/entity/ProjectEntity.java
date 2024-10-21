@@ -20,7 +20,7 @@ public class ProjectEntity {
     @JoinColumn(name = "workspace")
     private WorkspaceEntity workspace;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private Set<PackageEntity> packages = new LinkedHashSet<>();
 
     @Column(name = "path", nullable = false, length = Integer.MAX_VALUE)

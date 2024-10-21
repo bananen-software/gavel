@@ -19,7 +19,7 @@ public class AuthorEntity {
     @Column(name = "email", nullable = false, length = Integer.MAX_VALUE)
     private String email;
 
-    @OneToMany(mappedBy = "author")
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
     private Set<ClassContributionEntity> classContributionEntities = new LinkedHashSet<>();
 
     public Set<ClassContributionEntity> getClassContributions() {

@@ -176,21 +176,18 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
             final PackageEntity packageEntity =
                     packageService.findOrCreatePackage(project, packageName);
 
-            final ClassEntity classEntity;
+            final ClassEntity classEntity = classService.findOrCreateClass(packageEntity, className);
 
             if (diff.getChangeType() == DiffEntry.ChangeType.RENAME) {
                 final ProjectFileEntity projectFileEntity =
                         projectFileService.saveOrUpdate(project, diff.getNewPath());
 
-                classEntity = classService.findOrCreateClass(packageEntity, className);
                 projectFileEntity.setClassField(classEntity);
 
                 classEntity.setName(className);
                 classEntity.getPackageField().getClasses().remove(classEntity);
                 classEntity.setPackageField(packageEntity);
                 packageEntity.getClasses().add(classEntity);
-            } else {
-                classEntity = classService.findOrCreateClass(packageEntity, className);
             }
 
             classEntity.setStatus(ClassStatus.ACTIVE);
@@ -215,8 +212,6 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
             //TODO: Measure author complexity for package
             //TODO: Measure author contribution to class
             //TODO: Measure author contribution to package
-            //TODO: Track renamed and moved files
-            //TODO: Track code/test ratio
             //TODO: Measure change coupling
             //TODO: Track issue tracking URL/issue references in comments
 

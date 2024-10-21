@@ -22,25 +22,25 @@ public class PackageEntity {
     @JoinColumn(name = "project")
     private ProjectEntity project;
 
-    @OneToMany(mappedBy = "packageField", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "packageField", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private Set<ClassEntity> classes = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "packageField", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "packageField", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private Set<ComponentDependencyMetricEntity> componentDependencyMetrics = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "packageField", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "packageField", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private Set<CumulativeComponentDependencyEntity> cumulativeComponentDependencies = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "packageField", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "packageField", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private Set<RelationalCohesionMetricEntity> relationalCohesionMetrics = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "packageField", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "packageField", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private Set<VisibilityMetricEntity> visibilityMetrics = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "packageField", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "packageField", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private Set<PackageComplexityEntity> packageComplexityEntities = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "packageField", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "packageField", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private Set<PackageLinesOfCodeEntity> packageLinesOfCodeEntities = new LinkedHashSet<>();
 
     @Column(name = "size")

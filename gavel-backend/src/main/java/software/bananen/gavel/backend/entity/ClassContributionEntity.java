@@ -28,10 +28,10 @@ public class ClassContributionEntity {
     @JoinColumn(name = "author", nullable = false)
     private AuthorEntity author;
 
-    @OneToMany(mappedBy = "contribution", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "contribution", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private Set<ClassComplexityEntity> classComplexities = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "contribution", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "contribution", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private Set<ClassLinesOfCodeEntity> classLinesOfCodes = new LinkedHashSet<>();
 
     public Long getId() {
