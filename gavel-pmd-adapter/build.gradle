@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+    id 'java-library'
+}
+
+group = 'software.bananen'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+}
+
+dependencies {
+    implementation group: 'net.sourceforge.pmd', name: 'pmd-core', version: '7.6.0'
+    implementation group: 'net.sourceforge.pmd', name: 'pmd-java', version: '7.6.0'
+
+    implementation 'org.slf4j:slf4j-simple:2.0.16'
+
+    testImplementation platform('org.junit:junit-bom:5.10.3')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.assertj:assertj-core:3.26.3'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

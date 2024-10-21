@@ -3,3 +3,5 @@ rootProject.name = 'gavel'
 include 'gavel-backend'
 include 'gavel-behavioral-analysis'
 include 'gavel-static-analysis'
+
+include 'gavel-pmd-adapter'
