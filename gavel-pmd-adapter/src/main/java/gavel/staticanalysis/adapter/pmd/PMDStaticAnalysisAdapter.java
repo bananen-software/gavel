@@ -57,8 +57,8 @@ public final class PMDStaticAnalysisAdapter {
      * @param projectPath The projects' path.
      * @return The findings.
      */
-    public Collection<StaticAnalysisFinding> analyze(final Path projectPath) {
-        final Collection<StaticAnalysisFinding> findings = new ArrayList<>();
+    public Collection<StaticAnalysisClassFinding> analyze(final Path projectPath) {
+        final Collection<StaticAnalysisClassFinding> findings = new ArrayList<>();
 
         final PMDConfiguration configuration = new PMDConfiguration();
 
@@ -73,7 +73,7 @@ public final class PMDStaticAnalysisAdapter {
             final Report report = analysis.performAnalysisAndCollectReport();
 
             for (final RuleViolation violation : report.getViolations()) {
-                findings.add(new StaticAnalysisFinding(
+                findings.add(new StaticAnalysisClassFinding(
                         violation.getAdditionalInfo().get("className"),
                         violation.getAdditionalInfo().get("packageName"),
                         violation.getDescription(),
