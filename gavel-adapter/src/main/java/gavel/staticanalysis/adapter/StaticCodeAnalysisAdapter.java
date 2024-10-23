@@ -1,0 +1,20 @@
+package gavel.staticanalysis.adapter;
+
+import java.nio.file.Path;
+import java.util.Collection;
+
+/**
+ * An adapter interface for implementations that provide insights into static
+ * code analysis results.
+ */
+public interface StaticCodeAnalysisAdapter {
+
+    /**
+     * Analyzes the given project path using the static code analysis tool
+     *
+     * @param projectPath The project path.
+     * @return The findings.
+     * @throws StaticAnalysisAdapterException May be thrown in case that the analysis failed.
+     */
+    Collection<StaticAnalysisClassFinding> analyze(final Path projectPath) throws StaticAnalysisAdapterException;
+}

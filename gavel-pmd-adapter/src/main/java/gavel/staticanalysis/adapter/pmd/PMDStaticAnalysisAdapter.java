@@ -2,6 +2,7 @@ package gavel.staticanalysis.adapter.pmd;
 
 import gavel.staticanalysis.adapter.Severity;
 import gavel.staticanalysis.adapter.StaticAnalysisClassFinding;
+import gavel.staticanalysis.adapter.StaticCodeAnalysisAdapter;
 import net.sourceforge.pmd.PMDConfiguration;
 import net.sourceforge.pmd.PmdAnalysis;
 import net.sourceforge.pmd.lang.rule.RulePriority;
@@ -22,7 +23,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * An adapter that integrates with the PMD static analysis tool.
  */
-public final class PMDStaticAnalysisAdapter {
+public final class PMDStaticAnalysisAdapter implements StaticCodeAnalysisAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PMDStaticAnalysisAdapter.class);
 
@@ -54,11 +55,9 @@ public final class PMDStaticAnalysisAdapter {
     }
 
     /**
-     * Analyzes the given projectPath recursively using the PMD static code analysis tool.
-     *
-     * @param projectPath The projects' path.
-     * @return The findings.
+     * {@inheritDoc}
      */
+    @Override
     public Collection<StaticAnalysisClassFinding> analyze(final Path projectPath) {
         final Collection<StaticAnalysisClassFinding> findings = new ArrayList<>();
 
