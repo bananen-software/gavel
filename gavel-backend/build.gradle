@@ -25,6 +25,9 @@ ext {
 dependencies {
     implementation project(':gavel-behavioral-analysis')
     implementation project(':gavel-static-analysis')
+    implementation project(':gavel-pmd-adapter')
+    implementation project(':gavel-owasp-dependency-check-adapter')
+
 
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-security'
