@@ -23,12 +23,12 @@ import static java.util.Objects.requireNonNull;
 /**
  * An adapter that integrates with the PMD static analysis tool.
  */
-public final class PMDStaticAnalysisAdapter implements StaticCodeAnalysisAdapter {
+public final class PMDAdapter implements StaticCodeAnalysisAdapter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PMDStaticAnalysisAdapter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PMDAdapter.class);
 
     private static final String DEFAULT_RULESET_PATH =
-            requireNonNull(PMDStaticAnalysisAdapter.class.getClassLoader().getResource("default-ruleset.xml")).getPath();
+            requireNonNull(PMDAdapter.class.getClassLoader().getResource("default-ruleset.xml")).getPath();
 
     private final String rulesetPath;
     private final RulePriority minimumPriority;
@@ -36,7 +36,7 @@ public final class PMDStaticAnalysisAdapter implements StaticCodeAnalysisAdapter
     /**
      * Creates a new instance.
      */
-    public PMDStaticAnalysisAdapter() {
+    public PMDAdapter() {
         this(DEFAULT_RULESET_PATH, RulePriority.LOW);
     }
 
@@ -46,8 +46,8 @@ public final class PMDStaticAnalysisAdapter implements StaticCodeAnalysisAdapter
      * @param rulesetPath     The path to the ruleset that should be used.
      * @param minimumPriority The minimum priority that should be used.
      */
-    public PMDStaticAnalysisAdapter(final String rulesetPath,
-                                    final RulePriority minimumPriority) {
+    public PMDAdapter(final String rulesetPath,
+                      final RulePriority minimumPriority) {
         this.rulesetPath =
                 requireNonNull(rulesetPath, "The ruleset path may not be null");
         this.minimumPriority =
