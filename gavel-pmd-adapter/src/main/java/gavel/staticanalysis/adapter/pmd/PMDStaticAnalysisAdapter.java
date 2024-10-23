@@ -1,5 +1,7 @@
 package gavel.staticanalysis.adapter.pmd;
 
+import gavel.staticanalysis.adapter.Severity;
+import gavel.staticanalysis.adapter.StaticAnalysisClassFinding;
 import net.sourceforge.pmd.PMDConfiguration;
 import net.sourceforge.pmd.PmdAnalysis;
 import net.sourceforge.pmd.lang.rule.RulePriority;

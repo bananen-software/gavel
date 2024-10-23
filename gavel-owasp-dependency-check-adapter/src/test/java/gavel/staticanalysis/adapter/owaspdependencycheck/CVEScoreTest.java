@@ -1,5 +1,6 @@
 package gavel.staticanalysis.adapter.owaspdependencycheck;
 
+import gavel.staticanalysis.adapter.CVEScore;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 

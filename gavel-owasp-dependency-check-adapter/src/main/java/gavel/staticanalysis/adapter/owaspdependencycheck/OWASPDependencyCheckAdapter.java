@@ -1,5 +1,6 @@
 package gavel.staticanalysis.adapter.owaspdependencycheck;
 
+import gavel.staticanalysis.adapter.*;
 import io.github.jeremylong.openvulnerability.client.nvd.*;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
@@ -19,7 +20,7 @@ import java.util.function.Function;
 /**
  * An adapter that allows to integrate the OWASP dependency check with gavel.
  */
-public final class OWASPDependencyCheckAdapter {
+public final class OWASPDependencyCheckAdapter implements ProjectDependencyCheckAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OWASPDependencyCheckAdapter.class);
 
@@ -47,32 +48,30 @@ public final class OWASPDependencyCheckAdapter {
         settings.setStringIfNotEmpty(Settings.KEYS.NVD_API_KEY, nvdApiKey);
     }
 
+
     /**
-     * Analyzes the dependencies of the given project path.
-     *
-     * @param projectPath The path to the project.
-     * @return The analyzed dependencies.
-     * @throws AnalysisAdapterException Might be thrown in case that the analysis failed.
+     * {@inheritDoc}
      */
-    public Collection<ProjectDependency> analyzeDependencies(final String projectPath) throws AnalysisAdapterException {
+    @Override
+    public Collection<ProjectDependency> checkDependencies(final File projectPath) throws StaticAnalysisAdapterException {
         try (Engine engine = new Engine(settings)) {
             LOGGER.info("Perform updates");
             try {
                 engine.doUpdates();
             } catch (final UpdateException e) {
-                throw new AnalysisAdapterException("Failed to update dependencies", e);
+                throw new StaticAnalysisAdapterException("Failed to update dependencies", e);
             }
             LOGGER.info("Completed updates");
 
             LOGGER.info("Scanning project path: {}", projectPath);
-            engine.scan(new File(projectPath));
+            engine.scan(projectPath);
             LOGGER.info("Scanned project path: {}", projectPath);
 
             LOGGER.info("Analyzing dependencies of project: {}", projectPath);
             try {
                 engine.analyzeDependencies();
             } catch (ExceptionCollection e) {
-                throw new AnalysisAdapterException("Failed to analyze dependencies", e);
+                throw new StaticAnalysisAdapterException("Failed to analyze dependencies", e);
             }
             LOGGER.info("Analyzed dependencies of project: {}", projectPath);
 

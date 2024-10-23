@@ -1,4 +1,4 @@
-package gavel.staticanalysis.adapter.owaspdependencycheck;
+package gavel.staticanalysis.adapter;
 
 import java.util.Collection;
 import java.util.Optional;

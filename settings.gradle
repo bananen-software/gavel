@@ -4,5 +4,6 @@ include 'gavel-backend'
 include 'gavel-behavioral-analysis'
 include 'gavel-static-analysis'
 
+include 'gavel-adapter'
 include 'gavel-owasp-dependency-check-adapter'
 include 'gavel-pmd-adapter'

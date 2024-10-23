@@ -18,6 +18,7 @@ repositories {
 }
 
 dependencies {
+    api project(':gavel-adapter')
     implementation group: 'net.sourceforge.pmd', name: 'pmd-core', version: '7.6.0'
 
     testImplementation platform('org.junit:junit-bom:5.10.3')

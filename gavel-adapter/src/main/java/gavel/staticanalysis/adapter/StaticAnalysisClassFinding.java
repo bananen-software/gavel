@@ -1,4 +1,4 @@
-package gavel.staticanalysis.adapter.pmd;
+package gavel.staticanalysis.adapter;
 
 public record StaticAnalysisClassFinding(String className,
                                          String packageName,

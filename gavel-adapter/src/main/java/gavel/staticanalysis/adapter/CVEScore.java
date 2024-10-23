@@ -1,4 +1,4 @@
-package gavel.staticanalysis.adapter.owaspdependencycheck;
+package gavel.staticanalysis.adapter;
 
 /**
  * An enumerable representation of the common vulnerability exposure score ratings.
