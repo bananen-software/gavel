@@ -31,9 +31,13 @@ public final class OWASPDependencyCheckAdapter implements ProjectDependencyCheck
      *
      * @param dataDirectory The path to the directory that data should be stored in.
      * @param nvdApiKey     The API key for the NVD API.
+     * @param enableYarn    A flag that enables the yarn integration.
+     * @param enablePnpm    A flag that enables the pnpm integration.
      */
     public OWASPDependencyCheckAdapter(final String dataDirectory,
-                                       final String nvdApiKey) {
+                                       final String nvdApiKey,
+                                       final boolean enableYarn,
+                                       final boolean enablePnpm) {
         settings = new Settings();
 
         settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
@@ -41,8 +45,8 @@ public final class OWASPDependencyCheckAdapter implements ProjectDependencyCheck
         settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, true);
 
         //TODO: Make this configurable?
-        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED, false);
-        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PNPM_AUDIT_ENABLED, false);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED, enableYarn);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PNPM_AUDIT_ENABLED, enablePnpm);
 
         settings.setBooleanIfNotNull(Settings.KEYS.UPDATE_NVDCVE_ENABLED, true);
         settings.setStringIfNotEmpty(Settings.KEYS.NVD_API_KEY, nvdApiKey);

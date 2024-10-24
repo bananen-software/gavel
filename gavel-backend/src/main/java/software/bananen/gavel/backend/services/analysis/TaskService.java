@@ -1,5 +1,8 @@
 package software.bananen.gavel.backend.services.analysis;
 
+import gavel.staticanalysis.adapter.owaspdependencycheck.OWASPDependencyCheckAdapter;
+import gavel.staticanalysis.adapter.pmd.PMDAdapter;
+import gavel.staticanalysis.adapter.spotbugs.SpotbugsAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import software.bananen.gavel.backend.entity.ProjectEntity;
 import software.bananen.gavel.backend.entity.WorkspaceEntity;
+import software.bananen.gavel.backend.repository.ClassFindingRepository;
 import software.bananen.gavel.backend.repository.ProjectRepository;
 import software.bananen.gavel.backend.repository.WorkspaceRepository;
 import software.bananen.gavel.backend.services.domain.*;
@@ -60,6 +64,10 @@ public class TaskService {
     private final PackageComplexityService packageComplexityService;
     private final PackageLinesOfCodeService packageLinesOfCodeService;
     private final ProjectFileService projectFileService;
+    private final PMDAdapter pmdAdapter;
+    private final SpotbugsAdapter spotbugsAdapter;
+    private final OWASPDependencyCheckAdapter owaspDependencyCheckAdapter;
+    private final ClassFindingRepository classFindingRepository;
 
     public TaskService(@Autowired final WorkspaceRepository workspaceRepository,
                        @Autowired final ProjectRepository projectRepository,
@@ -76,7 +84,11 @@ public class TaskService {
                        @Autowired final ClassComplexityService classComplexityService,
                        @Autowired final PackageComplexityService packageComplexityService,
                        @Autowired final PackageLinesOfCodeService packageLinesOfCodeService,
-                       @Autowired final ProjectFileService projectFileService) {
+                       @Autowired final ProjectFileService projectFileService,
+                       @Autowired final PMDAdapter pmdAdapter,
+                       @Autowired final SpotbugsAdapter spotbugsAdapter,
+                       @Autowired final OWASPDependencyCheckAdapter owaspDependencyCheckAdapter,
+                       @Autowired final ClassFindingRepository classFindingRepository) {
         this.projectRepository = projectRepository;
         this.workspaceRepository = workspaceRepository;
         this.authorService = authorService;
@@ -93,6 +105,10 @@ public class TaskService {
         this.packageComplexityService = packageComplexityService;
         this.packageLinesOfCodeService = packageLinesOfCodeService;
         this.projectFileService = projectFileService;
+        this.pmdAdapter = pmdAdapter;
+        this.spotbugsAdapter = spotbugsAdapter;
+        this.owaspDependencyCheckAdapter = owaspDependencyCheckAdapter;
+        this.classFindingRepository = classFindingRepository;
     }
 
     @Transactional
@@ -187,6 +203,15 @@ public class TaskService {
                         packageComplexityService,
                         packageLinesOfCodeService,
                         projectFileService
+                ),
+                new RunStaticCodeAnalysisStep(
+                        taskId,
+                        pmdAdapter,
+                        spotbugsAdapter,
+                        project,
+                        packageService,
+                        classService,
+                        classFindingRepository
                 ),
                 new AnalyzeLCOM4MetricStep(
                         taskId,

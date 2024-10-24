@@ -63,4 +63,8 @@ public class ClassService {
         classEntity.setStatus(ClassStatus.DELETED);
         repository.save(classEntity);
     }
+
+    public void save(final ClassEntity classEntity) {
+        repository.save(classEntity);
+    }
 }

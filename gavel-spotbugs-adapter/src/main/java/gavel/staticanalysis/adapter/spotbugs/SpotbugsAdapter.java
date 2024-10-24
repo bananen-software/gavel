@@ -78,7 +78,7 @@ public final class SpotbugsAdapter implements StaticCodeAnalysisAdapter {
     }
 
     /**
-     * Maps the priority to the enumerable representation.
+     * Maps the severity to the enumerable representation.
      *
      * @param rating The rating.
      * @return The severity.

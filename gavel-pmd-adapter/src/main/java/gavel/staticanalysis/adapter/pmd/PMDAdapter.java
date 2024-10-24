@@ -12,6 +12,7 @@ import net.sourceforge.pmd.util.log.internal.SimpleMessageReporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,8 +28,9 @@ public final class PMDAdapter implements StaticCodeAnalysisAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PMDAdapter.class);
 
-    private static final String DEFAULT_RULESET_PATH =
-            requireNonNull(PMDAdapter.class.getClassLoader().getResource("default-ruleset.xml")).getPath();
+    private static final URL DEFAULT_RULESET_PATH =
+            requireNonNull(PMDAdapter.class.getClassLoader()
+                    .getResource("rulesets/default-ruleset.xml"));
 
     private final String rulesetPath;
     private final RulePriority minimumPriority;
@@ -37,21 +39,21 @@ public final class PMDAdapter implements StaticCodeAnalysisAdapter {
      * Creates a new instance.
      */
     public PMDAdapter() {
-        this(DEFAULT_RULESET_PATH, RulePriority.LOW);
+        this(DEFAULT_RULESET_PATH.getPath(), RulePriority.LOW);
     }
 
     /**
      * Creates a new instance.
      *
      * @param rulesetPath     The path to the ruleset that should be used.
-     * @param minimumPriority The minimum priority that should be used.
+     * @param minimumPriority The minimum severity that should be used.
      */
     public PMDAdapter(final String rulesetPath,
                       final RulePriority minimumPriority) {
         this.rulesetPath =
                 requireNonNull(rulesetPath, "The ruleset path may not be null");
         this.minimumPriority =
-                requireNonNull(minimumPriority, "The minimum priority may not be null");
+                requireNonNull(minimumPriority, "The minimum severity may not be null");
     }
 
     /**
@@ -94,9 +96,9 @@ public final class PMDAdapter implements StaticCodeAnalysisAdapter {
     }
 
     /**
-     * MAps the given PMD rule priority to its {@link Severity}
+     * MAps the given PMD rule severity to its {@link Severity}
      *
-     * @param priority The priority that should be mapped.
+     * @param priority The severity that should be mapped.
      * @return The severity.
      */
     private Severity mapToSeverity(final RulePriority priority) {

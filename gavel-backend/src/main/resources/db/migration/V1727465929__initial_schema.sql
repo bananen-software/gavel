@@ -74,6 +74,19 @@ create table "classes"
     primary key ("id")
 );
 
+create table "class_findings"
+(
+    "id"               bigint GENERATED ALWAYS AS IDENTITY,
+    "class"            bigint not null references "classes" ("id"),
+    "description"      text   not null,
+    "rule_name"        text   not null,
+    "rule_description" text   not null,
+    "severity"         int    not null,
+    "tool"             text   not null,
+
+    primary key ("id")
+);
+
 create table "project_files"
 (
     "id"      bigint GENERATED ALWAYS AS IDENTITY,

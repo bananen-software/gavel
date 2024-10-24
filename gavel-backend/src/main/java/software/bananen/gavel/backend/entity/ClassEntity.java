@@ -78,6 +78,9 @@ public class ClassEntity {
     @Column(name = "status", nullable = false)
     private ClassStatus status;
 
+    @OneToMany(mappedBy = "classField", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    private Set<ClassFindingEntity> classFindingEntities = new LinkedHashSet<>();
+
     public ClassStatus getStatus() {
         return status;
     }
@@ -220,5 +223,13 @@ public class ClassEntity {
 
     public void setClassCohesionEntities(Set<ClassCohesionEntity> classCohesionEntities) {
         this.classCohesionEntities = classCohesionEntities;
+    }
+
+    public Set<ClassFindingEntity> getClassFindingEntities() {
+        return classFindingEntities;
+    }
+
+    public void setClassFindingEntities(Set<ClassFindingEntity> classFindingEntities) {
+        this.classFindingEntities = classFindingEntities;
     }
 }

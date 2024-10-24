@@ -5,6 +5,6 @@ public record StaticAnalysisClassFinding(String className,
                                          String description,
                                          String ruleName,
                                          String ruleDescription,
-                                         Severity priority,
+                                         Severity severity,
                                          String tool) {
 }
