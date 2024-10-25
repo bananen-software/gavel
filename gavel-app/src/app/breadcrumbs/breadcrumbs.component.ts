@@ -1,0 +1,40 @@
+import {Component, input} from '@angular/core';
+import {BreadcrumbModule} from "primeng/breadcrumb";
+import {NgClass, NgIf} from "@angular/common";
+import {MenuItem, SharedModule} from "primeng/api";
+
+export const home: MenuItem = {
+  label: 'Home',
+  routerLink: ['/'],
+  icon: 'pi pi-home'
+};
+
+export const packageOverview: MenuItem = {
+  label: 'Packages',
+  routerLink: ['/package-overview'],
+  icon: 'pi pi-folder-open'
+};
+
+export function packageClassesOverview(packageName: string): MenuItem {
+  return {
+    label: packageName,
+    routerLink: ['/package-overview', packageName],
+    icon: undefined
+  }
+}
+
+@Component({
+  selector: 'app-breadcrumbs',
+  standalone: true,
+  imports: [
+    BreadcrumbModule,
+    NgIf,
+    SharedModule,
+    NgClass
+  ],
+  templateUrl: './breadcrumbs.component.html',
+  styleUrl: './breadcrumbs.component.css'
+})
+export class BreadcrumbsComponent {
+  readonly breadcrumbs = input<MenuItem[]>([]);
+}

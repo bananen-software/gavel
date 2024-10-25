@@ -18,6 +18,10 @@ export type PackageOverview = {
   packageComplexity: "MOSTLY_SIMPLE" | "BALANCED" | "COMPLEX" | "HIGHLY_COMPLEX";
   numberOfTypes: number;
   classComplexityRatings: ClassComplexityRatings;
+  numberOfFindings: number;
+  numberOfHighFindings: number;
+  defectDensity: number;
+  highDefectDensity: number;
 };
 
 @Injectable({

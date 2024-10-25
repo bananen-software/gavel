@@ -54,10 +54,18 @@ public class PackageService {
         pkg.setNumberOfVeryHighComplexityTypes(0);
         pkg.setSize(Size.UNKNOWN);
         pkg.setComplexityRating(PackageComplexity.EMPTY);
+        pkg.setTotalNumberOfFindings(0);
+        pkg.setNumberOfHighPriorityFindings(0);
+        pkg.setDefectDensity(0.0);
+        pkg.setHighDefectDensity(0.0);
 
         pkg.setProject(project);
         project.getPackages().add(pkg);
 
         return pkg;
+    }
+
+    public void save(final PackageEntity packageEntity) {
+        repository.save(packageEntity);
     }
 }

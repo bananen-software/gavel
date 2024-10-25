@@ -81,6 +81,54 @@ public class ClassEntity {
     @OneToMany(mappedBy = "classField", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private Set<ClassFindingEntity> classFindingEntities = new LinkedHashSet<>();
 
+    @ColumnDefault("0")
+    @Column(name = "total_number_of_findings", nullable = false)
+    private Integer totalNumberOfFindings;
+
+    @ColumnDefault("0")
+    @Column(name = "number_of_high_priority_findings", nullable = false)
+    private Integer numberOfHighPriorityFindings;
+
+    @ColumnDefault("0")
+    @Column(name = "defect_density", nullable = false)
+    private double defectDensity;
+
+    @ColumnDefault("0")
+    @Column(name = "high_defect_density", nullable = false)
+    private double highDefectDensity;
+
+    public double getHighDefectDensity() {
+        return highDefectDensity;
+    }
+
+    public void setHighDefectDensity(double highDefectDensity) {
+        this.highDefectDensity = highDefectDensity;
+    }
+
+    public double getDefectDensity() {
+        return defectDensity;
+    }
+
+    public void setDefectDensity(double defectDensity) {
+        this.defectDensity = defectDensity;
+    }
+
+    public Integer getNumberOfHighPriorityFindings() {
+        return numberOfHighPriorityFindings;
+    }
+
+    public void setNumberOfHighPriorityFindings(Integer numberOfHighPriorityFindings) {
+        this.numberOfHighPriorityFindings = numberOfHighPriorityFindings;
+    }
+
+    public Integer getTotalNumberOfFindings() {
+        return totalNumberOfFindings;
+    }
+
+    public void setTotalNumberOfFindings(Integer totalNumberOfFindings) {
+        this.totalNumberOfFindings = totalNumberOfFindings;
+    }
+
     public ClassStatus getStatus() {
         return status;
     }

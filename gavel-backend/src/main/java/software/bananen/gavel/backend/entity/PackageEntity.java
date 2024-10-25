@@ -1,9 +1,12 @@
 package software.bananen.gavel.backend.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.ColumnDefault;
+import software.bananen.gavel.backend.domain.ClassStatus;
 import software.bananen.gavel.backend.domain.PackageComplexity;
 import software.bananen.gavel.backend.domain.Size;
 
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -75,6 +78,54 @@ public class PackageEntity {
 
     @Column(name = "number_of_very_high_complexity_types")
     private Integer numberOfVeryHighComplexityTypes;
+
+    @ColumnDefault("0")
+    @Column(name = "total_number_of_findings", nullable = false)
+    private Integer totalNumberOfFindings;
+
+    @ColumnDefault("0")
+    @Column(name = "number_of_high_priority_findings", nullable = false)
+    private Integer numberOfHighPriorityFindings;
+
+    @ColumnDefault("0")
+    @Column(name = "defect_density", nullable = false)
+    private double defectDensity;
+
+    @ColumnDefault("0")
+    @Column(name = "high_defect_density", nullable = false)
+    private double highDefectDensity;
+
+    public double getHighDefectDensity() {
+        return highDefectDensity;
+    }
+
+    public void setHighDefectDensity(double highDefectDensity) {
+        this.highDefectDensity = highDefectDensity;
+    }
+
+    public double getDefectDensity() {
+        return defectDensity;
+    }
+
+    public void setDefectDensity(double defectDensity) {
+        this.defectDensity = defectDensity;
+    }
+
+    public Integer getNumberOfHighPriorityFindings() {
+        return numberOfHighPriorityFindings;
+    }
+
+    public void setNumberOfHighPriorityFindings(Integer numberOfHighPriorityFindings) {
+        this.numberOfHighPriorityFindings = numberOfHighPriorityFindings;
+    }
+
+    public Integer getTotalNumberOfFindings() {
+        return totalNumberOfFindings;
+    }
+
+    public void setTotalNumberOfFindings(Integer totalNumberOfFindings) {
+        this.totalNumberOfFindings = totalNumberOfFindings;
+    }
 
     public Set<VisibilityMetricEntity> getVisibilityMetrics() {
         return visibilityMetrics;
@@ -242,5 +293,12 @@ public class PackageEntity {
 
     public void setNumberOfVeryHighComplexityTypes(Integer numberOfVeryHighComplexityTypes) {
         this.numberOfVeryHighComplexityTypes = numberOfVeryHighComplexityTypes;
+    }
+
+    public Collection<ClassEntity> getActiveClasses() {
+        return getClasses()
+                .stream()
+                .filter(e -> ClassStatus.ACTIVE.equals(e.getStatus()))
+                .toList();
     }
 }

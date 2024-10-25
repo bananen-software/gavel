@@ -9,20 +9,50 @@
              [sortOrder]="-1">
       <ng-template pTemplate="header">
         <tr>
-          <th pSortableColumn="fileName">
-            File
-            <p-sortIcon field="fileName"></p-sortIcon>
+          <th pSortableColumn="className">
+            Class
+            <p-sortIcon field="className"></p-sortIcon>
+          </th>
+          <th pSortableColumn="packageName">
+            Package
+            <p-sortIcon field="packageName"></p-sortIcon>
           </th>
           <th pSortableColumn="numberOfChanges">
             Number of Changes
             <p-sortIcon field="numberOfChanges"></p-sortIcon>
           </th>
+          <th pSortableColumn="complexityRating">
+            Complexity
+            <p-sortIcon field="complexityRating"></p-sortIcon>
+          </th>
+          <th pSortableColumn="totalLinesOfCode">
+            Size
+            <p-sortIcon field="totalLinesOfCode"></p-sortIcon>
+          </th>
+          <th pSortableColumn="numberOfAuthors">
+            Authors
+            <p-sortIcon field="numberOfAuthors"></p-sortIcon>
+          </th>
+          <th pSortableColumn="defectDensity">
+            Defect Density
+            <p-sortIcon field="defectDensity"></p-sortIcon>
+          </th>
+          <th pSortableColumn="lastModified">
+            Last modified
+            <p-sortIcon field="lastModified"></p-sortIcon>
+          </th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-metric>
         <tr>
-          <td>{{ metric.fileName }}</td>
+          <td>{{ metric.className }}</td>
+          <td>{{ metric.packageName }}</td>
           <td class="numeric">{{ metric.numberOfChanges }}</td>
+          <td>{{ metric.complexityRating }}</td>
+          <td>{{ metric.size }}</td>
+          <td>{{ metric.numberOfAuthors }}</td>
+          <td>{{ metric.defectDensity }}</td>
+          <td>{{ metric.lastModified }}</td>
         </tr>
       </ng-template>
     </p-table>

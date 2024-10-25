@@ -1,0 +1,11 @@
+.p-menuitem-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+a:link,
+a:visited {
+  color: var(--p-breadcrumb-item-color);
+  text-decoration: none;
+}

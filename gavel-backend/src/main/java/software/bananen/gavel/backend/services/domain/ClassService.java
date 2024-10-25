@@ -51,6 +51,10 @@ public class ClassService {
             classEntity.setSize(Size.EMPTY);
             classEntity.setNumberOfResponsibilities(0);
             classEntity.setStatus(ClassStatus.ACTIVE);
+            classEntity.setTotalNumberOfFindings(0);
+            classEntity.setNumberOfHighPriorityFindings(0);
+            classEntity.setDefectDensity(0.0);
+            classEntity.setHighDefectDensity(0.0);
 
             packageEntity.getClasses().add(classEntity);
             packageEntity.setNumberOfTypes(packageEntity.getClasses().size());

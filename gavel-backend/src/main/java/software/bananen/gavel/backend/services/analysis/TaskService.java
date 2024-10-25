@@ -207,11 +207,24 @@ public class TaskService {
                 new RunStaticCodeAnalysisStep(
                         taskId,
                         pmdAdapter,
+                        project,
+                        packageService,
+                        classService,
+                        classFindingRepository
+                ),
+                new RunStaticCodeAnalysisStep(
+                        taskId,
                         spotbugsAdapter,
                         project,
                         packageService,
                         classService,
                         classFindingRepository
+                ),
+                new RunOWASPDependencyCheckStep(
+                        taskId,
+                        project,
+                        projectRepository,
+                        owaspDependencyCheckAdapter
                 ),
                 new AnalyzeLCOM4MetricStep(
                         taskId,

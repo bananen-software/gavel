@@ -48,7 +48,11 @@ public class ListPackagesUseCase {
                             packageEntity.getNumberOfMediumComplexityTypes() / (double) packageEntity.getNumberOfTypes(),
                             packageEntity.getNumberOfHighComplexityTypes() / (double) packageEntity.getNumberOfTypes(),
                             packageEntity.getNumberOfVeryHighComplexityTypes() / (double) packageEntity.getNumberOfTypes()
-                    )
+                    ),
+                    packageEntity.getTotalNumberOfFindings(),
+                    packageEntity.getNumberOfHighPriorityFindings(),
+                    packageEntity.getDefectDensity(),
+                    packageEntity.getHighDefectDensity()
             ));
         }
 

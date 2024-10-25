@@ -12,7 +12,11 @@ export class PackageClass {
               public complexityRating: "LOW" | "MEDIUM" | "HIGH" | "VERY_HIGH",
               public totalLinesOfCode: number,
               public totalLinesOfComments: number,
-              public commentToCodeRatio: number) {
+              public commentToCodeRatio: number,
+              public numberOfFindings: number,
+              public numberOfHighFindings: number,
+              public defectDensity: number,
+              public highDefectDensity: number) {
   }
 }
 

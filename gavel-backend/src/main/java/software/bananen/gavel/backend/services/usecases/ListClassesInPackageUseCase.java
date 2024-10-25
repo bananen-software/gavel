@@ -3,7 +3,6 @@ package software.bananen.gavel.backend.services.usecases;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import software.bananen.gavel.backend.domain.ClassStatus;
 import software.bananen.gavel.backend.entity.ClassEntity;
 import software.bananen.gavel.backend.entity.PackageEntity;
 import software.bananen.gavel.backend.entity.ProjectEntity;
@@ -45,8 +44,7 @@ public class ListClassesInPackageUseCase {
 
         final Collection<ClassOverviewResponseModel> result = new ArrayList<>();
 
-        for (final ClassEntity classEntity :
-                matchingPackage.get().getClasses().stream().filter(e -> ClassStatus.ACTIVE.equals(e.getStatus())).toList()) {
+        for (final ClassEntity classEntity : matchingPackage.get().getActiveClasses()) {
             result.add(new ClassOverviewResponseModel(
                     matchingPackage.get().getPackageName(),
                     classEntity.getName(),
@@ -58,7 +56,11 @@ public class ListClassesInPackageUseCase {
                     classEntity.getTotalLinesOfCode(),
                     classEntity.getTotalLinesOfComments(),
                     classEntity.getCommentToCodeRatio(),
-                    classEntity.getNumberOfResponsibilities()
+                    classEntity.getNumberOfResponsibilities(),
+                    classEntity.getTotalNumberOfFindings(),
+                    classEntity.getNumberOfHighPriorityFindings(),
+                    classEntity.getDefectDensity(),
+                    classEntity.getHighDefectDensity()
             ));
         }
 

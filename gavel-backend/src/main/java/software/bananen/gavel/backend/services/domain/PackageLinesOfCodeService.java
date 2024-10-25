@@ -2,7 +2,6 @@ package software.bananen.gavel.backend.services.domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.backend.domain.ClassStatus;
 import software.bananen.gavel.backend.domain.Size;
 import software.bananen.gavel.backend.entity.*;
 import software.bananen.gavel.backend.repository.PackageLinesOfCodeRepository;
@@ -56,16 +55,8 @@ public class PackageLinesOfCodeService {
     private int measurePackageLines(final PackageEntity packageEntity) {
         int packageLines = 0;
 
-        for (final ClassEntity classEntity :
-                packageEntity.getClasses()
-                        .stream().filter(e -> ClassStatus.ACTIVE.equals(e.getStatus()))
-                        .toList()) {
-            packageLines += classEntity.getClassContributions()
-                    .stream()
-                    .max(Comparator.comparing(ClassContributionEntity::getTimestamp))
-                    .flatMap(c -> c.getClassLinesOfCodes().stream().findFirst())
-                    .map(ClassLinesOfCodeEntity::getTotalLinesOfCode)
-                    .orElse(0);
+        for (final ClassEntity classEntity : packageEntity.getActiveClasses()) {
+            packageLines += classEntity.getTotalLinesOfCode();
         }
 
         return packageLines;

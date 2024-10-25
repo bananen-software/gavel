@@ -1,6 +1,6 @@
 import {Component, computed, inject, Signal} from '@angular/core';
 import {CardModule} from "primeng/card";
-import {SharedModule} from "primeng/api";
+import {MenuItem, SharedModule} from "primeng/api";
 import {TableModule} from "primeng/table";
 import {ViewLayoutComponent} from "../view-layout/view-layout.component";
 import {toSignal} from "@angular/core/rxjs-interop";
@@ -8,6 +8,14 @@ import PackageClassesOverviewService, {PackageClass} from "./package-classes-ove
 import {ActivatedRoute} from "@angular/router";
 import {catchError, map, of, switchMap} from "rxjs";
 import {toPercent, toPercentString} from "../../util/math-helpers";
+import {BreadcrumbModule} from "primeng/breadcrumb";
+import {NgClass, NgIf} from "@angular/common";
+import {
+  BreadcrumbsComponent,
+  home,
+  packageClassesOverview,
+  packageOverview
+} from "../breadcrumbs/breadcrumbs.component";
 
 @Component({
   selector: 'app-package-classes-overview',
@@ -16,7 +24,11 @@ import {toPercent, toPercentString} from "../../util/math-helpers";
     CardModule,
     SharedModule,
     TableModule,
-    ViewLayoutComponent
+    ViewLayoutComponent,
+    BreadcrumbModule,
+    NgClass,
+    NgIf,
+    BreadcrumbsComponent
   ],
   templateUrl: './package-classes-overview.component.html',
   styleUrl: './package-classes-overview.component.css'
@@ -39,6 +51,13 @@ export class PackageClassesOverviewComponent {
 
   protected readonly loading: Signal<boolean> =
     computed(() => this.metrics.length > 0);
+
+  protected readonly breadcrumbs: Signal<MenuItem[]> =
+    computed(() => [
+      home,
+      packageOverview,
+      packageClassesOverview(this.route.snapshot.paramMap.get('packageName') ?? '')
+    ]);
 
   protected readonly toPercent = toPercent;
   protected readonly toPercentString = toPercentString;

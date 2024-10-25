@@ -13,5 +13,9 @@ public record PackageOverviewResponseModel(
         PackageComplexity packageComplexity,
         int packageComplexityOrdinal,
         int numberOfTypes,
-        ClassComplexityRatingResponseModel classComplexityRatings) {
+        ClassComplexityRatingResponseModel classComplexityRatings,
+        int numberOfFindings,
+        int numberOfHighFindings,
+        double defectDensity,
+        double highDefectDensity) {
 }

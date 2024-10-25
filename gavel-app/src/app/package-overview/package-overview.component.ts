@@ -3,10 +3,12 @@ import {ViewLayoutComponent} from "../view-layout/view-layout.component";
 import {toSignal} from "@angular/core/rxjs-interop";
 import {PackageOverview, PackageOverviewService} from "./package-overview.service";
 import {CardModule} from "primeng/card";
-import {SharedModule} from "primeng/api";
+import {MenuItem, SharedModule} from "primeng/api";
 import {TableModule, TableRowSelectEvent} from "primeng/table";
 import {toPercent, toPercentString} from "../../util/math-helpers";
 import {Router} from "@angular/router";
+import {precisionRound} from "d3";
+import {BreadcrumbsComponent, home, packageOverview} from "../breadcrumbs/breadcrumbs.component";
 
 @Component({
   selector: 'app-package-overview',
@@ -15,7 +17,8 @@ import {Router} from "@angular/router";
     ViewLayoutComponent,
     CardModule,
     SharedModule,
-    TableModule
+    TableModule,
+    BreadcrumbsComponent
   ],
   templateUrl: './package-overview.component.html',
   styleUrl: './package-overview.component.css'
@@ -35,6 +38,12 @@ export class PackageOverviewComponent {
     return this.metrics().length == 0;
   });
 
+  protected readonly breadcrumbs: Signal<MenuItem[]> =
+    computed(() => [
+      home,
+      packageOverview
+    ]);
+
   // TODO: Convert to pipe
   protected readonly toPercentString = toPercentString;
   protected readonly toPercent = toPercent;
@@ -42,4 +51,6 @@ export class PackageOverviewComponent {
   viewPackageDetail($event: TableRowSelectEvent) {
     this.#router.navigate(['/package-classes-overview/', $event.data.packageName]);
   }
+
+  protected readonly precisionRound = precisionRound;
 }

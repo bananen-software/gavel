@@ -47,6 +47,10 @@ create table "packages"
     "number_of_medium_complexity_types"    int              not null default (0),
     "number_of_high_complexity_types"      int              not null default (0),
     "number_of_very_high_complexity_types" int              not null default (0),
+    "total_number_of_findings"             int              not null default (0),
+    "number_of_high_priority_findings"     int              not null default (0),
+    "defect_density"                       double precision not null default (0),
+    "high_defect_density"                  double precision not null default (0),
 
     primary key ("id")
 );
@@ -55,21 +59,25 @@ create unique index on "packages" ("package", "project");
 
 create table "classes"
 (
-    "id"                         bigint GENERATED ALWAYS AS IDENTITY,
-    "name"                       text                     not null,
-    "package"                    bigint references packages ("id"),
-    "programming_language"       bigint references "programming_languages" ("id"),
-    "last_modified"              timestamp with time zone not null,
-    "number_of_authors"          int                      not null default (0),
-    "number_of_changes"          int                      not null default (0),
-    "complexity"                 int                      not null default (0),
-    "complexity_rating"          int                      not null default (0),
-    "size"                       int                      not null default (0),
-    "total_lines_of_code"        int                      not null default (0),
-    "total_lines_of_comments"    int                      not null default (0),
-    "comment_to_code_ratio"      double precision         not null default (0),
-    "number_of_responsibilities" int                      not null default (0),
-    "status"                     int                      not null default (0),
+    "id"                               bigint GENERATED ALWAYS AS IDENTITY,
+    "name"                             text                     not null,
+    "package"                          bigint references packages ("id"),
+    "programming_language"             bigint references "programming_languages" ("id"),
+    "last_modified"                    timestamp with time zone not null,
+    "number_of_authors"                int                      not null default (0),
+    "number_of_changes"                int                      not null default (0),
+    "complexity"                       int                      not null default (0),
+    "complexity_rating"                int                      not null default (0),
+    "size"                             int                      not null default (0),
+    "total_lines_of_code"              int                      not null default (0),
+    "total_lines_of_comments"          int                      not null default (0),
+    "comment_to_code_ratio"            double precision         not null default (0),
+    "number_of_responsibilities"       int                      not null default (0),
+    "status"                           int                      not null default (0),
+    "total_number_of_findings"         int                      not null default (0),
+    "number_of_high_priority_findings" int                      not null default (0),
+    "defect_density"                   double precision         not null default (0),
+    "high_defect_density"              double precision         not null default (0),
 
     primary key ("id")
 );

@@ -39,7 +39,7 @@ public final class PMDAdapter implements StaticCodeAnalysisAdapter {
      * Creates a new instance.
      */
     public PMDAdapter() {
-        this(DEFAULT_RULESET_PATH.getPath(), RulePriority.LOW);
+        this(DEFAULT_RULESET_PATH.getPath(), RulePriority.MEDIUM);
     }
 
     /**

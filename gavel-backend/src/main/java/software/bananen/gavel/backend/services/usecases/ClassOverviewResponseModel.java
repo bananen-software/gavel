@@ -14,5 +14,9 @@ public record ClassOverviewResponseModel(String packageName,
                                          Integer totalLinesOfCode,
                                          Integer totalLinesOfComments,
                                          Double commentToCodeRatio,
-                                         Integer classCohesion) {
+                                         Integer classCohesion,
+                                         double numberOfFindings,
+                                         double numberOfHighFindings,
+                                         double defectDensity,
+                                         double highDefectDensity) {
 }

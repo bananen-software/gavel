@@ -1,4 +1,7 @@
 <app-view-layout>
+  <app-breadcrumbs [breadcrumbs]="breadcrumbs()"></app-breadcrumbs>
+
+
   <p-card header="Raw data">
     <p-table [value]="metrics()"
              [rows]="10"
@@ -38,6 +41,10 @@
             LCOM4
             <p-sortIcon field="classCohesion"></p-sortIcon>
           </th>
+          <th scope="col" pSortableColumn="defectDensity">
+            Defect Density
+            <p-sortIcon field="defectDensity"></p-sortIcon>
+          </th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-metric>
@@ -51,6 +58,7 @@
             /{{ metric.totalLinesOfCode }})
           </td>
           <td>{{ metric.classCohesion }}</td>
+          <td>{{ metric.defectDensity }}</td>
         </tr>
       </ng-template>
     </p-table>
