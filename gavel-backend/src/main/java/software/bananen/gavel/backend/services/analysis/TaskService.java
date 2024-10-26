@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import software.bananen.gavel.backend.entity.ProjectEntity;
 import software.bananen.gavel.backend.entity.WorkspaceEntity;
+import software.bananen.gavel.backend.repository.ChangeCouplingRepository;
 import software.bananen.gavel.backend.repository.ClassFindingRepository;
 import software.bananen.gavel.backend.repository.ProjectRepository;
 import software.bananen.gavel.backend.repository.WorkspaceRepository;
@@ -68,6 +69,7 @@ public class TaskService {
     private final SpotbugsAdapter spotbugsAdapter;
     private final OWASPDependencyCheckAdapter owaspDependencyCheckAdapter;
     private final ClassFindingRepository classFindingRepository;
+    private final ChangeCouplingRepository changeCouplingRepository;
 
     public TaskService(@Autowired final WorkspaceRepository workspaceRepository,
                        @Autowired final ProjectRepository projectRepository,
@@ -88,7 +90,8 @@ public class TaskService {
                        @Autowired final PMDAdapter pmdAdapter,
                        @Autowired final SpotbugsAdapter spotbugsAdapter,
                        @Autowired final OWASPDependencyCheckAdapter owaspDependencyCheckAdapter,
-                       @Autowired final ClassFindingRepository classFindingRepository) {
+                       @Autowired final ClassFindingRepository classFindingRepository,
+                       @Autowired final ChangeCouplingRepository changeCouplingRepository) {
         this.projectRepository = projectRepository;
         this.workspaceRepository = workspaceRepository;
         this.authorService = authorService;
@@ -109,6 +112,7 @@ public class TaskService {
         this.spotbugsAdapter = spotbugsAdapter;
         this.owaspDependencyCheckAdapter = owaspDependencyCheckAdapter;
         this.classFindingRepository = classFindingRepository;
+        this.changeCouplingRepository = changeCouplingRepository;
     }
 
     @Transactional
@@ -202,7 +206,8 @@ public class TaskService {
                         classComplexityService,
                         packageComplexityService,
                         packageLinesOfCodeService,
-                        projectFileService
+                        projectFileService,
+                        changeCouplingRepository
                 ),
                 new RunStaticCodeAnalysisStep(
                         taskId,

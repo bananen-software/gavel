@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.bananen.gavel.backend.domain.ClassStatus;
 import software.bananen.gavel.backend.entity.*;
+import software.bananen.gavel.backend.repository.ChangeCouplingRepository;
 import software.bananen.gavel.backend.services.domain.*;
 import software.bananen.gavel.backend.services.technical.JavaParserService;
 import software.bananen.gavel.behavioralanalysis.Author;
@@ -20,9 +21,7 @@ import software.bananen.gavel.behavioralanalysis.git.Mailmap;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static software.bananen.gavel.behavioralanalysis.git.GitUtil.loadMailmap;
 
@@ -43,6 +42,7 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
     private final PackageComplexityService packageComplexityService;
     private final PackageLinesOfCodeService packageLinesOfCodeService;
     private final ProjectFileService projectFileService;
+    private final ChangeCouplingRepository changeCouplingRepository;
 
     /**
      * Creates a new instance.
@@ -59,7 +59,8 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
                                  final ClassComplexityService classComplexityService,
                                  final PackageComplexityService packageComplexityService,
                                  final PackageLinesOfCodeService packageLinesOfCodeService,
-                                 final ProjectFileService projectFileService) {
+                                 final ProjectFileService projectFileService,
+                                 final ChangeCouplingRepository changeCouplingRepository) {
         super(taskId, STEP_NAME);
         this.project = project;
         this.authorService = authorService;
@@ -71,6 +72,7 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
         this.packageComplexityService = packageComplexityService;
         this.packageLinesOfCodeService = packageLinesOfCodeService;
         this.projectFileService = projectFileService;
+        this.changeCouplingRepository = changeCouplingRepository;
     }
 
     /**
@@ -117,7 +119,9 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
         //TODO: Measure author contribution to project
         final AuthorEntity authorEntity = authorService.findOrCreate(author);
 
-        LOGGER.info("{} processing commit", commit.getName());
+        LOGGER.info("Processing commit {}", commit.getName());
+
+        final Collection<ClassEntity> modifiedClasses = new ArrayList<>();
 
         for (final DiffEntry diff : GitUtil.extractDiffEntries(repository, commit)) {
             LOGGER.debug("Processing diff {} file {} => {}", diff.getChangeType(), diff.getOldPath(), diff.getNewPath());
@@ -128,7 +132,8 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
                 case RENAME:
                 case COPY:
                     if (isNotExcludedType(diff.getNewPath())) {
-                        processJavaClass(commit, repository, diff, timestamp, authorEntity);
+                        processJavaClass(commit, repository, diff, timestamp, authorEntity)
+                                .ifPresent(modifiedClasses::add);
                     } else {
                         LOGGER.debug("Skipping excluded file type {}", diff.getNewPath());
                     }
@@ -144,16 +149,40 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
             }
         }
 
-        LOGGER.info("{} processed commit", commit.getName());
+        LOGGER.info("Processed commit {}", commit.getName());
 
         //TODO: Measure aggregate metrics for project
+        for (final ClassEntity sourceClass : modifiedClasses) {
+            for (final ClassEntity targetClass : modifiedClasses) {
+                if (!Objects.equals(sourceClass, targetClass)) {
+                    final ChangeCouplingEntity changeCouplingEntity =
+                            changeCouplingRepository.findBySourceClassAndTargetClass(sourceClass, targetClass)
+                                    .orElseGet(() -> {
+                                        final ChangeCouplingEntity entity = new ChangeCouplingEntity();
+
+                                        entity.setSourceClass(sourceClass);
+                                        entity.setTargetClass(targetClass);
+                                        entity.setCoupledChanges(0);
+
+                                        return entity;
+                                    });
+                    
+                    changeCouplingEntity.setTotalChanges(sourceClass.getNumberOfChanges());
+                    changeCouplingEntity.setCoupledChanges(changeCouplingEntity.getCoupledChanges() + 1);
+                    changeCouplingEntity.setChangeCoupling(
+                            changeCouplingEntity.getCoupledChanges() / (double) changeCouplingEntity.getTotalChanges());
+
+                    changeCouplingRepository.save(changeCouplingEntity);
+                }
+            }
+        }
     }
 
-    private void processJavaClass(final RevCommit commit,
-                                  final Repository repository,
-                                  final DiffEntry diff,
-                                  final LocalDateTime timestamp,
-                                  final AuthorEntity authorEntity) throws IOException {
+    private Optional<ClassEntity> processJavaClass(final RevCommit commit,
+                                                   final Repository repository,
+                                                   final DiffEntry diff,
+                                                   final LocalDateTime timestamp,
+                                                   final AuthorEntity authorEntity) throws IOException {
         final String content =
                 GitUtil.loadFileContentFromDiff(repository, commit, diff);
 
@@ -196,7 +225,7 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
                     classContributionService.findLatestContributionTo(classEntity);
 
             final ClassContributionEntity classContributionEntity =
-                    classContributionService.findOrCreate(classEntity, timestamp, className, authorEntity);
+                    classContributionService.findOrCreate(classEntity, timestamp, commit.getName(), authorEntity);
 
             classComplexityService.createOrUpdate(classContributionEntity, latestContribution, complexity);
             classLinesOfCodeService.createOrUpdate(classContributionEntity, latestContribution, totalLines, commentLines, commentToCodeRatio);
@@ -216,9 +245,12 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
             //TODO: Track issue tracking URL/issue references in comments
 
             LOGGER.debug("Parsed package {} and class {}", packageName, className);
+            return Optional.of(classEntity);
         } else {
             LOGGER.error("Failed to parse class from: {}", diff.getNewPath());
         }
+
+        return Optional.empty();
     }
 
     private boolean isNotExcludedType(final String path) {

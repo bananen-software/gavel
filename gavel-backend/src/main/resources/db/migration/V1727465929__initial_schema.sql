@@ -237,3 +237,15 @@ create table "package_lines_of_code"
 
     primary key ("id")
 );
+
+create table "change_coupling"
+(
+    "id"              bigint GENERATED ALWAYS AS IDENTITY,
+    "source_class"    bigint           not null references "classes" ("id"),
+    "target_class"    bigint           not null references "classes" ("id"),
+    "coupled_changes" int              not null default (0),
+    "total_changes"   int              not null default (0),
+    "change_coupling" double precision not null default (0),
+
+    primary key ("id")
+);
