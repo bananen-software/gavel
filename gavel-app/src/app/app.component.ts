@@ -89,6 +89,11 @@ export class AppComponent implements OnInit {
             icon: PrimeIcons.LIGHTBULB,
             routerLink: "code-hotspot-metrics"
           },
+          {
+            label: 'Change Coupling',
+            icon: PrimeIcons.LINK,
+            routerLink: "change-coupling"
+          },
         ]
       },
       {

@@ -14,6 +14,7 @@ import {CodeHotspotMetricsComponent} from "./code-hotspot-metrics/code-hotspot-m
 import {ProjectSettingsComponent} from "./project-settings/project-settings.component";
 import {PackageOverviewComponent} from "./package-overview/package-overview.component";
 import {PackageClassesOverviewComponent} from "./package-classes-overview/package-classes-overview.component";
+import {ChangeCouplingComponent} from "./change-coupling/change-coupling.component";
 
 export const routes: Routes = [
   {
@@ -59,5 +60,9 @@ export const routes: Routes = [
   {
     path: "package-classes-overview/:packageName",
     component: PackageClassesOverviewComponent
+  },
+  {
+    path: "change-coupling",
+    component: ChangeCouplingComponent
   }
 ];
