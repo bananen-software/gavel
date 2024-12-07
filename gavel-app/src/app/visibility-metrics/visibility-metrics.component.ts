@@ -5,7 +5,7 @@ import {SharedModule} from "primeng/api";
 import {TableModule} from "primeng/table";
 import VisibilityMetricsService, {Visibility} from "./visibility-metrics.service";
 import {toSignal} from "@angular/core/rxjs-interop";
-import {toPercent, toPercentString} from "../../util/math-helpers";
+import {PercentPipe} from "@angular/common";
 
 @Component({
   selector: 'app-visibility-metrics',
@@ -14,7 +14,8 @@ import {toPercent, toPercentString} from "../../util/math-helpers";
     ViewLayoutComponent,
     CardModule,
     SharedModule,
-    TableModule
+    TableModule,
+    PercentPipe
   ],
   templateUrl: './visibility-metrics.component.html',
   styleUrl: './visibility-metrics.component.css'
@@ -29,6 +30,4 @@ export class VisibilityMetricsComponent {
   protected readonly loading: Signal<boolean> = computed(() => {
     return this.metrics().length == 0;
   });
-  protected readonly toPercent = toPercent;
-  protected readonly toPercentString = toPercentString;
 }

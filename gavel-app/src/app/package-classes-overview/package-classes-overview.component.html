@@ -51,14 +51,14 @@
         <tr>
           <td>{{ metric.className }}</td>
           <td>{{ metric.complexityRating }} ({{ metric.complexity }})</td>
-          <td>{{ metric.lastModified }}</td>
-          <td>{{ metric.numberOfChanges }}</td>
-          <td>{{ metric.numberOfAuthors }}</td>
-          <td>{{ toPercentString(toPercent(metric.commentToCodeRatio, 1)) }} ({{ metric.totalLinesOfComments }}
-            /{{ metric.totalLinesOfCode }})
+          <td>{{ metric.lastModified | date }}</td>
+          <td>{{ metric.numberOfChanges | number }}</td>
+          <td>{{ metric.numberOfAuthors | number }}</td>
+          <td>{{ metric.commentToCodeRatio | percent }} ({{ metric.totalLinesOfComments | number }}
+            /{{ metric.totalLinesOfCode | number }})
           </td>
-          <td>{{ metric.classCohesion }}</td>
-          <td>{{ metric.defectDensity }}</td>
+          <td>{{ metric.classCohesion | number }}</td>
+          <td>{{ metric.defectDensity | number: '1.0-0' }}</td>
         </tr>
       </ng-template>
     </p-table>

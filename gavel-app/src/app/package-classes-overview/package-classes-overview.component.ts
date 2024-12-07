@@ -7,9 +7,8 @@ import {toSignal} from "@angular/core/rxjs-interop";
 import PackageClassesOverviewService, {PackageClass} from "./package-classes-overview.service";
 import {ActivatedRoute} from "@angular/router";
 import {catchError, map, of, switchMap} from "rxjs";
-import {toPercent, toPercentString} from "../../util/math-helpers";
 import {BreadcrumbModule} from "primeng/breadcrumb";
-import {NgClass, NgIf} from "@angular/common";
+import {DatePipe, DecimalPipe, PercentPipe} from "@angular/common";
 import {
   BreadcrumbsComponent,
   home,
@@ -26,9 +25,10 @@ import {
     TableModule,
     ViewLayoutComponent,
     BreadcrumbModule,
-    NgClass,
-    NgIf,
-    BreadcrumbsComponent
+    BreadcrumbsComponent,
+    PercentPipe,
+    DecimalPipe,
+    DatePipe
   ],
   templateUrl: './package-classes-overview.component.html',
   styleUrl: './package-classes-overview.component.css'
@@ -58,7 +58,4 @@ export class PackageClassesOverviewComponent {
       packageOverview,
       packageClassesOverview(this.route.snapshot.paramMap.get('packageName') ?? '')
     ]);
-
-  protected readonly toPercent = toPercent;
-  protected readonly toPercentString = toPercentString;
 }

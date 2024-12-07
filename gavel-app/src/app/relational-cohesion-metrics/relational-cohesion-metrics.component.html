@@ -64,10 +64,10 @@
       <ng-template pTemplate="body" let-metric>
         <tr>
           <td>{{ metric.packageName }}</td>
-          <td>{{ metric.rating }}</td>
-          <td class="numeric">{{ metric.relationalCohesion }}</td>
-          <td class="numeric">{{ metric.numberOfTypes }}</td>
-          <td class="numeric">{{ metric.numberOfInternalRelationships }}</td>
+          <td>{{ metric.rating | relationalCohesionStatus }}</td>
+          <td class="numeric">{{ metric.relationalCohesion | number }}</td>
+          <td class="numeric">{{ metric.numberOfTypes | number }}</td>
+          <td class="numeric">{{ metric.numberOfInternalRelationships | number }}</td>
         </tr>
       </ng-template>
     </p-table>

@@ -5,6 +5,7 @@ import {SharedModule} from "primeng/api";
 import {TableModule} from "primeng/table";
 import {toSignal} from "@angular/core/rxjs-interop";
 import AuthorComplexityMetricsService, {AuthorComplexity} from "./author-complexity-metrics.service";
+import {DecimalPipe} from "@angular/common";
 
 @Component({
   selector: 'app-author-complexity-metrics',
@@ -13,7 +14,8 @@ import AuthorComplexityMetricsService, {AuthorComplexity} from "./author-complex
     ViewLayoutComponent,
     CardModule,
     SharedModule,
-    TableModule
+    TableModule,
+    DecimalPipe
   ],
   templateUrl: './author-complexity-metrics.component.html',
   styleUrl: './author-complexity-metrics.component.css'

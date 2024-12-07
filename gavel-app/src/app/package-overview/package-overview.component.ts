@@ -5,10 +5,12 @@ import {PackageOverview, PackageOverviewService} from "./package-overview.servic
 import {CardModule} from "primeng/card";
 import {MenuItem, SharedModule} from "primeng/api";
 import {TableModule, TableRowSelectEvent} from "primeng/table";
-import {toPercent, toPercentString} from "../../util/math-helpers";
 import {Router} from "@angular/router";
 import {precisionRound} from "d3";
 import {BreadcrumbsComponent, home, packageOverview} from "../breadcrumbs/breadcrumbs.component";
+import {DecimalPipe, PercentPipe} from "@angular/common";
+import {ElementSizePipe} from "../../pipes/ElementSizePipe";
+import {PackageComplexityPipe} from "../../pipes/PackageComplexityPipe";
 
 @Component({
   selector: 'app-package-overview',
@@ -18,7 +20,11 @@ import {BreadcrumbsComponent, home, packageOverview} from "../breadcrumbs/breadc
     CardModule,
     SharedModule,
     TableModule,
-    BreadcrumbsComponent
+    BreadcrumbsComponent,
+    PercentPipe,
+    DecimalPipe,
+    ElementSizePipe,
+    PackageComplexityPipe
   ],
   templateUrl: './package-overview.component.html',
   styleUrl: './package-overview.component.css'
@@ -43,10 +49,6 @@ export class PackageOverviewComponent {
       home,
       packageOverview
     ]);
-
-  // TODO: Convert to pipe
-  protected readonly toPercentString = toPercentString;
-  protected readonly toPercent = toPercent;
 
   viewPackageDetail($event: TableRowSelectEvent) {
     this.#router.navigate(['/package-classes-overview/', $event.data.packageName]);

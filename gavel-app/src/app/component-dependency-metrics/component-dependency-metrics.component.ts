@@ -12,7 +12,7 @@ import {KnobModule} from "primeng/knob";
 import {FormsModule} from "@angular/forms";
 import {ProgressBarModule} from "primeng/progressbar";
 import {MeterGroupModule} from "primeng/metergroup";
-import {NgForOf} from "@angular/common";
+import {PercentPipe} from "@angular/common";
 import {
   ComponentDependencyMetricsDiagramComponent
 } from "../component-dependency-metrics-diagram/component-dependency-metrics-diagram.component";
@@ -42,8 +42,8 @@ class KeyInsights {
     FormsModule,
     ProgressBarModule,
     MeterGroupModule,
-    NgForOf,
-    ComponentDependencyMetricsDiagramComponent
+    ComponentDependencyMetricsDiagramComponent,
+    PercentPipe
   ],
   templateUrl: './component-dependency-metrics.component.html',
   styleUrl: './component-dependency-metrics.component.css'
@@ -105,6 +105,4 @@ export class ComponentDependencyMetricsComponent {
   public determineZone(measurement: ComponentDependency): string {
     return DependencyZone[this.#service.determineZone(measurement)];
   }
-
-  protected readonly calculatePercentString = calculatePercentString;
 }

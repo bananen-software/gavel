@@ -53,7 +53,7 @@
           <td>
             {{ metric.targetClassName }}
           </td>
-          <td>{{ toPercentString(toPercent(metric.changeCoupling, 1)) }}</td>
+          <td>{{ metric.changeCoupling | percent }}</td>
           <td class="numeric">{{ metric.numberOfSharedChanges }}</td>
           <td class="numeric">{{ metric.totalChanges }}</td>
         </tr>

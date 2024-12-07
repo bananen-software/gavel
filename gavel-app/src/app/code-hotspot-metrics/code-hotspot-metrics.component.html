@@ -47,12 +47,12 @@
         <tr>
           <td>{{ metric.className }}</td>
           <td>{{ metric.packageName }}</td>
-          <td class="numeric">{{ metric.numberOfChanges }}</td>
-          <td>{{ metric.complexityRating }}</td>
-          <td>{{ metric.size }}</td>
-          <td>{{ metric.numberOfAuthors }}</td>
-          <td>{{ metric.defectDensity }}</td>
-          <td>{{ metric.lastModified }}</td>
+          <td class="numeric">{{ metric.numberOfChanges | number }}</td>
+          <td>{{ metric.complexityRating | classComplexity }}</td>
+          <td>{{ metric.size  | elementSize }}</td>
+          <td>{{ metric.numberOfAuthors | number }}</td>
+          <td>{{ metric.defectDensity | number }}</td>
+          <td>{{ metric.lastModified | date }}</td>
         </tr>
       </ng-template>
     </p-table>

@@ -5,6 +5,9 @@ import CodeHotspotMetricsService, {CodeHotspot} from "./code-hotspot-metrics.ser
 import {CardModule} from "primeng/card";
 import {SharedModule} from "primeng/api";
 import {TableModule} from "primeng/table";
+import {DatePipe, DecimalPipe} from "@angular/common";
+import {ElementSizePipe} from "../../pipes/ElementSizePipe";
+import ClassComplexityPipe from "../../pipes/ClassComplexityPipe";
 
 @Component({
   selector: 'app-code-hotspot-metrics',
@@ -13,7 +16,11 @@ import {TableModule} from "primeng/table";
     ViewLayoutComponent,
     CardModule,
     SharedModule,
-    TableModule
+    TableModule,
+    DecimalPipe,
+    DatePipe,
+    ElementSizePipe,
+    ClassComplexityPipe
   ],
   templateUrl: './code-hotspot-metrics.component.html',
   styleUrl: './code-hotspot-metrics.component.css'

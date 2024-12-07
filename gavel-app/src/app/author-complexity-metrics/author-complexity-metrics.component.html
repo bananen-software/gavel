@@ -33,9 +33,9 @@
             {{ metric.name }}<br/>
             <span class="author-email">{{ metric.email }}</span>
           </td>
-          <td class="numeric">{{ metric.complexityDelta }}</td>
-          <td class="numeric">{{ metric.numberOfChanges }}</td>
-          <td class="numeric">{{ metric.averageComplexityAdded }}</td>
+          <td class="numeric">{{ metric.complexityDelta | number }}</td>
+          <td class="numeric">{{ metric.numberOfChanges | number }}</td>
+          <td class="numeric">{{ metric.averageComplexityAdded | number }}</td>
         </tr>
       </ng-template>
     </p-table>

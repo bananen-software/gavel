@@ -4,7 +4,7 @@ import {ViewLayoutComponent} from "../view-layout/view-layout.component";
 import {toSignal} from "@angular/core/rxjs-interop";
 import ChangeCouplingService, {ChangeCoupling} from "./change-coupling.service";
 import {TableModule} from "primeng/table";
-import {toPercent, toPercentString} from "../../util/math-helpers";
+import {PercentPipe} from "@angular/common";
 
 @Component({
   selector: 'app-change-coupling',
@@ -12,7 +12,8 @@ import {toPercent, toPercentString} from "../../util/math-helpers";
   imports: [
     CardModule,
     ViewLayoutComponent,
-    TableModule
+    TableModule,
+    PercentPipe
   ],
   templateUrl: './change-coupling.component.html',
   styleUrl: './change-coupling.component.css'
@@ -27,6 +28,4 @@ export class ChangeCouplingComponent {
   protected readonly loading: Signal<boolean> = computed(() => {
     return this.metrics().length == 0;
   });
-  protected readonly toPercentString = toPercentString;
-  protected readonly toPercent = toPercent;
 }

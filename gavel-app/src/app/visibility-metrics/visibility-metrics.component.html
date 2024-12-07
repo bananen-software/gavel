@@ -16,9 +16,9 @@
       <ng-template pTemplate="body" let-metric>
         <tr>
           <td>{{ metric.packageName }}</td>
-          <td class="numeric">{{ toPercentString(toPercent(metric.relativeVisibility, 1)) }}</td>
-          <td class="numeric">{{ toPercentString(toPercent(metric.averageRelativeVisibility, 1)) }}</td>
-          <td class="numeric">{{ toPercentString(toPercent(metric.globalRelativeVisibility, 1)) }}</td>
+          <td class="numeric">{{ metric.relativeVisibility | percent }}</td>
+          <td class="numeric">{{ metric.averageRelativeVisibility | percent }}</td>
+          <td class="numeric">{{ metric.globalRelativeVisibility | percent }}</td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">

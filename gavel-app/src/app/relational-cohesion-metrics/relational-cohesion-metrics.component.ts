@@ -8,6 +8,8 @@ import {calculatePercentString} from "../../util/math-helpers";
 import {IconFieldModule} from "primeng/iconfield";
 import {InputIconModule} from "primeng/inputicon";
 import {InputTextModule} from "primeng/inputtext";
+import {DecimalPipe} from "@angular/common";
+import RelationalCohesionStatusPipe from "../../pipes/RelationalCohesionStatusPipe";
 
 class KeyInsights {
   constructor(public okCount: number,
@@ -29,7 +31,9 @@ class KeyInsights {
     TableModule,
     IconFieldModule,
     InputIconModule,
-    InputTextModule
+    InputTextModule,
+    DecimalPipe,
+    RelationalCohesionStatusPipe
   ],
   templateUrl: './relational-cohesion-metrics.component.html',
   styleUrl: './relational-cohesion-metrics.component.css'

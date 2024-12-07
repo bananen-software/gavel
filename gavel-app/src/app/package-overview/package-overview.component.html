@@ -46,14 +46,14 @@
       <ng-template pTemplate="body" let-metric>
         <tr [pSelectableRow]="metric">
           <td>{{ metric.packageName }}</td>
-          <td>{{ metric.size }}</td>
-          <td>{{ metric.packageComplexity }}</td>
-          <td>{{ metric.numberOfTypes }}</td>
-          <td>{{ metric.complexity }}</td>
-          <td>{{ toPercentString(toPercent(metric.commentToCodeRatio, 1)) }} ({{ metric.totalLinesOfComments }}
+          <td>{{ metric.size | elementSize }}</td>
+          <td>{{ metric.packageComplexity | packageComplexity }}</td>
+          <td>{{ metric.numberOfTypes | number }}</td>
+          <td>{{ metric.complexity | number }}</td>
+          <td>{{ metric.commentToCodeRatio | percent }} ({{ metric.totalLinesOfComments }}
             / {{ metric.totalLinesOfCode }})
           </td>
-          <td>{{ metric.defectDensity }}</td>
+          <td>{{ metric.defectDensity | number }}</td>
 
         </tr>
       </ng-template>

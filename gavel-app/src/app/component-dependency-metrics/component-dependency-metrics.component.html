@@ -85,9 +85,9 @@
           <td>{{ determineZone(metric) }}</td>
           <td class="numeric">{{ metric.afferentCoupling }}</td>
           <td class="numeric">{{ metric.efferentCoupling }}</td>
-          <td class="numeric">{{ calculatePercentString(metric.instability, 1) }}</td>
-          <td class="numeric">{{ calculatePercentString(metric.abstractness, 1) }}</td>
-          <td class="numeric">{{ calculatePercentString(metric.normalizedDistanceFromMainSequence, 1) }}</td>
+          <td class="numeric">{{ metric.instability | percent }}</td>
+          <td class="numeric">{{ metric.abstractness | percent }}</td>
+          <td class="numeric">{{ metric.normalizedDistanceFromMainSequence | percent }}</td>
         </tr>
       </ng-template>
     </p-table>
