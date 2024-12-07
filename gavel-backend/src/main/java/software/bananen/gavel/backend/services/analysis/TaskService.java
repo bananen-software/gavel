@@ -70,6 +70,7 @@ public class TaskService {
     private final OWASPDependencyCheckAdapter owaspDependencyCheckAdapter;
     private final ClassFindingRepository classFindingRepository;
     private final ChangeCouplingRepository changeCouplingRepository;
+    private final MeasureWhitespaceComplexityService measureWhitespaceComplexityService;
 
     public TaskService(@Autowired final WorkspaceRepository workspaceRepository,
                        @Autowired final ProjectRepository projectRepository,
@@ -91,7 +92,8 @@ public class TaskService {
                        @Autowired final SpotbugsAdapter spotbugsAdapter,
                        @Autowired final OWASPDependencyCheckAdapter owaspDependencyCheckAdapter,
                        @Autowired final ClassFindingRepository classFindingRepository,
-                       @Autowired final ChangeCouplingRepository changeCouplingRepository) {
+                       @Autowired final ChangeCouplingRepository changeCouplingRepository,
+                       @Autowired final MeasureWhitespaceComplexityService measureWhitespaceComplexityService) {
         this.projectRepository = projectRepository;
         this.workspaceRepository = workspaceRepository;
         this.authorService = authorService;
@@ -113,6 +115,7 @@ public class TaskService {
         this.owaspDependencyCheckAdapter = owaspDependencyCheckAdapter;
         this.classFindingRepository = classFindingRepository;
         this.changeCouplingRepository = changeCouplingRepository;
+        this.measureWhitespaceComplexityService = measureWhitespaceComplexityService;
     }
 
     @Transactional
@@ -207,7 +210,8 @@ public class TaskService {
                         packageComplexityService,
                         packageLinesOfCodeService,
                         projectFileService,
-                        changeCouplingRepository
+                        changeCouplingRepository,
+                        measureWhitespaceComplexityService
                 ),
                 new RunStaticCodeAnalysisStep(
                         taskId,

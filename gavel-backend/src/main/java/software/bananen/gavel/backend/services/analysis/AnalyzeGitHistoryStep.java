@@ -43,6 +43,7 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
     private final PackageLinesOfCodeService packageLinesOfCodeService;
     private final ProjectFileService projectFileService;
     private final ChangeCouplingRepository changeCouplingRepository;
+    private final MeasureWhitespaceComplexityService measureWhitespaceComplexityService;
 
     /**
      * Creates a new instance.
@@ -60,7 +61,8 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
                                  final PackageComplexityService packageComplexityService,
                                  final PackageLinesOfCodeService packageLinesOfCodeService,
                                  final ProjectFileService projectFileService,
-                                 final ChangeCouplingRepository changeCouplingRepository) {
+                                 final ChangeCouplingRepository changeCouplingRepository,
+                                 final MeasureWhitespaceComplexityService measureWhitespaceComplexityService) {
         super(taskId, STEP_NAME);
         this.project = project;
         this.authorService = authorService;
@@ -73,6 +75,7 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
         this.packageLinesOfCodeService = packageLinesOfCodeService;
         this.projectFileService = projectFileService;
         this.changeCouplingRepository = changeCouplingRepository;
+        this.measureWhitespaceComplexityService = measureWhitespaceComplexityService;
     }
 
     /**
@@ -166,7 +169,7 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
 
                                         return entity;
                                     });
-                    
+
                     changeCouplingEntity.setTotalChanges(sourceClass.getNumberOfChanges());
                     changeCouplingEntity.setCoupledChanges(changeCouplingEntity.getCoupledChanges() + 1);
                     changeCouplingEntity.setChangeCoupling(
@@ -193,7 +196,8 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
                     JAVA_PARSER_SERVICE.getPackageNameFrom(parseResult.get());
             final String className =
                     JAVA_PARSER_SERVICE.getClassNameFrom(parseResult.get());
-            final Integer complexity = measureComplexity(content);
+            final Integer complexity =
+                    measureWhitespaceComplexityService.measure(content);
 
             final int commentLines =
                     JAVA_PARSER_SERVICE.countCommentLines(parseResult.get());
@@ -257,12 +261,5 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
         return path.endsWith(".java") &&
                 !path.endsWith("module-info.java") &&
                 !path.endsWith("package-info.java");
-    }
-
-    private static Integer measureComplexity(final String content) {
-        return content.lines()
-                .map(GitUtil::calculateWhitespaceComplexity)
-                .mapToInt(Integer::intValue)
-                .sum();
     }
 }
