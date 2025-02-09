@@ -15,6 +15,7 @@ import {
   packageClassesOverview,
   packageOverview
 } from "../breadcrumbs/breadcrumbs.component";
+import ClassComplexityPipe from "../../pipes/ClassComplexityPipe";
 
 @Component({
   selector: 'app-package-classes-overview',
@@ -28,7 +29,8 @@ import {
     BreadcrumbsComponent,
     PercentPipe,
     DecimalPipe,
-    DatePipe
+    DatePipe,
+    ClassComplexityPipe
   ],
   templateUrl: './package-classes-overview.component.html',
   styleUrl: './package-classes-overview.component.css'

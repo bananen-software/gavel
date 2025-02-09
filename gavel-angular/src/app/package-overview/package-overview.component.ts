@@ -10,6 +10,22 @@ import {BreadcrumbsComponent, home, packageOverview} from "../breadcrumbs/breadc
 import {DecimalPipe, PercentPipe} from "@angular/common";
 import {ElementSizePipe} from "../../pipes/ElementSizePipe";
 import {PackageComplexityPipe} from "../../pipes/PackageComplexityPipe";
+import {ChartModule} from 'primeng/chart';
+import {
+  PackageComplexityDistributionCardComponent
+} from "../package-complexity-distribution-card/package-complexity-distribution-card.component";
+import {
+  PackageSizeDistributionCardComponent
+} from "../package-size-distribution-card/package-size-distribution-card.component";
+
+export type PieChartDataSet = {
+  data: number[];
+};
+
+export type PieChartData = {
+  labels: string[],
+  datasets: PieChartDataSet[]
+};
 
 @Component({
   selector: 'app-package-overview',
@@ -23,7 +39,10 @@ import {PackageComplexityPipe} from "../../pipes/PackageComplexityPipe";
     PercentPipe,
     DecimalPipe,
     ElementSizePipe,
-    PackageComplexityPipe
+    PackageComplexityPipe,
+    ChartModule,
+    PackageComplexityDistributionCardComponent,
+    PackageSizeDistributionCardComponent
   ],
   templateUrl: './package-overview.component.html',
   styleUrl: './package-overview.component.css'

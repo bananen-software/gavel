@@ -50,7 +50,7 @@
       <ng-template pTemplate="body" let-metric>
         <tr>
           <td>{{ metric.className }}</td>
-          <td>{{ metric.complexityRating }} ({{ metric.complexity }})</td>
+          <td>{{ metric.complexityRating | classComplexity }} ({{ metric.complexity | number }})</td>
           <td>{{ metric.lastModified | date }}</td>
           <td>{{ metric.numberOfChanges | number }}</td>
           <td>{{ metric.numberOfAuthors | number }}</td>

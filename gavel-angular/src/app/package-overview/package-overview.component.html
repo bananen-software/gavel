@@ -1,6 +1,13 @@
 <app-view-layout>
   <app-breadcrumbs [breadcrumbs]="breadcrumbs()"></app-breadcrumbs>
 
+  <div
+    style="display: flex; grid-gap: var(--mat-toolbar-title-text-line-height)">
+
+    <app-package-size-distribution-card [metrics]="metrics()"/>
+    <app-package-complexity-distribution-card [metrics]="metrics()"/>
+  </div>
+
   <p-card header="Raw data">
     <p-table [value]="metrics()"
              [rows]="10"
