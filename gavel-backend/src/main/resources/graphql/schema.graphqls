@@ -1,0 +1,59 @@
+type Query {
+    projectById(id: Int): Project,
+    packageById(id: Int): Package,
+    packagesByProject(projectId: Int): [Package!]!
+    classesByPackage(packageId: Int): [Class!]!
+}
+
+type Project {
+    id: ID,
+    name: String
+    analysisStatus: String,
+    lastAnalyzed: String,
+    packages: [Package!]!
+}
+
+type Package {
+    id: ID,
+    name: String,
+    complexity: Int,
+    complexityRating: String
+    complexityOrdinal: Int,
+    numberOfTypes: Int,
+    defectDensity: Float,
+    highDefectDensity: Float,
+    linesOfCode: Int,
+    linesOfComments: Int,
+    commentToCodeRatio: Float,
+    numberOfVeryHighComplexityTypes: Int,
+    numberOfHighComplexityTypes: Int,
+    numberOfMediumComplexityTypes: Int,
+    numberOfLowComplexityTypes: Int,
+    numberOfHighPriorityFindings: Int,
+    totalNumberOfFindings: Int,
+    size: String,
+    project: Project,
+    classes: [Class!]!
+}
+
+type Class {
+    id: ID,
+    packageId: Int,
+    name: String,
+    programmingLanguage: String,
+    lastModified: String,
+    numberOfChanges: Int,
+    numberOfAuthors: Int,
+    complexity: Int,
+    complexityRating: String,
+    totalLinesOfCode: Int,
+    totalLinesOfComments: Int,
+    commentToCodeRatio: Float,
+    numberOfResponsibilities: Int,
+    status: String,
+    totalNumberOfFindings: Int,
+    numberOfHighPriorityFindings: Int,
+    defectDensity: Float,
+    highDefectDensity: Float,
+    package: Package
+}

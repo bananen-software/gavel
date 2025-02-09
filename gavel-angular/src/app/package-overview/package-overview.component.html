@@ -9,7 +9,7 @@
              [loading]="loading()"
              selectionMode="single"
              (onRowSelect)="viewPackageDetail($event)"
-             sortField="packageComplexityOrdinal"
+             sortField="complexityOrdinal"
              [sortOrder]="-1">
       <ng-template pTemplate="header">
         <tr>
@@ -21,17 +21,13 @@
             Size
             <p-sortIcon field="totalLinesOfCode"></p-sortIcon>
           </th>
-          <th scope="col" pSortableColumn="packageComplexityOrdinal">
+          <th scope="col" pSortableColumn="complexityOrdinal">
             Complexity Rating
-            <p-sortIcon field="packageComplexity"></p-sortIcon>
+            <p-sortIcon field="complexityOrdinal"></p-sortIcon>
           </th>
           <th scope="col" pSortableColumn="numberOfTypes">
             Number of Types
             <p-sortIcon field="numberOfTypes"></p-sortIcon>
-          </th>
-          <th scope="col" pSortableColumn="complexity">
-            Complexity
-            <p-sortIcon field="complexity"></p-sortIcon>
           </th>
           <th scope="col" pSortableColumn="commentToCodeRatio">
             Comment to Code Ratio
@@ -46,15 +42,12 @@
       <ng-template pTemplate="body" let-metric>
         <tr [pSelectableRow]="metric">
           <td>{{ metric.packageName }}</td>
-          <td>{{ metric.size | elementSize }}</td>
-          <td>{{ metric.packageComplexity | packageComplexity }}</td>
+          <td>{{ metric.size | elementSize }} ({{ metric.totalLinesOfCode | number }})</td>
+          <td>{{ metric.packageComplexity | packageComplexity }} ({{ metric.complexity | number }})</td>
           <td>{{ metric.numberOfTypes | number }}</td>
-          <td>{{ metric.complexity | number }}</td>
-          <td>{{ metric.commentToCodeRatio | percent }} ({{ metric.totalLinesOfComments }}
-            / {{ metric.totalLinesOfCode }})
+          <td>{{ metric.commentToCodeRatio | percent }}
           </td>
-          <td>{{ metric.defectDensity | number }}</td>
-
+          <td>{{ metric.defectDensity | number: '1.0-0' }}</td>
         </tr>
       </ng-template>
     </p-table>

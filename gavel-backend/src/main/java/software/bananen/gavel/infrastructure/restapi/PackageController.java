@@ -7,7 +7,10 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import software.bananen.gavel.backend.services.usecases.*;
+import software.bananen.gavel.backend.services.usecases.ClassOverviewResponseModel;
+import software.bananen.gavel.backend.services.usecases.FetchPackageUseCase;
+import software.bananen.gavel.backend.services.usecases.ListClassesInPackageUseCase;
+import software.bananen.gavel.backend.services.usecases.PackageOverviewResponseModel;
 
 import java.util.Collection;
 
@@ -15,28 +18,15 @@ import java.util.Collection;
 @RequestMapping(value = "/packages")
 public class PackageController {
 
-    private final ListPackagesUseCase listPackagesUseCase;
     private final FetchPackageUseCase fetchPackageUseCase;
     private final ListClassesInPackageUseCase listClassesInPackageUseCase;
 
     public PackageController(
-            @Autowired ListPackagesUseCase listPackagesUseCase,
             @Autowired FetchPackageUseCase fetchPackageUseCase,
             @Autowired ListClassesInPackageUseCase listClassesInPackageUseCase) {
-        this.listPackagesUseCase = listPackagesUseCase;
         this.fetchPackageUseCase = fetchPackageUseCase;
         this.listClassesInPackageUseCase = listClassesInPackageUseCase;
     }
-
-
-    @CrossOrigin(origins = "http://localhost:4200")
-    @GetMapping("/")
-    public ResponseEntity<Collection<PackageOverviewResponseModel>> loadPackages() {
-        return listPackagesUseCase.load()
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
 
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/{packageName}")

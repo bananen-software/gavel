@@ -6,7 +6,6 @@ import {CardModule} from "primeng/card";
 import {MenuItem, SharedModule} from "primeng/api";
 import {TableModule, TableRowSelectEvent} from "primeng/table";
 import {Router} from "@angular/router";
-import {precisionRound} from "d3";
 import {BreadcrumbsComponent, home, packageOverview} from "../breadcrumbs/breadcrumbs.component";
 import {DecimalPipe, PercentPipe} from "@angular/common";
 import {ElementSizePipe} from "../../pipes/ElementSizePipe";
@@ -53,6 +52,4 @@ export class PackageOverviewComponent {
   viewPackageDetail($event: TableRowSelectEvent) {
     this.#router.navigate(['/package-classes-overview/', $event.data.packageName]);
   }
-
-  protected readonly precisionRound = precisionRound;
 }

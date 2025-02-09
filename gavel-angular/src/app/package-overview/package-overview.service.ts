@@ -1,39 +1,70 @@
 import {Injectable} from "@angular/core";
-import {Observable} from "rxjs";
-import {HttpClient} from "@angular/common/http";
+import {map, Observable} from "rxjs";
+import {Apollo, gql} from "apollo-angular";
 
-export type ClassComplexityRatings = {
-  lowComplexityPercentage: number;
-  mediumComplexityPercentage: number;
-  highComplexityPercentage: number;
-  veryHighComplexityPercentage: number;
-};
+const QUERY_DATA = gql`
+  query packageOverview {
+    projectById(id: 1) {
+      id
+      name
+      packages {
+        id
+        name
+        size,
+        complexityRating,
+        complexityOrdinal,
+        numberOfTypes,
+        complexity,
+        commentToCodeRatio,
+        linesOfCode,
+        linesOfComments,
+        defectDensity
+      }
+    }
+  }
+`
 
 export type PackageOverview = {
   packageName: string;
   complexity: number;
+  complexityOrdinal: number;
+  commentToCodeRatio: number;
   totalLinesOfCode: number;
   totalLinesOfComments: number;
   size: "SMALL" | "MEDIUM" | "LARGE" | "UNKNOWN" | "VERY_LARGE";
   packageComplexity: "MOSTLY_SIMPLE" | "BALANCED" | "COMPLEX" | "HIGHLY_COMPLEX";
   numberOfTypes: number;
-  classComplexityRatings: ClassComplexityRatings;
-  numberOfFindings: number;
-  numberOfHighFindings: number;
   defectDensity: number;
-  highDefectDensity: number;
 };
 
 @Injectable({
   providedIn: 'root'
 })
 export class PackageOverviewService {
-  constructor(private httpClient: HttpClient) {
+  constructor(private graphqlClient: Apollo) {
   }
 
   public loadMetrics(): Observable<PackageOverview[]> {
-    //TODO: Handle errors
-    // ZOD validation?
-    return this.httpClient.get<PackageOverview[]>("http://127.0.0.1:8080/packages/");
+    return this.graphqlClient.watchQuery({
+      query: QUERY_DATA,
+      variables: {
+        id: 1,
+      },
+    }).valueChanges.pipe(map(result => {// @ts-ignore
+      return result.data?.projectById.packages.map(pkg => {
+        return {
+          packageName: pkg.name,
+          complexity: pkg.complexity,
+          complexityOrdinal: pkg.complexityOrdinal,
+          commentToCodeRatio: pkg.commentToCodeRatio,
+          totalLinesOfCode: pkg.linesOfCode,
+          totalLinesOfComments: pkg.linesOfComments,
+          size: pkg.size,
+          packageComplexity: pkg.complexityRating,
+          numberOfTypes: pkg.numberOfTypes,
+          defectDensity: pkg.defectDensity
+        }
+      });
+    }));
   }
 }
