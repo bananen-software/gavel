@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import software.bananen.gavel.infrastructure.persistence.jpa.ClassEntity;
 import software.bananen.gavel.infrastructure.persistence.jpa.ClassRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.ComponentDependencyMetricEntity;
 import software.bananen.gavel.infrastructure.persistence.jpa.ComponentDependencyMetricsRepository;
 import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectRepository;
 import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
@@ -78,42 +79,46 @@ public class GraphqlController {
 
     @SchemaMapping(field = "packages", typeName = "Project")
     public List<PackageReadModel> projectToPackages(final ProjectReadModel project) {
-        return packagesByProject(project.id);
+        return packagesByProject(project.id());
     }
 
     @SchemaMapping(field = "project", typeName = "Package")
     public ProjectReadModel packageToProject(final PackageReadModel pkg) {
-        return projectById(pkg.projectId);
+        return projectById(pkg.projectId());
     }
 
     @SchemaMapping(field = "classes", typeName = "Package")
     public List<ClassReadModel> packageToClasses(final PackageReadModel pkg) {
-        return classesByPackage(pkg.id);
+        return classesByPackage(pkg.id());
     }
 
     @SchemaMapping(field = "package", typeName = "Class")
     public PackageReadModel classToPackage(final ClassReadModel clazz) {
-        return packageById(clazz.packageId);
+        return packageById(clazz.packageId());
     }
 
     @SchemaMapping(field = "relationalCohesion", typeName = "Package")
     public RelationalCohesionReadModel packageToRelationalCohesion(final PackageReadModel pkg) {
-        return relationalCohesionRepository.findByPackageFieldId(pkg.id)
+        return relationalCohesionRepository.findByPackageFieldId(pkg.id())
                 .map(mapToRelationalCohesionReadModel())
                 .orElse(null);
     }
 
     @SchemaMapping(field = "componentDependency", typeName = "Package")
     public ComponentDependencyReadModel packageToComponentDependency(final PackageReadModel pkg) {
-        return componentDependencyMetricsRepository.findByPackageFieldId(pkg.id)
-                .map(e -> new ComponentDependencyReadModel(
-                        e.getAfferentCoupling(),
-                        e.getEfferentCoupling(),
-                        e.getAbstractness(),
-                        e.getInstability(),
-                        e.getDistance()
-                ))
+        return componentDependencyMetricsRepository.findByPackageFieldId(pkg.id())
+                .map(toComponentDependencyReadModel())
                 .orElse(null);
+    }
+
+    private static Function<ComponentDependencyMetricEntity, ComponentDependencyReadModel> toComponentDependencyReadModel() {
+        return e -> new ComponentDependencyReadModel(
+                e.getAfferentCoupling(),
+                e.getEfferentCoupling(),
+                e.getAbstractness(),
+                e.getInstability(),
+                e.getDistance()
+        );
     }
 
     private Function<RelationalCohesionMetricEntity, RelationalCohesionReadModel> mapToRelationalCohesionReadModel() {
@@ -123,70 +128,6 @@ public class GraphqlController {
                 metric.getNumberOfInternalRelationships(),
                 metric.getRelationalCohesion()
         );
-    }
-
-    public record ProjectReadModel(int id,
-                                   String name,
-                                   String analysisStatus,
-                                   String lastAnalyzed) {
-    }
-
-    public record PackageReadModel(int id,
-                                   int projectId,
-                                   String name,
-                                   Integer complexity,
-                                   String complexityRating,
-                                   Double commentToCodeRatio,
-                                   double defectDensity,
-                                   double highDefectDensity,
-                                   Integer linesOfCode,
-                                   Integer linesOfComments,
-                                   Integer numberOfVeryHighComplexityTypes,
-                                   Integer numberOfHighComplexityTypes,
-                                   Integer numberOfMediumComplexityTypes,
-                                   Integer numberOfLowComplexityTypes,
-                                   Integer numberOfHighPriorityFindings,
-                                   Integer totalNumberOfFindings,
-                                   String size,
-                                   Integer numberOfTypes,
-                                   int complexityOrdinal) {
-
-    }
-
-    public record ClassReadModel(int id,
-                                 int packageId,
-                                 String name,
-                                 String programmingLanguage,
-                                 String lastModified,
-                                 int numberOfChanges,
-                                 int numberOfAuthors,
-                                 int complexity,
-                                 String complexityRating,
-                                 int totalLinesOfCode,
-                                 int totalLinesOfComments,
-                                 double commentToCodeRatio,
-                                 int numberOfResponsibilities,
-                                 String status,
-                                 int totalNumberOfFindings,
-                                 int numberOfHighPriorityFindings,
-                                 double defectDensity,
-                                 double highDefectDensity) {
-
-    }
-
-    public record RelationalCohesionReadModel(
-            String rating,
-            int numberOfTypes,
-            int numberOfInternalRelationships,
-            double relationalCohesion) {
-    }
-
-    public record ComponentDependencyReadModel(
-            int afferentCoupling,
-            int efferentCoupling,
-            double abstractness,
-            double instability,
-            double distance) {
     }
 
     private static Function<PackageEntity, PackageReadModel> toPackageReadModel() {
