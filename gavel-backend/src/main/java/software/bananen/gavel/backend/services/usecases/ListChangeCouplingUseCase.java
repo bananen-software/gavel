@@ -1,8 +1,8 @@
 package software.bananen.gavel.backend.services.usecases;
 
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.backend.entity.ChangeCouplingEntity;
-import software.bananen.gavel.backend.repository.ChangeCouplingRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.ChangeCouplingEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.ChangeCouplingRepository;
 
 import java.util.Collection;
 import java.util.function.Function;

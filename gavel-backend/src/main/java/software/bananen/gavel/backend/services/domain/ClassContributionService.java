@@ -2,14 +2,13 @@ package software.bananen.gavel.backend.services.domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.backend.entity.AuthorEntity;
-import software.bananen.gavel.backend.entity.ClassContributionEntity;
-import software.bananen.gavel.backend.entity.ClassEntity;
-import software.bananen.gavel.backend.repository.ClassContributionRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.AuthorEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.ClassContributionEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.ClassContributionRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.ClassEntity;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -54,13 +53,8 @@ public class ClassContributionService {
             contribution.setAuthor(authorEntity);
             contribution.setClassField(classEntity);
 
-            Set<ClassContributionEntity> classContributions = classEntity.getClassContributions();
-            classContributions.add(contribution);
-            classEntity.setClassContributions(classContributions);
-
-            Set<ClassContributionEntity> authorContributions = authorEntity.getClassContributions();
-            authorContributions.add(contribution);
-            authorEntity.setClassContributions(authorContributions);
+            classEntity.getClassContributions().add(contribution);
+            authorEntity.getClassContributions().add(contribution);
 
             return contribution;
         };

@@ -1,7 +1,9 @@
 rootProject.name = 'gavel'
 
+include 'gavel-application'
 include 'gavel-backend'
 include 'gavel-behavioral-analysis'
+include 'gavel-domain'
 include 'gavel-static-analysis'
 
 include 'gavel-adapter'

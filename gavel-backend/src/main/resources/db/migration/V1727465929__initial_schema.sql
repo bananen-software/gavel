@@ -23,10 +23,12 @@ create table "workspaces"
 
 create table "projects"
 (
-    "id"        bigint GENERATED ALWAYS AS IDENTITY,
-    "name"      text not null,
-    "path"      text not null,
-    "workspace" bigint references workspaces ("id"),
+    "id"              bigint GENERATED ALWAYS AS IDENTITY,
+    "name"            text not null,
+    "path"            text not null,
+    "workspace"       bigint references workspaces ("id"),
+    "last_analyzed"   timestamp with time zone,
+    "analysis_status" int  not null,
 
     primary key ("id")
 );
@@ -175,10 +177,10 @@ create table "authors"
 create table "class_contributions"
 (
     "id"             bigint GENERATED ALWAYS AS IDENTITY,
-    "class"          bigint    not null references "classes" ("id"),
-    "timestamp"      timestamp not null,
-    "vcs_identifier" text      not null,
-    "author"         int       not null references "authors" ("id"),
+    "class"          bigint                   not null references "classes" ("id"),
+    "timestamp"      timestamp with time zone not null,
+    "vcs_identifier" text                     not null,
+    "author"         int                      not null references "authors" ("id"),
 
     primary key ("id")
 );

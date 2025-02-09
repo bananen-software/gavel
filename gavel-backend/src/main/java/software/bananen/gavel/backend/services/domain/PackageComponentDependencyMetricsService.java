@@ -2,9 +2,9 @@ package software.bananen.gavel.backend.services.domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.backend.entity.ComponentDependencyMetricEntity;
-import software.bananen.gavel.backend.entity.PackageEntity;
-import software.bananen.gavel.backend.repository.PackageComponentDependencyMetricsRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.ComponentDependencyMetricEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.PackageComponentDependencyMetricsRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
 import software.bananen.gavel.staticanalysis.ComponentDependency;
 
 import java.util.HashSet;

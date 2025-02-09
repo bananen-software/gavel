@@ -3,11 +3,7 @@ package software.bananen.gavel.backend.services.usecases;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import software.bananen.gavel.backend.entity.CumulativeComponentDependencyEntity;
-import software.bananen.gavel.backend.entity.PackageEntity;
-import software.bananen.gavel.backend.entity.ProjectEntity;
-import software.bananen.gavel.backend.entity.WorkspaceEntity;
-import software.bananen.gavel.backend.repository.WorkspaceRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.*;
 
 import java.util.ArrayList;
 import java.util.Collection;

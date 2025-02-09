@@ -1,7 +1,5 @@
 package software.bananen.gavel.backend.services.usecases;
 
-import software.bananen.gavel.backend.domain.PackageComplexity;
-import software.bananen.gavel.backend.domain.Size;
 
 public record PackageOverviewResponseModel(
         String packageName,
@@ -9,8 +7,8 @@ public record PackageOverviewResponseModel(
         int totalLinesOfCode,
         int totalLinesOfComments,
         double commentToCodeRatio,
-        Size size,
-        PackageComplexity packageComplexity,
+        String size,
+        String packageComplexity,
         int packageComplexityOrdinal,
         int numberOfTypes,
         ClassComplexityRatingResponseModel classComplexityRatings,

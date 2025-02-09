@@ -13,6 +13,11 @@ import java.util.Collection;
 public interface ProjectDependencyCheckAdapter {
 
     /**
+     * Updates the sources for the dependency check.
+     */
+    void updateSources() throws StaticAnalysisAdapterException;
+
+    /**
      * Checks the dependencies of the given project path.
      *
      * @param projectPath The project path.

@@ -2,11 +2,11 @@ package software.bananen.gavel.backend.services.domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.backend.domain.PackageComplexity;
-import software.bananen.gavel.backend.domain.Size;
-import software.bananen.gavel.backend.entity.PackageEntity;
-import software.bananen.gavel.backend.entity.ProjectEntity;
-import software.bananen.gavel.backend.repository.PackageRepository;
+import software.bananen.gavel.domain.model.PackageComplexityRating;
+import software.bananen.gavel.domain.model.Size;
+import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.PackageRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity;
 
 import java.util.Optional;
 
@@ -33,7 +33,7 @@ public class PackageService {
     /**
      * Maps the given measurement and packages to a {@link PackageEntity}
      *
-     * @param packageName The package name
+     * @param packageName The package value
      * @param project     The project entity.
      * @return The mapping function.
      */
@@ -53,7 +53,7 @@ public class PackageService {
         pkg.setNumberOfHighComplexityTypes(0);
         pkg.setNumberOfVeryHighComplexityTypes(0);
         pkg.setSize(Size.UNKNOWN);
-        pkg.setComplexityRating(PackageComplexity.EMPTY);
+        pkg.setComplexityRating(PackageComplexityRating.EMPTY);
         pkg.setTotalNumberOfFindings(0);
         pkg.setNumberOfHighPriorityFindings(0);
         pkg.setDefectDensity(0.0);

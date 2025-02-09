@@ -29,7 +29,7 @@ public final class PMDAdapter implements StaticCodeAnalysisAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(PMDAdapter.class);
 
     private static final URL DEFAULT_RULESET_PATH =
-            requireNonNull(PMDAdapter.class.getClassLoader()
+            requireNonNull(Thread.currentThread().getContextClassLoader()
                     .getResource("rulesets/default-ruleset.xml"));
 
     private final String rulesetPath;

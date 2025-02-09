@@ -1,9 +1,9 @@
 package software.bananen.gavel.backend.services.domain;
 
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.backend.entity.PackageEntity;
-import software.bananen.gavel.backend.entity.VisibilityMetricEntity;
-import software.bananen.gavel.backend.repository.PackageVisibilityMetricsRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.PackageVisibilityMetricsRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.VisibilityMetricEntity;
 import software.bananen.gavel.staticanalysis.ComponentVisibility;
 
 import java.util.HashSet;

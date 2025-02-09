@@ -52,12 +52,11 @@ public final class OWASPDependencyCheckAdapter implements ProjectDependencyCheck
         settings.setStringIfNotEmpty(Settings.KEYS.NVD_API_KEY, nvdApiKey);
     }
 
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public Collection<ProjectDependency> checkDependencies(final File projectPath) throws StaticAnalysisAdapterException {
+    public void updateSources() throws StaticAnalysisAdapterException {
         try (Engine engine = new Engine(settings)) {
             LOGGER.info("Perform updates");
             try {
@@ -66,7 +65,15 @@ public final class OWASPDependencyCheckAdapter implements ProjectDependencyCheck
                 throw new StaticAnalysisAdapterException("Failed to update dependencies", e);
             }
             LOGGER.info("Completed updates");
+        }
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<ProjectDependency> checkDependencies(final File projectPath) throws StaticAnalysisAdapterException {
+        try (Engine engine = new Engine(settings)) {
             LOGGER.info("Scanning project path: {}", projectPath);
             engine.scan(projectPath);
             LOGGER.info("Scanned project path: {}", projectPath);
@@ -114,6 +121,12 @@ public final class OWASPDependencyCheckAdapter implements ProjectDependencyCheck
         );
     }
 
+    /**
+     * Retrieves the score from the given vulnerability.
+     *
+     * @param vulnerability The vulnerability.
+     * @return The score.
+     */
     private static Double getScore(final Vulnerability vulnerability) {
         return Optional.ofNullable(vulnerability.getCvssV4())
                 .map(CvssV4::getCvssData)

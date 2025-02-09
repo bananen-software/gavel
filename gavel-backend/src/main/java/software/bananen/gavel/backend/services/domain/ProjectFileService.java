@@ -1,9 +1,9 @@
 package software.bananen.gavel.backend.services.domain;
 
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.backend.entity.ProjectEntity;
-import software.bananen.gavel.backend.entity.ProjectFileEntity;
-import software.bananen.gavel.backend.repository.ProjectFileRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.ProjectFileEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.ProjectFileRepository;
 
 import java.util.Optional;
 

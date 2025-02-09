@@ -2,13 +2,14 @@ package software.bananen.gavel.backend.services.domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.backend.domain.Size;
-import software.bananen.gavel.backend.entity.*;
-import software.bananen.gavel.backend.repository.PackageLinesOfCodeRepository;
+import software.bananen.gavel.domain.model.Size;
+import software.bananen.gavel.domain.service.MeasureCommentToCodeRatioService;
+import software.bananen.gavel.domain.service.RatePackageSizeService;
+import software.bananen.gavel.infrastructure.persistence.jpa.*;
 
 import java.util.Comparator;
 import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 
 @Service
 public class PackageLinesOfCodeService {
@@ -23,31 +24,30 @@ public class PackageLinesOfCodeService {
     public void createOrUpdate(final PackageEntity packageEntity) {
         int packageLines = measurePackageLines(packageEntity);
         int packageCommentLines = measurePackageCommentLines(packageEntity);
-        double packageCodeToCommentRatio =
-                packageLines > 0 ?
-                        (packageCommentLines / (double) packageLines) :
-                        0;
+        final double packageCodeToCommentRatio =
+                new MeasureCommentToCodeRatioService().measure(packageLines, packageCommentLines);
 
-        final Set<PackageLinesOfCodeEntity> values = new LinkedHashSet<>();
         final PackageLinesOfCodeEntity packageLinesOfCodeEntity =
                 packageEntity.getPackageLinesOfCodeEntities()
                         .stream()
                         .findFirst()
                         .orElse(new PackageLinesOfCodeEntity());
 
+        final Size packageSize = new RatePackageSizeService().rate(packageLines);
+
+        packageLinesOfCodeEntity.setPackageField(packageEntity);
         packageLinesOfCodeEntity.setTotalLinesOfCode(packageLines);
         packageLinesOfCodeEntity.setTotalLinesOfComment(packageCommentLines);
         packageLinesOfCodeEntity.setCommentToCodeRatio(packageCodeToCommentRatio);
-        packageLinesOfCodeEntity.setPackageSize(Size.getPackageSize(packageLines));
+        packageLinesOfCodeEntity.setPackageSize(packageSize);
 
-        packageLinesOfCodeEntity.setPackageField(packageEntity);
-        values.add(packageLinesOfCodeEntity);
-        packageEntity.setPackageLinesOfCodeEntities(values);
+        packageEntity.setPackageLinesOfCodeEntities(
+                new LinkedHashSet<>(List.of(packageLinesOfCodeEntity)));
 
         packageEntity.setLinesOfCode(packageLines);
         packageEntity.setLinesOfComments(packageCommentLines);
         packageEntity.setCommentToCodeRatio(packageCodeToCommentRatio);
-        packageEntity.setSize(Size.getPackageSize(packageLines));
+        packageEntity.setSize(packageSize);
 
         repository.save(packageLinesOfCodeEntity);
     }

@@ -1,10 +1,10 @@
 package software.bananen.gavel.backend.services.domain;
 
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.backend.domain.RelationalCohesionRating;
-import software.bananen.gavel.backend.entity.PackageEntity;
-import software.bananen.gavel.backend.entity.RelationalCohesionMetricEntity;
-import software.bananen.gavel.backend.repository.PackageRelationalCohesionMetricsRepository;
+import software.bananen.gavel.domain.service.RateRelationalCohesionService;
+import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.PackageRelationalCohesionMetricsRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.RelationalCohesionMetricEntity;
 import software.bananen.gavel.staticanalysis.RelationalCohesion;
 
 import java.util.HashSet;
@@ -24,7 +24,7 @@ public class PackageRelationalCohesionMetricsService {
         RelationalCohesionMetricEntity entity = repository.findByPackageField(packageEntity)
                 .orElse(new RelationalCohesionMetricEntity());
 
-        entity.setRating(RelationalCohesionRating.getCohesionRating(measurement.relationalCohesion()));
+        entity.setRating(new RateRelationalCohesionService().rate(measurement.relationalCohesion()));
         entity.setRelationalCohesion(measurement.relationalCohesion());
         entity.setNumberOfInternalRelationships(measurement.numberOfInternalRelationships());
         entity.setNumberOfTypes(measurement.numberOfTypes());

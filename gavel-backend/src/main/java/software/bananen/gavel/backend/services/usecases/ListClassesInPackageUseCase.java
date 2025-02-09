@@ -3,10 +3,10 @@ package software.bananen.gavel.backend.services.usecases;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import software.bananen.gavel.backend.entity.ClassEntity;
-import software.bananen.gavel.backend.entity.PackageEntity;
-import software.bananen.gavel.backend.entity.ProjectEntity;
-import software.bananen.gavel.backend.repository.ProjectRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.ClassEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,10 +16,10 @@ import java.util.Optional;
 @Service
 public class ListClassesInPackageUseCase {
 
-    private final ProjectRepository projectRepository;
+    private final JpaProjectRepository projectRepository;
 
     public ListClassesInPackageUseCase(
-            @Autowired final ProjectRepository projectRepository) {
+            @Autowired final JpaProjectRepository projectRepository) {
         this.projectRepository = projectRepository;
     }
 
@@ -52,7 +52,7 @@ public class ListClassesInPackageUseCase {
                     classEntity.getNumberOfChanges(),
                     classEntity.getNumberOfAuthors(),
                     classEntity.getComplexity(),
-                    classEntity.getComplexityRating(),
+                    classEntity.getComplexityRating().name(),
                     classEntity.getTotalLinesOfCode(),
                     classEntity.getTotalLinesOfComments(),
                     classEntity.getCommentToCodeRatio(),

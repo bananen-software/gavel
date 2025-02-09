@@ -1,14 +1,16 @@
 package software.bananen.gavel.backend.services.analysis;
 
-import software.bananen.gavel.backend.entity.ClassEntity;
-import software.bananen.gavel.backend.entity.PackageEntity;
-import software.bananen.gavel.backend.entity.ProjectEntity;
 import software.bananen.gavel.backend.services.domain.ClassCohesionService;
 import software.bananen.gavel.backend.services.domain.ClassService;
 import software.bananen.gavel.backend.services.domain.PackageService;
 import software.bananen.gavel.contextloader.ProjectContext;
+import software.bananen.gavel.infrastructure.persistence.jpa.ClassEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity;
 import software.bananen.gavel.staticanalysis.LCOM4Metric;
 import software.bananen.gavel.staticanalysis.LCOM4MetricsService;
+
+import static java.util.Objects.requireNonNull;
 
 public class AnalyzeLCOM4MetricStep extends AbstractAnalysisStep {
 
@@ -23,23 +25,33 @@ public class AnalyzeLCOM4MetricStep extends AbstractAnalysisStep {
     /**
      * Creates a new instance.
      *
-     * @param taskId The ID of the task that the step belongs to.
+     * @param service
+     * @param projectContext
+     * @param project
+     * @param packageService
+     * @param classService
+     * @param cohesionService
      */
-    public AnalyzeLCOM4MetricStep(final String taskId,
-                                  final LCOM4MetricsService service,
+    public AnalyzeLCOM4MetricStep(final LCOM4MetricsService service,
                                   final ProjectContext projectContext,
                                   final ProjectEntity project,
                                   final PackageService packageService,
                                   final ClassService classService,
                                   final ClassCohesionService cohesionService) {
-        super(taskId, STEP_NAME);
+        super(STEP_NAME);
 
-        this.service = service;
-        this.projectContext = projectContext;
-        this.project = project;
-        this.packageService = packageService;
-        this.classService = classService;
-        this.cohesionService = cohesionService;
+        this.service =
+                requireNonNull(service, "The service may not be null");
+        this.projectContext =
+                requireNonNull(projectContext, "The projectContext may not be null");
+        this.project =
+                requireNonNull(project, "The project may not be null");
+        this.packageService =
+                requireNonNull(packageService, "The packageService may not be null");
+        this.classService =
+                requireNonNull(classService, "The classService may not be null");
+        this.cohesionService =
+                requireNonNull(cohesionService, "The cohesionService may not be null");
     }
 
     /**

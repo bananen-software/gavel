@@ -2,9 +2,9 @@ package software.bananen.gavel.backend.services.domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.backend.entity.ClassCohesionEntity;
-import software.bananen.gavel.backend.entity.ClassEntity;
-import software.bananen.gavel.backend.repository.ClassCohesionRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.ClassCohesionEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.ClassCohesionRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.ClassEntity;
 
 import java.util.Optional;
 

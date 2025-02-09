@@ -1,9 +1,9 @@
 package software.bananen.gavel.backend.services.domain;
 
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.backend.entity.CumulativeComponentDependencyEntity;
-import software.bananen.gavel.backend.entity.PackageEntity;
-import software.bananen.gavel.backend.repository.PackageCumulativeComponentDependencyMetricsRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.CumulativeComponentDependencyEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.PackageCumulativeComponentDependencyMetricsRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
 import software.bananen.gavel.staticanalysis.CumulativeComponentDependency;
 
 import java.util.HashSet;

@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StopWatch;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * An abstract base class that can be used to implement analysis steps.
  */
@@ -11,20 +13,16 @@ public abstract class AbstractAnalysisStep implements Runnable {
 
     private static final Logger LOGGER =
             LoggerFactory.getLogger(AbstractAnalysisStep.class);
-    private final String taskId;
     private final String stepName;
 
     /**
      * Creates a new instance.
      *
-     * @param taskId   The ID of the task that the step belongs to.
-     * @param stepName The name of the step.
+     * @param stepName The value of the step.
      */
     public AbstractAnalysisStep(
-            final String taskId,
             final String stepName) {
-        this.taskId = taskId;
-        this.stepName = stepName;
+        this.stepName = requireNonNull(stepName, "The step value may not be null");
     }
 
     /**
@@ -34,11 +32,11 @@ public abstract class AbstractAnalysisStep implements Runnable {
     public final void run() {
         final StopWatch stopWatch = new StopWatch();
 
-        stopWatch.start();
-        LOGGER.info("[Task: {}] Running step: {}", taskId, stepName);
+        stopWatch.start(stepName);
+        LOGGER.info("Running step: {}", stepName);
         runAnalysis();
         stopWatch.stop();
-        LOGGER.info("[Task: {}] Completed Step: {} completed in {}ms", taskId, stepName, stopWatch.getTotalTimeMillis());
+        LOGGER.info("Completed Step: {} completed in {}ms", stepName, stopWatch.getTotalTimeMillis());
     }
 
     /**

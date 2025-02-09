@@ -1,0 +1,5 @@
+dependencies {
+    implementation project(':gavel-adapter')
+    implementation project(':gavel-domain')
+
+}

@@ -1,9 +1,14 @@
 package gavel.staticanalysis.adapter;
 
+import java.io.Serial;
+
 /**
  * An exception that can be thrown by analysis adapters.
  */
 public class StaticAnalysisAdapterException extends Exception {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     /**
      * Creates a new instance.

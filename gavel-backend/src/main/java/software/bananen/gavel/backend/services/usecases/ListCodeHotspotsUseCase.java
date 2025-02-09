@@ -2,10 +2,10 @@ package software.bananen.gavel.backend.services.usecases;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.backend.entity.ClassEntity;
-import software.bananen.gavel.backend.entity.PackageEntity;
-import software.bananen.gavel.backend.entity.ProjectEntity;
-import software.bananen.gavel.backend.repository.ProjectRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.ClassEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,9 +14,9 @@ import java.util.Optional;
 @Service
 public class ListCodeHotspotsUseCase {
 
-    private final ProjectRepository projectRepository;
+    private final JpaProjectRepository projectRepository;
 
-    public ListCodeHotspotsUseCase(@Autowired final ProjectRepository projectRepository) {
+    public ListCodeHotspotsUseCase(@Autowired final JpaProjectRepository projectRepository) {
         this.projectRepository = projectRepository;
     }
 
@@ -31,9 +31,9 @@ public class ListCodeHotspotsUseCase {
                             classEntity.getName(),
                             classEntity.getNumberOfChanges(),
                             classEntity.getComplexity(),
-                            classEntity.getComplexityRating(),
+                            classEntity.getComplexityRating().name(),
                             classEntity.getTotalLinesOfCode(),
-                            classEntity.getSize(),
+                            classEntity.getSize().name(),
                             classEntity.getLastModified(),
                             classEntity.getNumberOfAuthors(),
                             classEntity.getDefectDensity()

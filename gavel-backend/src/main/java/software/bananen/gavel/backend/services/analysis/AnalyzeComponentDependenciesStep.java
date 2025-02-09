@@ -1,15 +1,18 @@
 package software.bananen.gavel.backend.services.analysis;
 
-import software.bananen.gavel.backend.entity.PackageEntity;
-import software.bananen.gavel.backend.entity.ProjectEntity;
 import software.bananen.gavel.backend.services.domain.PackageComponentDependencyMetricsService;
 import software.bananen.gavel.backend.services.domain.PackageService;
 import software.bananen.gavel.contextloader.ProjectContext;
+import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity;
 import software.bananen.gavel.staticanalysis.ComponentDependency;
 import software.bananen.gavel.staticanalysis.ComponentDependencyMetricsService;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * A step that can be used to analyze the component dependencies of a project.
+ */
 public class AnalyzeComponentDependenciesStep extends AbstractAnalysisStep {
 
     private static final String STEP_NAME = "Analyze component dependencies";
@@ -23,26 +26,30 @@ public class AnalyzeComponentDependenciesStep extends AbstractAnalysisStep {
     /**
      * Creates a new instance.
      *
-     * @param taskId         The ID of the task.
-     * @param service        The service that should be used by the step.
-     * @param projectContext The project context that should be analyzed.
-     * @param project
+     * @param service                    The service that should be used by the step.
+     * @param projectContext             The project context that should be analyzed.
+     * @param project                    The project that should be analyzed.
+     * @param packageService             The package service.
+     * @param componentDependencyService The component dependency service.
      */
     public AnalyzeComponentDependenciesStep(
-            final String taskId,
             final ComponentDependencyMetricsService service,
             final ProjectContext projectContext,
             final ProjectEntity project,
             final PackageService packageService,
             final PackageComponentDependencyMetricsService componentDependencyService) {
-        super(taskId, STEP_NAME);
+        super(STEP_NAME);
 
-        this.service = requireNonNull(service, "The service may not be null");
+        this.service =
+                requireNonNull(service, "The service may not be null");
         this.projectContext =
                 requireNonNull(projectContext, "The project context may not be null");
-        this.project = project;
-        this.packageService = packageService;
-        this.componentDependencyService = componentDependencyService;
+        this.project =
+                requireNonNull(project, "The project may not be null");
+        this.packageService =
+                requireNonNull(packageService, "The package service may not be null");
+        this.componentDependencyService =
+                requireNonNull(componentDependencyService, "The component dependency metrics service may not be null");
     }
 
     /**

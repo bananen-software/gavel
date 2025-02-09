@@ -2,9 +2,9 @@ package software.bananen.gavel.backend.services.domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.backend.entity.AuthorEntity;
-import software.bananen.gavel.backend.repository.AuthorRepository;
 import software.bananen.gavel.behavioralanalysis.Author;
+import software.bananen.gavel.infrastructure.persistence.jpa.AuthorEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.AuthorRepository;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -30,7 +30,7 @@ public class AuthorService {
     }
 
     /**
-     * Finds an existing author matching the name and email or creates one if
+     * Finds an existing author matching the value and email or creates one if
      * it does not exist.
      *
      * @param author The authors' data.

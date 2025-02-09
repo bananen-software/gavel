@@ -2,14 +2,12 @@ package software.bananen.gavel.backend.services.domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.backend.domain.Size;
-import software.bananen.gavel.backend.entity.ClassContributionEntity;
-import software.bananen.gavel.backend.entity.ClassEntity;
-import software.bananen.gavel.backend.entity.ClassLinesOfCodeEntity;
-import software.bananen.gavel.backend.repository.ClassLinesOfCodeRepository;
+import software.bananen.gavel.domain.service.RateClassSizeService;
+import software.bananen.gavel.infrastructure.persistence.jpa.ClassContributionEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.ClassEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.ClassLinesOfCodeEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.ClassLinesOfCodeRepository;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -45,26 +43,28 @@ public class ClassLinesOfCodeService {
         final Integer addedLinesOfComments =
                 commentLines - latestLinesOfComments;
 
+        final var size = new RateClassSizeService().rate(totalLines);
+
         final ClassLinesOfCodeEntity measuredLinesOfCode =
                 repository.findByContribution(contribution).orElse(new ClassLinesOfCodeEntity());
 
         measuredLinesOfCode.setTotalLinesOfCode(totalLines);
         measuredLinesOfCode.setCommentToCodeRatio(commentToCodeRatio);
         measuredLinesOfCode.setTotalLinesOfComment(commentLines);
-        measuredLinesOfCode.setSize(Size.getClassSize(totalLines));
+        measuredLinesOfCode.setSize(size);
         measuredLinesOfCode.setAddedLinesOfCode(addedLinesOfCode);
         measuredLinesOfCode.setAddedLinesOfComment(addedLinesOfComments);
 
         measuredLinesOfCode.setContribution(contribution);
 
-        contribution.setClassLinesOfCodes(new HashSet<>(List.of(measuredLinesOfCode)));
+        contribution.getClassLinesOfCodes().add(measuredLinesOfCode);
 
         final ClassEntity classEntity = contribution.getClassField();
 
         classEntity.setTotalLinesOfComments(commentLines);
         classEntity.setTotalLinesOfCode(totalLines);
         classEntity.setCommentToCodeRatio(commentToCodeRatio);
-        classEntity.setSize(Size.getClassSize(totalLines));
+        classEntity.setSize(size);
 
         repository.save(measuredLinesOfCode);
     }

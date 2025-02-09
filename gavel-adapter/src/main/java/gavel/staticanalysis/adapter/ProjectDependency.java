@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 /**
- * A model that represents a projects dependency.
+ * A model that represents a projects' dependency.
  *
  * @param name                 The name of the dependency
  * @param fileName             The file name.

@@ -1,9 +1,14 @@
 package software.bananen.gavel.contextloader;
 
+import java.io.Serial;
+
 /**
  * An exception that is thrown when the project context could not be loaded.
  */
 public class ProjectContextLoaderException extends Exception {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     /**
      * Creates a new instance.

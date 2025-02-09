@@ -33,7 +33,6 @@ dependencies {
     testImplementation 'org.assertj:assertj-core:3.26.3'
 }
 
-
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
@@ -54,4 +53,44 @@ jar {
 
 application {
     mainClass = 'software.bananen.gavel.cli.Application'
+}
+
+configure(subprojects.findAll()) {
+    repositories {
+        mavenCentral()
+        maven { url = 'https://repo.spring.io/milestone' }
+    }
+
+    apply plugin: 'java'
+    apply plugin: 'java-library'
+    apply plugin: 'idea'
+    apply plugin: 'pmd'
+
+    group = 'software.bananen'
+    version = '0.0.1-SNAPSHOT'
+
+    dependencies {
+        implementation 'org.slf4j:slf4j-api:2.0.12'
+
+        testImplementation platform('org.junit:junit-bom:5.10.3')
+        testImplementation 'org.junit.jupiter:junit-jupiter'
+        testImplementation 'org.assertj:assertj-core:3.26.3'
+        testImplementation 'org.mockito:mockito-core:5.15.2'
+    }
+
+    pmd {
+        sourceSets = [sourceSets.main]
+
+        toolVersion = "7.5.0"
+    }
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+    }
+
+    test {
+        useJUnitPlatform()
+    }
 }

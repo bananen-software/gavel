@@ -2,11 +2,10 @@ package software.bananen.gavel.backend.services.domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.backend.domain.ClassStatus;
-import software.bananen.gavel.backend.domain.ComplexityRating;
-import software.bananen.gavel.backend.domain.PackageComplexity;
-import software.bananen.gavel.backend.entity.*;
-import software.bananen.gavel.backend.repository.PackageComplexityRepository;
+import software.bananen.gavel.domain.model.ClassComplexityRating;
+import software.bananen.gavel.domain.model.ClassStatus;
+import software.bananen.gavel.domain.service.RatePackageComplexityService;
+import software.bananen.gavel.infrastructure.persistence.jpa.*;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,7 +26,7 @@ public class PackageComplexityService {
                         .findFirst()
                         .orElse(new PackageComplexityEntity());
 
-        final Map<ComplexityRating, Integer> complexityTypes =
+        final Map<ClassComplexityRating, Integer> complexityTypes =
                 measureComplexityTypes(packageEntity);
 
         complexityTypes.values()
@@ -36,13 +35,13 @@ public class PackageComplexityService {
                 .ifPresent(packageEntity::setNumberOfTypes);
 
         packageEntity.setNumberOfLowComplexityTypes(
-                complexityTypes.getOrDefault(ComplexityRating.LOW, 0));
+                complexityTypes.getOrDefault(ClassComplexityRating.LOW, 0));
         packageEntity.setNumberOfMediumComplexityTypes(
-                complexityTypes.getOrDefault(ComplexityRating.MEDIUM, 0));
+                complexityTypes.getOrDefault(ClassComplexityRating.MEDIUM, 0));
         packageEntity.setNumberOfHighComplexityTypes(
-                complexityTypes.getOrDefault(ComplexityRating.HIGH, 0));
+                complexityTypes.getOrDefault(ClassComplexityRating.HIGH, 0));
         packageEntity.setNumberOfVeryHighComplexityTypes(
-                complexityTypes.getOrDefault(ComplexityRating.VERY_HIGH, 0));
+                complexityTypes.getOrDefault(ClassComplexityRating.VERY_HIGH, 0));
 
         final int packageComplexity = measurePackageComplexity(packageEntity);
 
@@ -54,7 +53,7 @@ public class PackageComplexityService {
                 new LinkedHashSet<>(Set.of(packageComplexityEntity))
         );
         packageEntity.setComplexityRating(
-                PackageComplexity.determine(
+                new RatePackageComplexityService().rate(
                         packageEntity.getNumberOfLowComplexityTypes(),
                         packageEntity.getNumberOfMediumComplexityTypes(),
                         packageEntity.getNumberOfHighComplexityTypes(),
@@ -80,8 +79,8 @@ public class PackageComplexityService {
         return packageComplexity;
     }
 
-    private Map<ComplexityRating, Integer> measureComplexityTypes(final PackageEntity packageEntity) {
-        final Map<ComplexityRating, Integer> result = new ConcurrentHashMap<>();
+    private Map<ClassComplexityRating, Integer> measureComplexityTypes(final PackageEntity packageEntity) {
+        final Map<ClassComplexityRating, Integer> result = new ConcurrentHashMap<>();
 
         for (final ClassEntity classEntity :
                 packageEntity.getClasses().stream().filter(e -> Objects

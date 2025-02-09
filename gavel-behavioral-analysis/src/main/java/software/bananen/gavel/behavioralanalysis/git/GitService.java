@@ -13,8 +13,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * A service that generates hotspot metrics based on the git version control
- * system.
+ * A service that allows to interact with an existing git repository.
  */
 public final class GitService {
 

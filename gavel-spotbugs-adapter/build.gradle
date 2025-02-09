@@ -1,32 +1,5 @@
-plugins {
-    id 'java'
-    id 'java-library'
-}
-
-group = 'software.bananen'
-version = '0.0.1-SNAPSHOT'
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
-}
-
-repositories {
-    mavenCentral()
-    maven { url 'https://repo.spring.io/milestone' }
-}
-
 dependencies {
     api project(':gavel-adapter')
     implementation 'com.github.spotbugs:spotbugs:4.8.4'
     implementation 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.13.0'
-
-    testImplementation platform('org.junit:junit-bom:5.10.3')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testImplementation 'org.assertj:assertj-core:3.26.3'
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
 }

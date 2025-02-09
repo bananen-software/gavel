@@ -1,7 +1,7 @@
 package software.bananen.gavel.backend.services.analysis;
 
-import software.bananen.gavel.backend.entity.ProjectEntity;
 import software.bananen.gavel.contextloader.ProjectContext;
+import software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity;
 import software.bananen.gavel.staticanalysis.DepthOfInheritanceTree;
 import software.bananen.gavel.staticanalysis.DepthOfInheritanceTreeMetricsService;
 
@@ -17,20 +17,22 @@ public class AnalyzeDepthOfInheritanceTreeStep extends AbstractAnalysisStep {
     /**
      * Creates a new instance.
      *
-     * @param taskId         The ID of the task.
      * @param service        The service that should be used by the step.
      * @param projectContext The project context that should be analyzed.
+     * @param project
      */
     public AnalyzeDepthOfInheritanceTreeStep(
-            final String taskId,
             final DepthOfInheritanceTreeMetricsService service,
             final ProjectContext projectContext,
             final ProjectEntity project) {
-        super(taskId, STEP_NAME);
-        this.service = requireNonNull(service, "The service may not be null");
+        super(STEP_NAME);
+
+        this.service =
+                requireNonNull(service, "The service may not be null");
         this.projectContext =
                 requireNonNull(projectContext, "The project context may not be null");
-        this.project = project;
+        this.project =
+                requireNonNull(project, "The project may not be null");
     }
 
     /**

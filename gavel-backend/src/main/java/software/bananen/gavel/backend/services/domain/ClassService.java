@@ -2,12 +2,12 @@ package software.bananen.gavel.backend.services.domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.backend.domain.ClassStatus;
-import software.bananen.gavel.backend.domain.ComplexityRating;
-import software.bananen.gavel.backend.domain.Size;
-import software.bananen.gavel.backend.entity.ClassEntity;
-import software.bananen.gavel.backend.entity.PackageEntity;
-import software.bananen.gavel.backend.repository.ClassRepository;
+import software.bananen.gavel.domain.model.ClassComplexityRating;
+import software.bananen.gavel.domain.model.ClassStatus;
+import software.bananen.gavel.domain.model.Size;
+import software.bananen.gavel.infrastructure.persistence.jpa.ClassEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.ClassRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -42,7 +42,7 @@ public class ClassService {
             classEntity.setPackageField(packageEntity);
             classEntity.setLastModified(LocalDateTime.now());
             classEntity.setComplexity(0);
-            classEntity.setComplexityRating(ComplexityRating.EMPTY);
+            classEntity.setComplexityRating(ClassComplexityRating.EMPTY);
             classEntity.setNumberOfAuthors(0);
             classEntity.setNumberOfChanges(0);
             classEntity.setCommentToCodeRatio(0.0);

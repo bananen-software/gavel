@@ -4,17 +4,18 @@ import gavel.staticanalysis.adapter.Severity;
 import gavel.staticanalysis.adapter.StaticAnalysisAdapterException;
 import gavel.staticanalysis.adapter.StaticAnalysisClassFinding;
 import gavel.staticanalysis.adapter.StaticCodeAnalysisAdapter;
-import software.bananen.gavel.backend.entity.ClassEntity;
-import software.bananen.gavel.backend.entity.ClassFindingEntity;
-import software.bananen.gavel.backend.entity.PackageEntity;
-import software.bananen.gavel.backend.entity.ProjectEntity;
-import software.bananen.gavel.backend.repository.ClassFindingRepository;
 import software.bananen.gavel.backend.services.domain.ClassService;
 import software.bananen.gavel.backend.services.domain.PackageService;
+import software.bananen.gavel.infrastructure.persistence.jpa.*;
 
 import java.nio.file.Path;
 import java.util.Objects;
 
+import static java.util.Objects.requireNonNull;
+
+/**
+ * An analysis step that runs static code analysis tools.
+ */
 public class RunStaticCodeAnalysisStep extends AbstractAnalysisStep {
     private final StaticCodeAnalysisAdapter adapter;
     private final ProjectEntity project;
@@ -25,21 +26,29 @@ public class RunStaticCodeAnalysisStep extends AbstractAnalysisStep {
     /**
      * Creates a new instance.
      *
-     * @param taskId                 The ID of the task that the step belongs to.
+     * @param adapter
+     * @param project
+     * @param packageService
+     * @param classService
      * @param classFindingRepository
      */
-    public RunStaticCodeAnalysisStep(final String taskId,
-                                     final StaticCodeAnalysisAdapter adapter,
+    public RunStaticCodeAnalysisStep(final StaticCodeAnalysisAdapter adapter,
                                      final ProjectEntity project,
                                      final PackageService packageService,
                                      final ClassService classService,
                                      final ClassFindingRepository classFindingRepository) {
-        super(taskId, "Run static code analysis");
-        this.adapter = adapter;
-        this.project = project;
-        this.packageService = packageService;
-        this.classService = classService;
-        this.classFindingRepository = classFindingRepository;
+        super("Run static code analysis");
+
+        this.adapter =
+                requireNonNull(adapter, "The adapter may not be null");
+        this.project =
+                requireNonNull(project, "The project may not be null");
+        this.packageService =
+                requireNonNull(packageService, "The package service may not be null");
+        this.classService =
+                requireNonNull(classService, "The class service may not be null");
+        this.classFindingRepository =
+                requireNonNull(classFindingRepository, "The class finding repository may not be null");
     }
 
     /**
@@ -113,6 +122,13 @@ public class RunStaticCodeAnalysisStep extends AbstractAnalysisStep {
         }
     }
 
+    /**
+     * Calculates the defect density.
+     *
+     * @param findings    The number of findings.
+     * @param linesOfCode The lines of code.
+     * @return The defect density.
+     */
     private static double calculateDefectDensity(final int findings, final int linesOfCode) {
         return (findings * 1000) / (double) linesOfCode;
     }

@@ -145,35 +145,20 @@ public final class GitUtil {
             } catch (final MissingObjectException e) {
                 //TODO: Find out why this occurs sometimes
                 throw new IOException(
-                        String.format("Failed to load file content from revision %s",
-                                commit.getId()),
+                        "Failed to load file content from revision " + commit.getId(),
                         e);
             }
         }
     }
 
     /**
-     * Calculates the complexity of a line based on the leading whitespaces.
-     * <p>
-     * This is a technique derived from the books of Adam Tornhill.
+     * Retrieves the commits from old to new.
      *
-     * @param line The line.
-     * @return The number of leading whitespaces for the line.
+     * @param git The git repository.
+     * @return The commits.
+     * @throws IOException     Might be thrown in case that reading data fails.
+     * @throws GitAPIException Might be thrown in case that accessing the git repository failed.
      */
-    public static int calculateWhitespaceComplexity(final String line) {
-        int leadingSpaces = 0;
-
-        for (final char c : line.toCharArray()) {
-            if (c == ' ') {
-                leadingSpaces++;
-            } else {
-                break;
-            }
-        }
-
-        return leadingSpaces;
-    }
-
     public static Collection<RevCommit> getCommitsFromOldToNew(final Git git) throws IOException, GitAPIException {
         final List<RevCommit> commits = new ArrayList<>();
 
@@ -205,7 +190,7 @@ public final class GitUtil {
      * @return The loaded mailmap.
      * @throws IOException Might be thrown in case that loading the mailmap failed.
      */
-    public static Mailmap loadMailmap(Path path) throws IOException {
+    public static Mailmap loadMailmap(final Path path) throws IOException {
         final Mailmap mailmap = new Mailmap();
 
         final Path mailmapFile = path.resolve(".mailmap");
@@ -234,12 +219,14 @@ public final class GitUtil {
     }
 
 
-    public static RevCommit extractLatestCommitFrom(Git git) throws GitAPIException {
-        return git.
-                log().
-                setMaxCount(1).
-                call().
-                iterator().
-                next();
+    /**
+     * Extracts the latest commit from the given git repository.
+     *
+     * @param git The git repository.
+     * @return The latest commit.
+     * @throws GitAPIException Might be thrown in case that accessing the git repository failed.
+     */
+    public static RevCommit extractLatestCommitFrom(final Git git) throws GitAPIException {
+        return git.log().setMaxCount(1).call().iterator().next();
     }
 }

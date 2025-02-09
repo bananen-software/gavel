@@ -3,9 +3,9 @@ package software.bananen.gavel.backend.services.usecases;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import software.bananen.gavel.backend.entity.PackageEntity;
-import software.bananen.gavel.backend.entity.ProjectEntity;
-import software.bananen.gavel.backend.repository.ProjectRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -13,9 +13,9 @@ import java.util.Optional;
 @Service
 public class FetchPackageUseCase {
 
-    private final ProjectRepository projectRepository;
+    private final JpaProjectRepository projectRepository;
 
-    public FetchPackageUseCase(@Autowired final ProjectRepository projectRepository) {
+    public FetchPackageUseCase(@Autowired final JpaProjectRepository projectRepository) {
         this.projectRepository = projectRepository;
     }
 
@@ -42,8 +42,8 @@ public class FetchPackageUseCase {
                         packageEntity.getLinesOfCode(),
                         packageEntity.getLinesOfComments(),
                         packageEntity.getCommentToCodeRatio(),
-                        packageEntity.getSize(),
-                        packageEntity.getComplexityRating(),
+                        packageEntity.getSize().name(),
+                        packageEntity.getComplexityRating().name(),
                         packageEntity.getComplexityRating().ordinal(),
                         packageEntity.getNumberOfTypes(),
                         new ClassComplexityRatingResponseModel(
