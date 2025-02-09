@@ -1,8 +1,13 @@
-package software.bananen.gavel.infrastructure.persistence;
+package software.bananen.gavel.infrastructure.persistence.adapter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.domain.model.*;
+import software.bananen.gavel.domain.model.AnalysisStatus;
+import software.bananen.gavel.domain.model.ProjectAggregate;
+import software.bananen.gavel.domain.model.ProjectEntity;
+import software.bananen.gavel.domain.model.ProjectIdValueObject;
+import software.bananen.gavel.domain.model.ProjectNameValueObject;
+import software.bananen.gavel.domain.model.ProjectPathValueObject;
 import software.bananen.gavel.domain.ports.repositories.ProjectRepository;
 import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectRepository;
 

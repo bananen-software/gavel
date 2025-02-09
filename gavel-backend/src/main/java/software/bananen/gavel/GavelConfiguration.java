@@ -14,7 +14,7 @@ import software.bananen.gavel.domain.ports.repositories.ProjectRepository;
 import software.bananen.gavel.domain.service.MeasureWhitespaceComplexityService;
 import software.bananen.gavel.domain.service.WorkspaceService;
 import software.bananen.gavel.infrastructure.git.GitLocateProjectsInWorkspaceService;
-import software.bananen.gavel.infrastructure.persistence.WorkspaceRepositoryAdapter;
+import software.bananen.gavel.infrastructure.persistence.adapter.WorkspaceRepositoryAdapter;
 import software.bananen.gavel.ports.usecases.CreateWorkspaceUseCase;
 import software.bananen.gavel.ports.usecases.LocateProjectsInWorkspaceUseCase;
 import software.bananen.gavel.ports.usecases.ScheduleProjectAnalysisUseCase;

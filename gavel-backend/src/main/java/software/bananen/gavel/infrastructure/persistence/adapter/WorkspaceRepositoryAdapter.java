@@ -1,7 +1,13 @@
-package software.bananen.gavel.infrastructure.persistence;
+package software.bananen.gavel.infrastructure.persistence.adapter;
 
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.domain.model.*;
+import software.bananen.gavel.domain.model.WorkspaceAggregate;
+import software.bananen.gavel.domain.model.WorkspaceBasePackageValueObject;
+import software.bananen.gavel.domain.model.WorkspaceEntity;
+import software.bananen.gavel.domain.model.WorkspaceExcludedPathValueObject;
+import software.bananen.gavel.domain.model.WorkspaceIdValueObject;
+import software.bananen.gavel.domain.model.WorkspaceNameValueObject;
+import software.bananen.gavel.domain.model.WorkspacePathValueObject;
 import software.bananen.gavel.domain.ports.repositories.WorkspaceRepository;
 import software.bananen.gavel.infrastructure.persistence.jpa.JpaWorkspaceRepository;
 

@@ -18,7 +18,13 @@ const QUERY_DATA = gql`
         commentToCodeRatio,
         linesOfCode,
         linesOfComments,
-        defectDensity
+        defectDensity,
+        relationalCohesion {
+          rating,
+          numberOfTypes,
+          numberOfInternalRelationships,
+          relationalCohesion
+        }
       }
     }
   }
@@ -35,6 +41,7 @@ export type PackageOverview = {
   packageComplexity: "MOSTLY_SIMPLE" | "BALANCED" | "COMPLEX" | "HIGHLY_COMPLEX";
   numberOfTypes: number;
   defectDensity: number;
+  cohesion: "HIGH" | "GOOD" | "LOW" | "NONE"
 };
 
 @Injectable({
@@ -62,7 +69,8 @@ export class PackageOverviewService {
           size: pkg.size,
           packageComplexity: pkg.complexityRating,
           numberOfTypes: pkg.numberOfTypes,
-          defectDensity: pkg.defectDensity
+          defectDensity: pkg.defectDensity,
+          cohesion: pkg.relationalCohesion ? pkg.relationalCohesion.rating : "NONE",
         }
       });
     }));

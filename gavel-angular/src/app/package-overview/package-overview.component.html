@@ -40,6 +40,10 @@
             Comment to Code Ratio
             <p-sortIcon field="commentToCodeRatio"></p-sortIcon>
           </th>
+          <th scope="col" pSortableColumn="cohesion">
+            Relational Cohesion
+            <p-sortIcon field="cohesion"></p-sortIcon>
+          </th>
           <th scope="col" pSortableColumn="defectDensity">
             Defect Density
             <p-sortIcon field="defectDensity"></p-sortIcon>
@@ -53,6 +57,8 @@
           <td>{{ metric.packageComplexity | packageComplexity }} ({{ metric.complexity | number }})</td>
           <td>{{ metric.numberOfTypes | number }}</td>
           <td>{{ metric.commentToCodeRatio | percent }}
+          </td>
+          <td>{{ metric.cohesion }}
           </td>
           <td>{{ metric.defectDensity | number: '1.0-0' }}</td>
         </tr>

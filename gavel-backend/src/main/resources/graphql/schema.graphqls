@@ -33,7 +33,8 @@ type Package {
     totalNumberOfFindings: Int,
     size: String,
     project: Project,
-    classes: [Class!]!
+    classes: [Class!]!,
+    relationalCohesion: RelationalCohesion
 }
 
 type Class {
@@ -56,4 +57,11 @@ type Class {
     defectDensity: Float,
     highDefectDensity: Float,
     package: Package
+}
+
+type RelationalCohesion {
+    rating: String,
+    numberOfTypes: Int,
+    numberOfInternalRelationships: Int,
+    relationalCohesion: Float
 }

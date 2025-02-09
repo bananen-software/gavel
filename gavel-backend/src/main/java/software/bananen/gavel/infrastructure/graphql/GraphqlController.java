@@ -14,6 +14,8 @@ import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
 import software.bananen.gavel.infrastructure.persistence.jpa.PackageRepository;
 import software.bananen.gavel.infrastructure.persistence.jpa.ProgrammingLanguageEntity;
 import software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.RelationalCohesionMetricEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.RelationalCohesionRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,13 +30,16 @@ public class GraphqlController {
     private final JpaProjectRepository projectRepository;
     private final PackageRepository packageRepository;
     private final ClassRepository classRepository;
+    private final RelationalCohesionRepository relationalCohesionRepository;
 
     public GraphqlController(@Autowired JpaProjectRepository projectRepository,
                              @Autowired PackageRepository packageRepository,
-                             @Autowired ClassRepository classRepository) {
+                             @Autowired ClassRepository classRepository,
+                             @Autowired RelationalCohesionRepository relationalCohesionRepository) {
         this.projectRepository = projectRepository;
         this.packageRepository = packageRepository;
         this.classRepository = classRepository;
+        this.relationalCohesionRepository = relationalCohesionRepository;
     }
 
     @QueryMapping
@@ -87,6 +92,22 @@ public class GraphqlController {
         return packageById(clazz.packageId);
     }
 
+    @SchemaMapping(field = "relationalCohesion", typeName = "Package")
+    public RelationalCohesionReadModel packageToRelationalCohesion(final PackageReadModel pkg) {
+        return relationalCohesionRepository.findByPackageFieldId(pkg.id)
+                .map(mapToRelationalCohesionReadModel())
+                .orElse(null);
+    }
+
+    private Function<RelationalCohesionMetricEntity, RelationalCohesionReadModel> mapToRelationalCohesionReadModel() {
+        return metric -> new RelationalCohesionReadModel(
+                metric.getRating().name(),
+                metric.getNumberOfTypes(),
+                metric.getNumberOfInternalRelationships(),
+                metric.getRelationalCohesion()
+        );
+    }
+
     public record ProjectReadModel(int id,
                                    String name,
                                    String analysisStatus,
@@ -133,6 +154,14 @@ public class GraphqlController {
                                  int numberOfHighPriorityFindings,
                                  double defectDensity,
                                  double highDefectDensity) {
+
+    }
+
+    public record RelationalCohesionReadModel(
+            String rating,
+            int numberOfTypes,
+            int numberOfInternalRelationships,
+            double relationalCohesion) {
 
     }
 
