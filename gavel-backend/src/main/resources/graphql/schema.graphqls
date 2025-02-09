@@ -35,6 +35,7 @@ type Package {
     project: Project,
     classes: [Class!]!,
     relationalCohesion: RelationalCohesion
+    componentDependency: ComponentDependency
 }
 
 type Class {
@@ -64,4 +65,12 @@ type RelationalCohesion {
     numberOfTypes: Int,
     numberOfInternalRelationships: Int,
     relationalCohesion: Float
+}
+
+type ComponentDependency {
+    afferentCoupling: Int,
+    efferentCoupling: Int,
+    abstractness: Float,
+    instability: Float,
+    distance: Float
 }

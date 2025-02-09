@@ -3,7 +3,7 @@ package software.bananen.gavel.backend.services.domain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.bananen.gavel.infrastructure.persistence.jpa.ComponentDependencyMetricEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.PackageComponentDependencyMetricsRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.ComponentDependencyMetricsRepository;
 import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
 import software.bananen.gavel.staticanalysis.ComponentDependency;
 
@@ -13,10 +13,10 @@ import java.util.Set;
 @Service
 public class PackageComponentDependencyMetricsService {
 
-    private final PackageComponentDependencyMetricsRepository repository;
+    private final ComponentDependencyMetricsRepository repository;
 
     public PackageComponentDependencyMetricsService(
-            @Autowired PackageComponentDependencyMetricsRepository repository) {
+            @Autowired ComponentDependencyMetricsRepository repository) {
         this.repository = repository;
     }
 

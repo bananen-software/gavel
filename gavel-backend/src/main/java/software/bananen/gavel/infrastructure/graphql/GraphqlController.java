@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import software.bananen.gavel.infrastructure.persistence.jpa.ClassEntity;
 import software.bananen.gavel.infrastructure.persistence.jpa.ClassRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.ComponentDependencyMetricsRepository;
 import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectRepository;
 import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
 import software.bananen.gavel.infrastructure.persistence.jpa.PackageRepository;
@@ -31,15 +32,18 @@ public class GraphqlController {
     private final PackageRepository packageRepository;
     private final ClassRepository classRepository;
     private final RelationalCohesionRepository relationalCohesionRepository;
+    private final ComponentDependencyMetricsRepository componentDependencyMetricsRepository;
 
     public GraphqlController(@Autowired JpaProjectRepository projectRepository,
                              @Autowired PackageRepository packageRepository,
                              @Autowired ClassRepository classRepository,
-                             @Autowired RelationalCohesionRepository relationalCohesionRepository) {
+                             @Autowired RelationalCohesionRepository relationalCohesionRepository,
+                             @Autowired ComponentDependencyMetricsRepository componentDependencyMetricsRepository) {
         this.projectRepository = projectRepository;
         this.packageRepository = packageRepository;
         this.classRepository = classRepository;
         this.relationalCohesionRepository = relationalCohesionRepository;
+        this.componentDependencyMetricsRepository = componentDependencyMetricsRepository;
     }
 
     @QueryMapping
@@ -96,6 +100,19 @@ public class GraphqlController {
     public RelationalCohesionReadModel packageToRelationalCohesion(final PackageReadModel pkg) {
         return relationalCohesionRepository.findByPackageFieldId(pkg.id)
                 .map(mapToRelationalCohesionReadModel())
+                .orElse(null);
+    }
+
+    @SchemaMapping(field = "componentDependency", typeName = "Package")
+    public ComponentDependencyReadModel packageToComponentDependency(final PackageReadModel pkg) {
+        return componentDependencyMetricsRepository.findByPackageFieldId(pkg.id)
+                .map(e -> new ComponentDependencyReadModel(
+                        e.getAfferentCoupling(),
+                        e.getEfferentCoupling(),
+                        e.getAbstractness(),
+                        e.getInstability(),
+                        e.getDistance()
+                ))
                 .orElse(null);
     }
 
@@ -162,7 +179,14 @@ public class GraphqlController {
             int numberOfTypes,
             int numberOfInternalRelationships,
             double relationalCohesion) {
+    }
 
+    public record ComponentDependencyReadModel(
+            int afferentCoupling,
+            int efferentCoupling,
+            double abstractness,
+            double instability,
+            double distance) {
     }
 
     private static Function<PackageEntity, PackageReadModel> toPackageReadModel() {
