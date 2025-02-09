@@ -1,5 +1,5 @@
 dependencies {
-    api project(':gavel-adapter')
+    api project(':gavel-domain')
     implementation group: 'net.sourceforge.pmd', name: 'pmd-core', version: '7.6.0'
     implementation group: 'net.sourceforge.pmd', name: 'pmd-java', version: '7.6.0'
 }

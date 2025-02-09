@@ -1,9 +1,9 @@
 package software.bananen.gavel.backend.services.analysis;
 
-import gavel.staticanalysis.adapter.ProjectDependency;
-import gavel.staticanalysis.adapter.ProjectDependencyCheckAdapter;
-import gavel.staticanalysis.adapter.StaticAnalysisAdapterException;
 import software.bananen.gavel.backend.services.domain.ProjectService;
+import software.bananen.gavel.domain.ports.service.StaticAnalysisAdapterException;
+import software.bananen.gavel.domain.ports.service.VulnerabilityCheckAdapter;
+import software.bananen.gavel.domain.ports.service.VulnerableDependency;
 import software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity;
 
 import java.io.File;
@@ -14,7 +14,7 @@ public class RunDependencyCheckStep extends AbstractAnalysisStep {
 
     private final ProjectEntity project;
     private final ProjectService projectService;
-    private final ProjectDependencyCheckAdapter dependencyCheckAdapter;
+    private final VulnerabilityCheckAdapter dependencyCheckAdapter;
 
     /**
      * Creates a new instance.
@@ -25,7 +25,7 @@ public class RunDependencyCheckStep extends AbstractAnalysisStep {
      */
     public RunDependencyCheckStep(final ProjectEntity project,
                                   final ProjectService projectService,
-                                  final ProjectDependencyCheckAdapter dependencyCheckAdapter) {
+                                  final VulnerabilityCheckAdapter dependencyCheckAdapter) {
         super("OWASP Dependency Check");
 
         this.project =
@@ -44,11 +44,11 @@ public class RunDependencyCheckStep extends AbstractAnalysisStep {
         try {
             final File projectPath = new File(project.getPath());
 
-            for (final ProjectDependency projectDependency :
+            for (final VulnerableDependency vulnerableDependency :
                     dependencyCheckAdapter.checkDependencies(projectPath)) {
-                if (projectDependency.vulnerabilitiesCount() > 0) {
+                if (vulnerableDependency.vulnerabilitiesCount() > 0) {
                     //TODO: Record these vulnerabilities
-                    System.out.println("Found vulnerabilities: " + projectDependency);
+                    System.out.println("Found vulnerabilities: " + vulnerableDependency);
                 }
             }
         } catch (final StaticAnalysisAdapterException e) {

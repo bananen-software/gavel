@@ -1,4 +1,4 @@
-package gavel.staticanalysis.adapter;
+package software.bananen.gavel.domain.ports.service;
 
 import java.nio.file.Path;
 import java.util.Collection;

@@ -1,11 +1,11 @@
 package software.bananen.gavel.backend.services.analysis;
 
-import gavel.staticanalysis.adapter.Severity;
-import gavel.staticanalysis.adapter.StaticAnalysisAdapterException;
-import gavel.staticanalysis.adapter.StaticAnalysisClassFinding;
-import gavel.staticanalysis.adapter.StaticCodeAnalysisAdapter;
 import software.bananen.gavel.backend.services.domain.ClassService;
 import software.bananen.gavel.backend.services.domain.PackageService;
+import software.bananen.gavel.domain.ports.service.Severity;
+import software.bananen.gavel.domain.ports.service.StaticAnalysisAdapterException;
+import software.bananen.gavel.domain.ports.service.StaticAnalysisClassFinding;
+import software.bananen.gavel.domain.ports.service.StaticCodeAnalysisAdapter;
 import software.bananen.gavel.infrastructure.persistence.jpa.*;
 
 import java.nio.file.Path;

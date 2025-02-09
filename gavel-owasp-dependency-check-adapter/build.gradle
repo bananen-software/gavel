@@ -1,4 +1,4 @@
 dependencies {
-    api project(':gavel-adapter')
+    api project(':gavel-domain')
     implementation group: 'org.owasp', name: 'dependency-check-core', version: '11.0.0'
 }

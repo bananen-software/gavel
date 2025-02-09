@@ -1,8 +1,5 @@
 package gavel.staticanalysis.adapter.pmd;
 
-import gavel.staticanalysis.adapter.Severity;
-import gavel.staticanalysis.adapter.StaticAnalysisClassFinding;
-import gavel.staticanalysis.adapter.StaticCodeAnalysisAdapter;
 import net.sourceforge.pmd.PMDConfiguration;
 import net.sourceforge.pmd.PmdAnalysis;
 import net.sourceforge.pmd.lang.rule.RulePriority;
@@ -11,6 +8,9 @@ import net.sourceforge.pmd.reporting.RuleViolation;
 import net.sourceforge.pmd.util.log.internal.SimpleMessageReporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.bananen.gavel.domain.ports.service.Severity;
+import software.bananen.gavel.domain.ports.service.StaticAnalysisClassFinding;
+import software.bananen.gavel.domain.ports.service.StaticCodeAnalysisAdapter;
 
 import java.net.URL;
 import java.nio.file.Path;

@@ -1,7 +1,11 @@
 package gavel.staticanalysis.adapter.owaspdependencycheck;
 
-import gavel.staticanalysis.adapter.*;
-import io.github.jeremylong.openvulnerability.client.nvd.*;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV2;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV2Data;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV3;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV3Data;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV4;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV4Data;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -10,6 +14,11 @@ import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.bananen.gavel.domain.ports.service.StaticAnalysisAdapterException;
+import software.bananen.gavel.domain.ports.service.VulnerabilityCheckAdapter;
+import software.bananen.gavel.domain.ports.service.VulnerabilityFinding;
+import software.bananen.gavel.domain.ports.service.VulnerableDependency;
+import software.bananen.gavel.domain.service.RateCVEScoreService;
 
 import java.io.File;
 import java.util.Arrays;
@@ -20,7 +29,7 @@ import java.util.function.Function;
 /**
  * An adapter that allows to integrate the OWASP dependency check with gavel.
  */
-public final class OWASPDependencyCheckAdapter implements ProjectDependencyCheckAdapter {
+public final class OWASPDependencyCheckAdapter implements VulnerabilityCheckAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OWASPDependencyCheckAdapter.class);
 
@@ -72,7 +81,7 @@ public final class OWASPDependencyCheckAdapter implements ProjectDependencyCheck
      * {@inheritDoc}
      */
     @Override
-    public Collection<ProjectDependency> checkDependencies(final File projectPath) throws StaticAnalysisAdapterException {
+    public Collection<VulnerableDependency> checkDependencies(final File projectPath) throws StaticAnalysisAdapterException {
         try (Engine engine = new Engine(settings)) {
             LOGGER.info("Scanning project path: {}", projectPath);
             engine.scan(projectPath);
@@ -95,12 +104,11 @@ public final class OWASPDependencyCheckAdapter implements ProjectDependencyCheck
      *
      * @return The mapping function.
      */
-    private static Function<Dependency, ProjectDependency> mapDependency() {
-        return dependency -> new ProjectDependency(
+    private static Function<Dependency, VulnerableDependency> mapDependency() {
+        return dependency -> new VulnerableDependency(
                 dependency.getName(),
                 dependency.getFileName(),
                 dependency.getFilePath(),
-                Optional.ofNullable(dependency.getLicense()),
                 dependency.getVulnerabilitiesCount(),
                 dependency.getVulnerabilities().stream().map(mapVulnerability()).toList()
         );
@@ -116,7 +124,7 @@ public final class OWASPDependencyCheckAdapter implements ProjectDependencyCheck
                 vulnerability.getName(),
                 vulnerability.getDescription(),
                 getScore(vulnerability),
-                CVEScore.map(getScore(vulnerability)),
+                new RateCVEScoreService().rate(getScore(vulnerability)),
                 "https://nvd.nist.gov/vuln/detail/" + vulnerability.getName()
         );
     }

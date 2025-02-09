@@ -2,10 +2,10 @@ package gavel.staticanalysis.adapter.spotbugs;
 
 import edu.umd.cs.findbugs.*;
 import edu.umd.cs.findbugs.config.UserPreferences;
-import gavel.staticanalysis.adapter.Severity;
-import gavel.staticanalysis.adapter.StaticAnalysisAdapterException;
-import gavel.staticanalysis.adapter.StaticAnalysisClassFinding;
-import gavel.staticanalysis.adapter.StaticCodeAnalysisAdapter;
+import software.bananen.gavel.domain.ports.service.Severity;
+import software.bananen.gavel.domain.ports.service.StaticAnalysisAdapterException;
+import software.bananen.gavel.domain.ports.service.StaticAnalysisClassFinding;
+import software.bananen.gavel.domain.ports.service.StaticCodeAnalysisAdapter;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -49,7 +49,6 @@ public final class SpotbugsAdapter implements StaticCodeAnalysisAdapter {
                 project.addFile(projectPath.toString());
                 project.addSourceDirs(Stream.of(projectPath).map(Path::toString).toList());
                 project.addAuxClasspathEntry(javaHomeDirectory.resolve("lib/jrt-fs.jar").toString());
-
 
                 reporter.setPriorityThreshold(Priorities.NORMAL_PRIORITY);
                 engine.setBugReporter(reporter);
