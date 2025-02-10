@@ -7,22 +7,20 @@ import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import software.bananen.gavel.infrastructure.persistence.jpa.ClassEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.AuthorRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.ClassComplexityRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.ClassContributionRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.ClassFindingRepository;
 import software.bananen.gavel.infrastructure.persistence.jpa.ClassRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.ComponentDependencyMetricEntity;
 import software.bananen.gavel.infrastructure.persistence.jpa.ComponentDependencyMetricsRepository;
 import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
 import software.bananen.gavel.infrastructure.persistence.jpa.PackageRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.ProgrammingLanguageEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.RelationalCohesionMetricEntity;
 import software.bananen.gavel.infrastructure.persistence.jpa.RelationalCohesionRepository;
 
-import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
+
+import static software.bananen.gavel.infrastructure.graphql.ReadModelMappingUtils.*;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -34,17 +32,29 @@ public class GraphqlController {
     private final ClassRepository classRepository;
     private final RelationalCohesionRepository relationalCohesionRepository;
     private final ComponentDependencyMetricsRepository componentDependencyMetricsRepository;
+    private final ClassContributionRepository classContributionRepository;
+    private final AuthorRepository authorRepository;
+    private final ClassComplexityRepository classComplexityRepository;
+    private final ClassFindingRepository classFindingRepository;
 
     public GraphqlController(@Autowired JpaProjectRepository projectRepository,
                              @Autowired PackageRepository packageRepository,
                              @Autowired ClassRepository classRepository,
                              @Autowired RelationalCohesionRepository relationalCohesionRepository,
-                             @Autowired ComponentDependencyMetricsRepository componentDependencyMetricsRepository) {
+                             @Autowired ComponentDependencyMetricsRepository componentDependencyMetricsRepository,
+                             @Autowired ClassContributionRepository classContributionRepository,
+                             @Autowired AuthorRepository authorRepository,
+                             @Autowired ClassComplexityRepository classComplexityRepository,
+                             @Autowired ClassFindingRepository classFindingRepository) {
         this.projectRepository = projectRepository;
         this.packageRepository = packageRepository;
         this.classRepository = classRepository;
         this.relationalCohesionRepository = relationalCohesionRepository;
         this.componentDependencyMetricsRepository = componentDependencyMetricsRepository;
+        this.classContributionRepository = classContributionRepository;
+        this.authorRepository = authorRepository;
+        this.classComplexityRepository = classComplexityRepository;
+        this.classFindingRepository = classFindingRepository;
     }
 
     @QueryMapping
@@ -66,6 +76,13 @@ public class GraphqlController {
     public PackageReadModel packageById(@Argument Integer id) {
         return packageRepository.findById((long) id)
                 .map(toPackageReadModel())
+                .orElse(null);
+    }
+
+    @QueryMapping
+    public ClassReadModel classById(@Argument Integer classId) {
+        return classRepository.findById((long) classId)
+                .map(toClassReadModel())
                 .orElse(null);
     }
 
@@ -111,81 +128,34 @@ public class GraphqlController {
                 .orElse(null);
     }
 
-    private static Function<ComponentDependencyMetricEntity, ComponentDependencyReadModel> toComponentDependencyReadModel() {
-        return e -> new ComponentDependencyReadModel(
-                e.getAfferentCoupling(),
-                e.getEfferentCoupling(),
-                e.getAbstractness(),
-                e.getInstability(),
-                e.getDistance()
-        );
+    @SchemaMapping(field = "contributions", typeName = "Class")
+    public Collection<ClassContributionReadModel> classToContribution(final ClassReadModel clazz) {
+        return classContributionRepository.findByClassFieldId(clazz.id())
+                .stream()
+                .map(toClassContributionReadModel())
+                .toList();
     }
 
-    private Function<RelationalCohesionMetricEntity, RelationalCohesionReadModel> mapToRelationalCohesionReadModel() {
-        return metric -> new RelationalCohesionReadModel(
-                metric.getRating().name(),
-                metric.getNumberOfTypes(),
-                metric.getNumberOfInternalRelationships(),
-                metric.getRelationalCohesion()
-        );
+    @SchemaMapping(field = "author", typeName = "ClassContribution")
+    public AuthorReadModel classContributionToAuthor(final ClassContributionReadModel contribution) {
+        return authorRepository.findById((long) contribution.authorId())
+                .map(toAuthorReadModel())
+                .orElse(null);
     }
 
-    private static Function<PackageEntity, PackageReadModel> toPackageReadModel() {
-        return pkg -> new PackageReadModel(
-                pkg.getId().intValue(),
-                pkg.getProject().getId().intValue(),
-                pkg.getPackageName(),
-                pkg.getComplexity(),
-                pkg.getComplexityRating().name(),
-                pkg.getCommentToCodeRatio(),
-                pkg.getDefectDensity(),
-                pkg.getHighDefectDensity(),
-                pkg.getLinesOfCode(),
-                pkg.getLinesOfComments(),
-                pkg.getNumberOfVeryHighComplexityTypes(),
-                pkg.getNumberOfHighComplexityTypes(),
-                pkg.getNumberOfMediumComplexityTypes(),
-                pkg.getNumberOfLowComplexityTypes(),
-                pkg.getNumberOfHighPriorityFindings(),
-                pkg.getTotalNumberOfFindings(),
-                pkg.getSize().name(),
-                pkg.getNumberOfTypes(),
-                pkg.getComplexityRating().ordinal()
-        );
+    @SchemaMapping(field = "complexity", typeName = "ClassContribution")
+    public ClassComplexityReadModel classContributionToComplexity(final ClassContributionReadModel contribution) {
+        return classComplexityRepository.findByContributionId(contribution.id())
+                .stream()
+                .findFirst()
+                .map(toClassComplexityReadModel()).orElse(null);
     }
 
-    private static Function<ProjectEntity, ProjectReadModel> toProjectReadModel() {
-        return e -> new ProjectReadModel(
-                e.getId().intValue(),
-                e.getName(),
-                e.getAnalysisStatus().name(),
-                Optional.ofNullable(e.getLastAnalyzed())
-                        .map(LocalDateTime::toString)
-                        .orElse(null)
-        );
-    }
-
-
-    private static Function<ClassEntity, ClassReadModel> toClassReadModel() {
-        return c -> new ClassReadModel(
-                c.getId().intValue(),
-                c.getPackageField().getId().intValue(),
-                c.getName(),
-                Optional.ofNullable(c.getProgrammingLanguage()).map(ProgrammingLanguageEntity::getName).orElse(null),
-                c.getLastModified().toString(),
-                c.getNumberOfChanges(),
-                c.getNumberOfAuthors(),
-                c.getComplexity(),
-                c.getComplexityRating().name(),
-                c.getTotalLinesOfCode(),
-                c.getTotalLinesOfComments(),
-                c.getCommentToCodeRatio(),
-                c.getNumberOfResponsibilities(),
-                c.getStatus().name(),
-                c.getTotalNumberOfFindings(),
-                c.getNumberOfHighPriorityFindings(),
-                c.getDefectDensity(),
-                c.getHighDefectDensity()
-        );
+    @SchemaMapping(field = "findings", typeName = "Class")
+    public Collection<FindingReadModel> classToFindings(final ClassReadModel clazz) {
+        return classFindingRepository.findByClassFieldId((long) clazz.id())
+                .stream()
+                .map(toFindingReadModel())
+                .toList();
     }
 }
