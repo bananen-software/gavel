@@ -36,9 +36,7 @@ export class PackageSizeDistributionCardComponent {
 
       values[index] = values[index] + 1;
     }
-
-    console.log(backgroundColors);
-
+    
     return {
       labels: labels,
       datasets: [{

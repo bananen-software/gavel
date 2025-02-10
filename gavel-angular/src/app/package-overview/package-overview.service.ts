@@ -31,6 +31,7 @@ const QUERY_DATA = gql`
 `
 
 export type PackageOverview = {
+  packageId: number;
   packageName: string;
   complexity: number;
   complexityOrdinal: number;
@@ -60,6 +61,7 @@ export class PackageOverviewService {
     }).valueChanges.pipe(map(result => {// @ts-ignore
       return result.data?.projectById.packages.map(pkg => {
         return {
+          packageId: pkg.id,
           packageName: pkg.name,
           complexity: pkg.complexity,
           complexityOrdinal: pkg.complexityOrdinal,

@@ -15,10 +15,10 @@ export const packageOverview: MenuItem = {
   icon: 'pi pi-folder-open'
 };
 
-export function packageClassesOverview(packageName: string): MenuItem {
+export function packageClassesOverview(packageId: string, packageName: string): MenuItem {
   return {
     label: packageName,
-    routerLink: ['/package-overview', packageName],
+    routerLink: ['/package-classes-overview', packageId],
     icon: undefined
   }
 }

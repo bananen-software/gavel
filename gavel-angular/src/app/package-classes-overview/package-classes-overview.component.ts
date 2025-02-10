@@ -4,7 +4,7 @@ import {MenuItem, SharedModule} from "primeng/api";
 import {TableModule} from "primeng/table";
 import {ViewLayoutComponent} from "../view-layout/view-layout.component";
 import {toSignal} from "@angular/core/rxjs-interop";
-import PackageClassesOverviewService, {PackageClass} from "./package-classes-overview.service";
+import PackageClassesOverviewService, {PackageClassData, PackageData} from "./package-classes-overview.service";
 import {ActivatedRoute} from "@angular/router";
 import {catchError, map, of, switchMap} from "rxjs";
 import {BreadcrumbModule} from "primeng/breadcrumb";
@@ -40,16 +40,19 @@ export class PackageClassesOverviewComponent {
   #service: PackageClassesOverviewService = inject(PackageClassesOverviewService);
   private route = inject(ActivatedRoute);
 
-  protected readonly metrics: Signal<PackageClass[]> =
-    toSignal(this.route.paramMap.pipe(map(params => params.get("packageName")),
-        switchMap(packageName => this.#service.loadMetrics(packageName)
-          .pipe(catchError(error => {
-            console.error(error);
-            return of([]);
-          })))),
-      {
-        initialValue: []
-      });
+  protected readonly packageData: Signal<PackageData | undefined> =
+    toSignal(this.route.paramMap.pipe(map(params => params.get("packageId")),
+      switchMap(packageId => this.#service.loadMetrics(packageId)
+        .pipe(catchError(error => {
+          console.error(error);
+          return of();
+        })))));
+
+  protected readonly metrics: Signal<PackageClassData[]> = computed(() => {
+    const data = this.packageData();
+
+    return data ? data.classes : []
+  })
 
   protected readonly loading: Signal<boolean> =
     computed(() => this.metrics.length > 0);
@@ -58,6 +61,7 @@ export class PackageClassesOverviewComponent {
     computed(() => [
       home,
       packageOverview,
-      packageClassesOverview(this.route.snapshot.paramMap.get('packageName') ?? '')
+      packageClassesOverview(this.route.snapshot.paramMap.get('packageId') ?? '', this.packageData()?.packageName ?? '')
     ]);
+  protected readonly JSON = JSON;
 }

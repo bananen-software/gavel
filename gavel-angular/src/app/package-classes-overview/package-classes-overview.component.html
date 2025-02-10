@@ -1,7 +1,6 @@
 <app-view-layout>
   <app-breadcrumbs [breadcrumbs]="breadcrumbs()"></app-breadcrumbs>
 
-
   <p-card header="Raw data">
     <p-table [value]="metrics()"
              [rows]="10"
@@ -57,7 +56,7 @@
           <td>{{ metric.commentToCodeRatio | percent }} ({{ metric.totalLinesOfComments | number }}
             /{{ metric.totalLinesOfCode | number }})
           </td>
-          <td>{{ metric.classCohesion | number }}</td>
+          <td>{{ metric.numberOfResponsibilities | number }}</td>
           <td>{{ metric.defectDensity | number: '1.0-0' }}</td>
         </tr>
       </ng-template>

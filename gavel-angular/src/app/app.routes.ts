@@ -58,7 +58,7 @@ export const routes: Routes = [
     component: PackageOverviewComponent
   },
   {
-    path: "package-classes-overview/:packageName",
+    path: "package-classes-overview/:packageId",
     component: PackageClassesOverviewComponent
   },
   {
