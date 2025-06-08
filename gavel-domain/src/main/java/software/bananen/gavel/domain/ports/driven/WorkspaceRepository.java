@@ -1,4 +1,4 @@
-package software.bananen.gavel.domain.ports.repositories;
+package software.bananen.gavel.domain.ports.driven;
 
 import software.bananen.gavel.domain.model.WorkspaceAggregate;
 import software.bananen.gavel.domain.model.WorkspaceIdValueObject;

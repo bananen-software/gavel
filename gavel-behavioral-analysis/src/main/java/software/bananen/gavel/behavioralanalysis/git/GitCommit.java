@@ -1,8 +1,8 @@
 package software.bananen.gavel.behavioralanalysis.git;
 
 import software.bananen.gavel.domain.model.Author;
-import software.bananen.gavel.domain.ports.driven.Commit;
-import software.bananen.gavel.domain.ports.driven.FileDiff;
+import software.bananen.gavel.domain.model.Commit;
+import software.bananen.gavel.domain.model.FileDiff;
 
 import java.time.LocalDateTime;
 import java.util.Collection;

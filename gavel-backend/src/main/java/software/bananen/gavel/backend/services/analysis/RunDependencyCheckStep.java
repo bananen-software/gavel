@@ -1,9 +1,9 @@
 package software.bananen.gavel.backend.services.analysis;
 
 import software.bananen.gavel.backend.services.domain.ProjectService;
-import software.bananen.gavel.domain.ports.service.StaticAnalysisAdapterException;
-import software.bananen.gavel.domain.ports.service.VulnerabilityCheckAdapter;
-import software.bananen.gavel.domain.ports.service.VulnerableDependency;
+import software.bananen.gavel.domain.model.VulnerableDependency;
+import software.bananen.gavel.domain.ports.driven.StaticAnalysisAdapterException;
+import software.bananen.gavel.domain.ports.driven.VulnerabilityCheckPort;
 import software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity;
 
 import java.io.File;
@@ -14,7 +14,7 @@ public class RunDependencyCheckStep extends AbstractAnalysisStep {
 
     private final ProjectEntity project;
     private final ProjectService projectService;
-    private final VulnerabilityCheckAdapter dependencyCheckAdapter;
+    private final VulnerabilityCheckPort dependencyCheckAdapter;
 
     /**
      * Creates a new instance.
@@ -25,7 +25,7 @@ public class RunDependencyCheckStep extends AbstractAnalysisStep {
      */
     public RunDependencyCheckStep(final ProjectEntity project,
                                   final ProjectService projectService,
-                                  final VulnerabilityCheckAdapter dependencyCheckAdapter) {
+                                  final VulnerabilityCheckPort dependencyCheckAdapter) {
         super("OWASP Dependency Check");
 
         this.project =

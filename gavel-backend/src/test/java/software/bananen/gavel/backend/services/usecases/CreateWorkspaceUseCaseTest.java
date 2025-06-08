@@ -2,7 +2,7 @@ package software.bananen.gavel.backend.services.usecases;
 
 import org.junit.jupiter.api.Test;
 import software.bananen.gavel.domain.model.*;
-import software.bananen.gavel.domain.ports.repositories.WorkspaceRepository;
+import software.bananen.gavel.domain.ports.driven.WorkspaceRepository;
 import software.bananen.gavel.ports.usecases.CreateWorkspaceRequestModel;
 import software.bananen.gavel.ports.usecases.CreateWorkspaceResponseModel;
 import software.bananen.gavel.ports.usecases.CreateWorkspaceUseCase;

@@ -5,7 +5,11 @@ import org.slf4j.LoggerFactory;
 import software.bananen.gavel.backend.services.domain.*;
 import software.bananen.gavel.behavioralanalysis.git.GitVersionControlSystemAdapter;
 import software.bananen.gavel.domain.model.ClassStatus;
-import software.bananen.gavel.domain.ports.driven.*;
+import software.bananen.gavel.domain.model.Commit;
+import software.bananen.gavel.domain.model.DiffType;
+import software.bananen.gavel.domain.model.FileDiff;
+import software.bananen.gavel.domain.ports.driven.VersionControlRepository;
+import software.bananen.gavel.domain.ports.driven.VersionControlSystemException;
 import software.bananen.gavel.infrastructure.javaparser.JavaParserMeasureClassFileStatisticsService;
 import software.bananen.gavel.infrastructure.persistence.jpa.*;
 

@@ -1,7 +1,7 @@
 package software.bananen.gavel.ports.usecases;
 
-import software.bananen.gavel.domain.ports.service.StaticAnalysisAdapterException;
-import software.bananen.gavel.domain.ports.service.VulnerabilityCheckAdapter;
+import software.bananen.gavel.domain.ports.driven.StaticAnalysisAdapterException;
+import software.bananen.gavel.domain.ports.driven.VulnerabilityCheckPort;
 
 import static java.util.Objects.requireNonNull;
 
@@ -10,14 +10,14 @@ import static java.util.Objects.requireNonNull;
  */
 public final class RefreshDependencyCheckSourcesUseCase {
 
-    private final VulnerabilityCheckAdapter dependencyCheck;
+    private final VulnerabilityCheckPort dependencyCheck;
 
     /**
      * Creates a new instance.
      *
      * @param dependencyCheck The dependency check that should be used.
      */
-    public RefreshDependencyCheckSourcesUseCase(final VulnerabilityCheckAdapter dependencyCheck) {
+    public RefreshDependencyCheckSourcesUseCase(final VulnerabilityCheckPort dependencyCheck) {
         this.dependencyCheck =
                 requireNonNull(dependencyCheck, "The dependency check adapter may not be null");
     }

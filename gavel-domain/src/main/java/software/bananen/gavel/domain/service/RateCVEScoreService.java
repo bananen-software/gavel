@@ -1,6 +1,6 @@
 package software.bananen.gavel.domain.service;
 
-import software.bananen.gavel.domain.ports.service.CVERating;
+import software.bananen.gavel.domain.model.CVERating;
 
 /**
  * A service that can be used to rate CVE scores.

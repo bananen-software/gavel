@@ -1,8 +1,8 @@
 package software.bananen.gavel.behavioralanalysis.git;
 
 import org.junit.jupiter.api.Test;
-import software.bananen.gavel.domain.ports.driven.Commit;
-import software.bananen.gavel.domain.ports.driven.FileDiff;
+import software.bananen.gavel.domain.model.Commit;
+import software.bananen.gavel.domain.model.FileDiff;
 import software.bananen.gavel.domain.ports.driven.VersionControlRepository;
 
 import java.nio.file.Paths;

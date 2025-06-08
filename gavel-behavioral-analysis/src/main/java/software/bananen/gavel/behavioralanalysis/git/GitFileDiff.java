@@ -3,8 +3,8 @@ package software.bananen.gavel.behavioralanalysis.git;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
-import software.bananen.gavel.domain.ports.driven.DiffType;
-import software.bananen.gavel.domain.ports.driven.FileDiff;
+import software.bananen.gavel.domain.model.DiffType;
+import software.bananen.gavel.domain.model.FileDiff;
 import software.bananen.gavel.domain.ports.driven.VersionControlSystemException;
 
 import java.io.IOException;

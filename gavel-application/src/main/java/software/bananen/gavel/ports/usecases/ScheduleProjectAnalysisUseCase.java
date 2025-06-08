@@ -1,7 +1,7 @@
 package software.bananen.gavel.ports.usecases;
 
 import software.bananen.gavel.domain.model.ProjectIdValueObject;
-import software.bananen.gavel.domain.ports.repositories.ProjectRepository;
+import software.bananen.gavel.domain.ports.driven.ProjectRepository;
 
 import static java.util.Objects.requireNonNull;
 

@@ -2,10 +2,10 @@ package software.bananen.gavel.backend.services.analysis;
 
 import software.bananen.gavel.backend.services.domain.ClassService;
 import software.bananen.gavel.backend.services.domain.PackageService;
-import software.bananen.gavel.domain.ports.service.Severity;
-import software.bananen.gavel.domain.ports.service.StaticAnalysisAdapterException;
-import software.bananen.gavel.domain.ports.service.StaticAnalysisClassFinding;
-import software.bananen.gavel.domain.ports.service.StaticCodeAnalysisAdapter;
+import software.bananen.gavel.domain.model.Severity;
+import software.bananen.gavel.domain.model.StaticAnalysisClassFinding;
+import software.bananen.gavel.domain.ports.driven.StaticAnalysisAdapterException;
+import software.bananen.gavel.domain.ports.driven.StaticCodeAnalysisPort;
 import software.bananen.gavel.infrastructure.persistence.jpa.*;
 
 import java.nio.file.Path;
@@ -17,7 +17,7 @@ import static java.util.Objects.requireNonNull;
  * An analysis step that runs static code analysis tools.
  */
 public class RunStaticCodeAnalysisStep extends AbstractAnalysisStep {
-    private final StaticCodeAnalysisAdapter adapter;
+    private final StaticCodeAnalysisPort adapter;
     private final ProjectEntity project;
     private final PackageService packageService;
     private final ClassService classService;
@@ -32,7 +32,7 @@ public class RunStaticCodeAnalysisStep extends AbstractAnalysisStep {
      * @param classService
      * @param classFindingRepository
      */
-    public RunStaticCodeAnalysisStep(final StaticCodeAnalysisAdapter adapter,
+    public RunStaticCodeAnalysisStep(final StaticCodeAnalysisPort adapter,
                                      final ProjectEntity project,
                                      final PackageService packageService,
                                      final ClassService classService,

@@ -1,6 +1,4 @@
-package software.bananen.gavel.domain.ports.driven;
-
-import software.bananen.gavel.domain.model.Author;
+package software.bananen.gavel.domain.model;
 
 import java.time.LocalDateTime;
 import java.util.Collection;

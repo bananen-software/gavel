@@ -2,12 +2,12 @@ package software.bananen.gavel.domain.service;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import software.bananen.gavel.domain.ports.service.CVERating;
+import software.bananen.gavel.domain.model.CVERating;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class RateCVEScoreServiceTest {
-    
+
     @ParameterizedTest
     @CsvSource({
             "0.0,NONE",

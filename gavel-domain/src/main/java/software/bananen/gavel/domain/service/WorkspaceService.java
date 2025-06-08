@@ -1,7 +1,7 @@
 package software.bananen.gavel.domain.service;
 
 import software.bananen.gavel.domain.model.*;
-import software.bananen.gavel.domain.ports.repositories.WorkspaceRepository;
+import software.bananen.gavel.domain.ports.driven.WorkspaceRepository;
 
 import java.util.ArrayList;
 import java.util.List;

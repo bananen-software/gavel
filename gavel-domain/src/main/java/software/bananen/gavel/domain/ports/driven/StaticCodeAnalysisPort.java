@@ -1,4 +1,6 @@
-package software.bananen.gavel.domain.ports.service;
+package software.bananen.gavel.domain.ports.driven;
+
+import software.bananen.gavel.domain.model.StaticAnalysisClassFinding;
 
 import java.nio.file.Path;
 import java.util.Collection;
@@ -7,7 +9,7 @@ import java.util.Collection;
  * An adapter interface for implementations that provide insights into static
  * code analysis results.
  */
-public interface StaticCodeAnalysisAdapter {
+public interface StaticCodeAnalysisPort {
 
     /**
      * Analyzes the given project path using the static code analysis tool

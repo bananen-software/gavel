@@ -2,10 +2,10 @@ package gavel.staticanalysis.adapter.spotbugs;
 
 import edu.umd.cs.findbugs.*;
 import edu.umd.cs.findbugs.config.UserPreferences;
-import software.bananen.gavel.domain.ports.service.Severity;
-import software.bananen.gavel.domain.ports.service.StaticAnalysisAdapterException;
-import software.bananen.gavel.domain.ports.service.StaticAnalysisClassFinding;
-import software.bananen.gavel.domain.ports.service.StaticCodeAnalysisAdapter;
+import software.bananen.gavel.domain.model.Severity;
+import software.bananen.gavel.domain.model.StaticAnalysisClassFinding;
+import software.bananen.gavel.domain.ports.driven.StaticAnalysisAdapterException;
+import software.bananen.gavel.domain.ports.driven.StaticCodeAnalysisPort;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -17,7 +17,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * An adapter that can be used to run the spotbugs static code analysis.
  */
-public final class SpotbugsAdapter implements StaticCodeAnalysisAdapter {
+public final class SpotbugsAdapter implements StaticCodeAnalysisPort {
 
     private final Path javaHomeDirectory;
 

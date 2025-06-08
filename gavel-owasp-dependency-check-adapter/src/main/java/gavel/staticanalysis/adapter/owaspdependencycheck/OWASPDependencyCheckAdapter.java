@@ -1,11 +1,6 @@
 package gavel.staticanalysis.adapter.owaspdependencycheck;
 
-import io.github.jeremylong.openvulnerability.client.nvd.CvssV2;
-import io.github.jeremylong.openvulnerability.client.nvd.CvssV2Data;
-import io.github.jeremylong.openvulnerability.client.nvd.CvssV3;
-import io.github.jeremylong.openvulnerability.client.nvd.CvssV3Data;
-import io.github.jeremylong.openvulnerability.client.nvd.CvssV4;
-import io.github.jeremylong.openvulnerability.client.nvd.CvssV4Data;
+import io.github.jeremylong.openvulnerability.client.nvd.*;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -14,10 +9,10 @@ import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.bananen.gavel.domain.ports.service.StaticAnalysisAdapterException;
-import software.bananen.gavel.domain.ports.service.VulnerabilityCheckAdapter;
-import software.bananen.gavel.domain.ports.service.VulnerabilityFinding;
-import software.bananen.gavel.domain.ports.service.VulnerableDependency;
+import software.bananen.gavel.domain.model.VulnerabilityFinding;
+import software.bananen.gavel.domain.model.VulnerableDependency;
+import software.bananen.gavel.domain.ports.driven.StaticAnalysisAdapterException;
+import software.bananen.gavel.domain.ports.driven.VulnerabilityCheckPort;
 import software.bananen.gavel.domain.service.RateCVEScoreService;
 
 import java.io.File;
@@ -29,7 +24,7 @@ import java.util.function.Function;
 /**
  * An adapter that allows to integrate the OWASP dependency check with gavel.
  */
-public final class OWASPDependencyCheckAdapter implements VulnerabilityCheckAdapter {
+public final class OWASPDependencyCheckAdapter implements VulnerabilityCheckPort {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OWASPDependencyCheckAdapter.class);
 

@@ -1,4 +1,6 @@
-package software.bananen.gavel.domain.ports.driven;
+package software.bananen.gavel.domain.model;
+
+import software.bananen.gavel.domain.ports.driven.VersionControlSystemException;
 
 import java.util.Objects;
 

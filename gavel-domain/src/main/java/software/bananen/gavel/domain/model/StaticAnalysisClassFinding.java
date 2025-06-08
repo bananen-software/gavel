@@ -1,4 +1,4 @@
-package software.bananen.gavel.domain.ports.service;
+package software.bananen.gavel.domain.model;
 
 /**
  * A static analysis finding that refers to a specific class.

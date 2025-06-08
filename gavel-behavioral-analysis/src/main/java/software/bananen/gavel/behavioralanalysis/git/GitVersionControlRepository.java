@@ -4,7 +4,7 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
-import software.bananen.gavel.domain.ports.driven.Commit;
+import software.bananen.gavel.domain.model.Commit;
 import software.bananen.gavel.domain.ports.driven.VersionControlRepository;
 import software.bananen.gavel.domain.ports.driven.VersionControlSystemException;
 

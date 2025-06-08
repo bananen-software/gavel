@@ -1,7 +1,7 @@
 package software.bananen.gavel.infrastructure.persistence.jpa;
 
 import jakarta.persistence.*;
-import software.bananen.gavel.domain.ports.service.Severity;
+import software.bananen.gavel.domain.model.Severity;
 
 @Entity
 @Table(name = "class_findings")

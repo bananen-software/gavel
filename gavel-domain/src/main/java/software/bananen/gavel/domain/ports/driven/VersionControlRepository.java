@@ -1,5 +1,7 @@
 package software.bananen.gavel.domain.ports.driven;
 
+import software.bananen.gavel.domain.model.Commit;
+
 import java.util.Collection;
 
 /**

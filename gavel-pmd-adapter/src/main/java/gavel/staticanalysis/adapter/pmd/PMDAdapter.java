@@ -8,9 +8,9 @@ import net.sourceforge.pmd.reporting.RuleViolation;
 import net.sourceforge.pmd.util.log.internal.SimpleMessageReporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.bananen.gavel.domain.ports.service.Severity;
-import software.bananen.gavel.domain.ports.service.StaticAnalysisClassFinding;
-import software.bananen.gavel.domain.ports.service.StaticCodeAnalysisAdapter;
+import software.bananen.gavel.domain.model.Severity;
+import software.bananen.gavel.domain.model.StaticAnalysisClassFinding;
+import software.bananen.gavel.domain.ports.driven.StaticCodeAnalysisPort;
 
 import java.net.URL;
 import java.nio.file.Path;
@@ -24,7 +24,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * An adapter that integrates with the PMD static analysis tool.
  */
-public final class PMDAdapter implements StaticCodeAnalysisAdapter {
+public final class PMDAdapter implements StaticCodeAnalysisPort {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PMDAdapter.class);
 

@@ -1,7 +1,7 @@
 package software.bananen.gavel.ports.usecases;
 
 import software.bananen.gavel.domain.model.*;
-import software.bananen.gavel.domain.ports.repositories.WorkspaceRepository;
+import software.bananen.gavel.domain.ports.driven.WorkspaceRepository;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

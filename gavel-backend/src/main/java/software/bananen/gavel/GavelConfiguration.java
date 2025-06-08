@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import software.bananen.gavel.behavioralanalysis.git.GitService;
 import software.bananen.gavel.contextloader.ProjectContextLoader;
-import software.bananen.gavel.domain.ports.repositories.ProjectRepository;
+import software.bananen.gavel.domain.ports.driven.ProjectRepository;
 import software.bananen.gavel.domain.service.MeasureWhitespaceComplexityService;
 import software.bananen.gavel.domain.service.WorkspaceService;
 import software.bananen.gavel.infrastructure.git.GitLocateProjectsInWorkspaceService;
