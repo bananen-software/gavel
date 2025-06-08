@@ -13,10 +13,9 @@ import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.eclipse.jgit.util.io.DisabledOutputStream;
-import software.bananen.gavel.behavioralanalysis.Author;
+import software.bananen.gavel.domain.model.Author;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
@@ -115,14 +114,14 @@ public final class GitUtil {
      * @return The loaded file contents.
      * @throws IOException Might be thrown in case that an IO operation failed.
      */
-    public static String loadFileContentFromDiff(final Repository repository,
-                                                 final RevCommit commit,
-                                                 final DiffEntry diffEntry)
+    public static byte[] loadRawFileContentFromDiff(final Repository repository,
+                                                    final RevCommit commit,
+                                                    final DiffEntry diffEntry)
             throws IOException {
         if (DEV_NULL.equals(diffEntry.getNewPath()) ||
                 DiffEntry.ChangeType.DELETE.equals(diffEntry.getChangeType())) {
             // The file has been deleted therefor the content will be empty
-            return "";
+            return new byte[0];
         }
 
         final RevTree tree = commit.getTree();
@@ -134,14 +133,14 @@ public final class GitUtil {
 
             if (!treeWalk.next()) {
                 // The file has probably been deleted therefor the content will be empty
-                return "";
+                return new byte[0];
             }
 
             try {
                 final ObjectId objectId = treeWalk.getObjectId(0);
                 final ObjectLoader loader = repository.open(objectId);
 
-                return new String(loader.getBytes(), StandardCharsets.UTF_8);
+                return loader.getBytes();
             } catch (final MissingObjectException e) {
                 //TODO: Find out why this occurs sometimes
                 throw new IOException(
@@ -198,6 +197,7 @@ public final class GitUtil {
         if (mailmapFile.toFile().exists()) {
             Files.readAllLines(mailmapFile).forEach(mailmap::parse);
         }
+
         return mailmap;
     }
 

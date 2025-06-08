@@ -2,7 +2,7 @@ package software.bananen.gavel.behavioralanalysis.git;
 
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
-import software.bananen.gavel.behavioralanalysis.Author;
+import software.bananen.gavel.domain.model.Author;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

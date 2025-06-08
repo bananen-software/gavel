@@ -1,7 +1,7 @@
 package software.bananen.gavel.behavioralanalysis.git;
 
 
-import software.bananen.gavel.behavioralanalysis.Author;
+import software.bananen.gavel.domain.model.Author;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

@@ -2,7 +2,7 @@ package software.bananen.gavel.backend.services.domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.behavioralanalysis.Author;
+import software.bananen.gavel.domain.model.Author;
 import software.bananen.gavel.infrastructure.persistence.jpa.AuthorEntity;
 import software.bananen.gavel.infrastructure.persistence.jpa.AuthorRepository;
 

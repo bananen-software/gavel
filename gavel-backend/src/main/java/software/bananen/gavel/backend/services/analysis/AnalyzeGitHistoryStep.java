@@ -1,47 +1,18 @@
 package software.bananen.gavel.backend.services.analysis;
 
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.diff.DiffEntry;
-import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.revwalk.RevCommit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.bananen.gavel.backend.services.domain.AuthorService;
-import software.bananen.gavel.backend.services.domain.ClassComplexityService;
-import software.bananen.gavel.backend.services.domain.ClassContributionService;
-import software.bananen.gavel.backend.services.domain.ClassLinesOfCodeService;
-import software.bananen.gavel.backend.services.domain.ClassService;
-import software.bananen.gavel.backend.services.domain.PackageComplexityService;
-import software.bananen.gavel.backend.services.domain.PackageLinesOfCodeService;
-import software.bananen.gavel.backend.services.domain.PackageService;
-import software.bananen.gavel.backend.services.domain.ProjectFileService;
-import software.bananen.gavel.behavioralanalysis.Author;
-import software.bananen.gavel.behavioralanalysis.git.GitService;
-import software.bananen.gavel.behavioralanalysis.git.GitUtil;
-import software.bananen.gavel.behavioralanalysis.git.Mailmap;
+import software.bananen.gavel.backend.services.domain.*;
+import software.bananen.gavel.behavioralanalysis.git.GitVersionControlSystemAdapter;
 import software.bananen.gavel.domain.model.ClassStatus;
+import software.bananen.gavel.domain.ports.driven.*;
 import software.bananen.gavel.infrastructure.javaparser.JavaParserMeasureClassFileStatisticsService;
-import software.bananen.gavel.infrastructure.persistence.jpa.AuthorEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ChangeCouplingEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ChangeCouplingRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.ClassContributionEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ClassEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ProjectFileEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.*;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import static software.bananen.gavel.behavioralanalysis.git.GitUtil.loadMailmap;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+import java.util.*;
 
 public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
 
@@ -95,88 +66,61 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
      */
     @Override
     protected void runAnalysis() {
-        final GitService gitService = new GitService();
+        final var vcs = new GitVersionControlSystemAdapter();
 
-        for (final Path path : gitService.locateGitRepositories(List.of(project.getPath()))) {
-            try (final Repository repository = gitService.loadRepository(path)) {
-                LOGGER.info("Processing repository {}", path);
+        try {
+            for (final VersionControlRepository repository : vcs.findRepositoriesIn(Paths.get(project.getPath()))) {
 
-                final String projectName = path.getName(path.getNameCount() - 1).toString();
+                LOGGER.info("Analyzing {} commits for project {}",
+                        repository.commits().size(),
+                        repository.projectName());
 
-                final Mailmap mailmap = loadMailmap(path);
+                final int numberOfCommits = repository.commits().size();
+                int numberOfProcessedCommits = 0;
 
-                LOGGER.info(".mailmap loaded with {} entries", mailmap.size());
+                for (final Commit commit : repository.commits()) {
+                    //TODO: Measure author contribution to project
+                    final AuthorEntity authorEntity = authorService.findOrCreate(commit.author());
 
-                try (final Git git = new Git(repository)) {
-                    //TODO: Support incremental analysis
-                    final Collection<RevCommit> commits = GitUtil.getCommitsFromOldToNew(git);
+                    final Collection<ClassEntity> modifiedClasses = new ArrayList<>();
 
-                    final int numberOfCommits = commits.size();
-                    int numberOfProcessedCommits = 0;
+                    LOGGER.info("Processing commit {} [{}/[{}]", commit.identifier(), ++numberOfProcessedCommits, numberOfCommits);
+                    for (final FileDiff diff : commit.diffs()) {
+                        LOGGER.debug("Processing diff {} file {} => {}", diff.type(), diff.oldPath(), diff.newPath());
 
-                    LOGGER.info("Analyzing {} commits for project {}", numberOfCommits, projectName);
+                        switch (diff.type()) {
+                            case ADDED, CHANGED, MOVED -> {
+                                if (isNotExcludedType(diff.newPath())) {
+                                    try {
+                                        processJavaClass(commit, diff, authorEntity).ifPresent(modifiedClasses::add);
+                                    } catch (final IOException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                } else {
+                                    LOGGER.debug("Skipping excluded file type {}", diff.newPath());
+                                }
+                            }
 
-                    for (final RevCommit commit : commits) {
-                        LOGGER.info("Processing commit {} [{}/{}]", commit.getName(), ++numberOfProcessedCommits, numberOfCommits);
-                        processCommit(commit, mailmap, repository);
-                        LOGGER.info("Processed commit {} [{}/{}]", commit.getName(), numberOfProcessedCommits, numberOfCommits);
+                            case DELETED -> {
+                                if (isNotExcludedType(diff.oldPath())) {
+                                    projectFileService.findByPath(project, diff.oldPath())
+                                            .map(ProjectFileEntity::getClassField)
+                                            .ifPresent(classService::delete);
+                                }
+                            }
+                        }
                     }
 
-                    LOGGER.info("Analyzed {} commits for project {}", numberOfCommits, projectName);
+                    recordChangeCoupling(modifiedClasses);
+
+                    LOGGER.info("Processed commit {} [{}/[{}]", commit.identifier(), ++numberOfProcessedCommits, numberOfCommits);
                 }
-            } catch (final IOException | GitAPIException e) {
-                throw new RuntimeException(e);
+
+                LOGGER.info("Analyzed {} commits for project {}", numberOfCommits, repository.projectName());
             }
+        } catch (final VersionControlSystemException e) {
+            throw new RuntimeException(e);
         }
-    }
-
-    /**
-     * Processes the commit.
-     *
-     * @param commit     The commit.
-     * @param mailmap    The mailmap.
-     * @param repository The git repository.
-     * @throws IOException Might be thrown in case that data could not be read from the repository.
-     */
-    private void processCommit(final RevCommit commit,
-                               final Mailmap mailmap,
-                               final Repository repository) throws IOException {
-        final Author author = mailmap.map(GitUtil.extractAuthor(commit));
-        final LocalDateTime timestamp = GitUtil.extractTimestampFrom(commit);
-
-        //TODO: Measure author contribution to project
-        final AuthorEntity authorEntity = authorService.findOrCreate(author);
-
-        final Collection<ClassEntity> modifiedClasses = new ArrayList<>();
-
-        for (final DiffEntry diff : GitUtil.extractDiffEntries(repository, commit)) {
-            LOGGER.debug("Processing diff {} file {} => {}", diff.getChangeType(), diff.getOldPath(), diff.getNewPath());
-
-            switch (diff.getChangeType()) {
-                case ADD:
-                case MODIFY:
-                case RENAME:
-                case COPY:
-                    if (isNotExcludedType(diff.getNewPath())) {
-                        processJavaClass(commit, repository, diff, timestamp, authorEntity)
-                                .ifPresent(modifiedClasses::add);
-                    } else {
-                        LOGGER.debug("Skipping excluded file type {}", diff.getNewPath());
-                    }
-                    break;
-
-                case DELETE:
-                    if (isNotExcludedType(diff.getOldPath())) {
-                        projectFileService.findByPath(project, diff.getOldPath())
-                                .map(ProjectFileEntity::getClassField)
-                                .ifPresent(classService::delete);
-                    }
-                    break;
-            }
-        }
-
-        //TODO: Measure aggregate metrics for project
-        recordChangeCoupling(modifiedClasses);
     }
 
     /**
@@ -243,13 +187,10 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
         }
     }
 
-    private Optional<ClassEntity> processJavaClass(final RevCommit commit,
-                                                   final Repository repository,
-                                                   final DiffEntry diff,
-                                                   final LocalDateTime timestamp,
-                                                   final AuthorEntity authorEntity) throws IOException {
-        final String content =
-                GitUtil.loadFileContentFromDiff(repository, commit, diff);
+    private Optional<ClassEntity> processJavaClass(final Commit commit,
+                                                   final FileDiff diff,
+                                                   final AuthorEntity authorEntity) throws IOException, VersionControlSystemException {
+        final String content = new String(diff.loadContent(), StandardCharsets.UTF_8);
 
         final Optional<JavaParserMeasureClassFileStatisticsService.ClassFileStatistics> parseResult =
                 JAVA_PARSER_SERVICE.measureClassFileStatistics(content);
@@ -261,9 +202,9 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
             final ClassEntity classEntity =
                     classService.findOrCreateClass(packageEntity, parseResult.get().className());
 
-            if (diff.getChangeType() == DiffEntry.ChangeType.RENAME) {
+            if (diff.type() == DiffType.MOVED) {
                 final ProjectFileEntity projectFileEntity =
-                        projectFileService.saveOrUpdate(project, diff.getNewPath());
+                        projectFileService.saveOrUpdate(project, diff.newPath());
 
                 projectFileEntity.setClassField(classEntity);
 
@@ -279,7 +220,7 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
                     classContributionService.findLatestContributionTo(classEntity);
 
             final ClassContributionEntity classContributionEntity =
-                    classContributionService.findOrCreate(classEntity, timestamp, commit.getName(), authorEntity);
+                    classContributionService.findOrCreate(classEntity, commit.timestamp(), commit.identifier(), authorEntity);
 
             classComplexityService.createOrUpdate(classContributionEntity, latestContribution, parseResult.get().complexity());
             classLinesOfCodeService.createOrUpdate(classContributionEntity, latestContribution, parseResult.get().totalLines(), parseResult.get().commentLines(), parseResult.get().commentToCodeRatio());
@@ -290,7 +231,7 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
             LOGGER.debug("Parsed package {} and class {}", parseResult.get().packageName(), parseResult.get().className());
             return Optional.of(classEntity);
         } else {
-            LOGGER.error("Failed to parse class from: {}", diff.getNewPath());
+            LOGGER.error("Failed to parse class from: {}", diff.newPath());
         }
 
         return Optional.empty();

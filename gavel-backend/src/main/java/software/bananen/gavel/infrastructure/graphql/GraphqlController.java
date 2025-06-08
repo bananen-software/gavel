@@ -7,15 +7,7 @@ import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import software.bananen.gavel.infrastructure.persistence.jpa.AuthorRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.ClassComplexityRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.ClassContributionRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.ClassFindingRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.ClassRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.ComponentDependencyMetricsRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.PackageRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.RelationalCohesionRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -26,6 +18,8 @@ import static software.bananen.gavel.infrastructure.graphql.ReadModelMappingUtil
 @RestController
 @RequestMapping(value = "/graphql")
 public class GraphqlController {
+
+    private static final String PACKAGE_TYPE_NAME = "Package";
 
     private final JpaProjectRepository projectRepository;
     private final PackageRepository packageRepository;
@@ -99,12 +93,12 @@ public class GraphqlController {
         return packagesByProject(project.id());
     }
 
-    @SchemaMapping(field = "project", typeName = "Package")
+    @SchemaMapping(field = "project", typeName = PACKAGE_TYPE_NAME)
     public ProjectReadModel packageToProject(final PackageReadModel pkg) {
         return projectById(pkg.projectId());
     }
 
-    @SchemaMapping(field = "classes", typeName = "Package")
+    @SchemaMapping(field = "classes", typeName = PACKAGE_TYPE_NAME)
     public List<ClassReadModel> packageToClasses(final PackageReadModel pkg) {
         return classesByPackage(pkg.id());
     }
@@ -114,14 +108,14 @@ public class GraphqlController {
         return packageById(clazz.packageId());
     }
 
-    @SchemaMapping(field = "relationalCohesion", typeName = "Package")
+    @SchemaMapping(field = "relationalCohesion", typeName = PACKAGE_TYPE_NAME)
     public RelationalCohesionReadModel packageToRelationalCohesion(final PackageReadModel pkg) {
         return relationalCohesionRepository.findByPackageFieldId(pkg.id())
                 .map(mapToRelationalCohesionReadModel())
                 .orElse(null);
     }
 
-    @SchemaMapping(field = "componentDependency", typeName = "Package")
+    @SchemaMapping(field = "componentDependency", typeName = PACKAGE_TYPE_NAME)
     public ComponentDependencyReadModel packageToComponentDependency(final PackageReadModel pkg) {
         return componentDependencyMetricsRepository.findByPackageFieldId(pkg.id())
                 .map(toComponentDependencyReadModel())
