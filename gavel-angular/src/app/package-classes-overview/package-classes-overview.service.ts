@@ -8,6 +8,7 @@ const QUERY_DATA = gql`
       id
       name
       classes {
+        id
         name
         complexity
         complexityRating
@@ -25,46 +26,8 @@ const QUERY_DATA = gql`
   }
 `
 
-const CLASS_QUERY_DATA = gql`
-  query packageClasses {
-    classById {
-      id
-      name
-      lastModified
-      numberOfAuthors
-      complexity
-      complexityRating
-      totalLinesOfCode
-      totalLinesOfComments
-      numberOfResponsibilities
-      package {
-        name
-        complexityRating
-      }
-      findings {
-        description
-        ruleName
-        ruleDescription
-        severity
-        tool
-      }
-      contributions {
-        author {
-          name
-          email
-        }
-        timestamp
-        complexity {
-          rating
-          complexity
-          addedComplexity
-        }
-      }
-    }
-  }
-`
-
 export type PackageClassData = {
+  classId: number;
   className: string,
   lastModified: string,
   numberOfChanges: number,
@@ -107,6 +70,7 @@ export default class PackageClassesOverviewService {
           classes: result.data?.packageById.classes.map(cls => {
             return {// @ts-ignore
               packageName: result.data?.packageName,
+              classId: cls.id,
               className: cls.name,
               lastModified: cls.lastModified,
               numberOfChanges: cls.numberOfChanges,

@@ -8,6 +8,7 @@
              [paginator]="true"
              [loading]="loading()"
              selectionMode="single"
+             (onRowSelect)="viewClassDetails($event)"
              sortField="complexity"
              [sortOrder]="-1">
       <ng-template pTemplate="header">
@@ -47,7 +48,7 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-metric>
-        <tr>
+        <tr [pSelectableRow]="metric">
           <td>{{ metric.className }}</td>
           <td>{{ metric.complexityRating | classComplexity }} ({{ metric.complexity | number }})</td>
           <td>{{ metric.lastModified | date }}</td>

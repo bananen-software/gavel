@@ -28,7 +28,7 @@ public final class RefreshDependencyCheckSourcesUseCase {
      * @param request The request.
      * @return The response to the refresh request.
      */
-    public RefreshDependencyCheckSourcesResponseModel refreshSources(RefreshDependencyCheckSourcesRequest request) {
+    public RefreshDependencyCheckSourcesResponseModel refreshSources(final RefreshDependencyCheckSourcesRequest request) {
         if (request == null) {
             return new RefreshDependencyCheckSourcesResponseModel.Failure("The request may not be null");
         }

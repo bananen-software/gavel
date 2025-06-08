@@ -1,11 +1,11 @@
 import {Component, computed, inject, Signal} from '@angular/core';
 import {CardModule} from "primeng/card";
 import {MenuItem, SharedModule} from "primeng/api";
-import {TableModule} from "primeng/table";
+import {TableModule, TableRowSelectEvent} from "primeng/table";
 import {ViewLayoutComponent} from "../view-layout/view-layout.component";
 import {toSignal} from "@angular/core/rxjs-interop";
 import PackageClassesOverviewService, {PackageClassData, PackageData} from "./package-classes-overview.service";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {catchError, map, of, switchMap} from "rxjs";
 import {BreadcrumbModule} from "primeng/breadcrumb";
 import {DatePipe, DecimalPipe, PercentPipe} from "@angular/common";
@@ -39,6 +39,7 @@ export class PackageClassesOverviewComponent {
 
   #service: PackageClassesOverviewService = inject(PackageClassesOverviewService);
   private route = inject(ActivatedRoute);
+  #router = inject(Router);
 
   protected readonly packageData: Signal<PackageData | undefined> =
     toSignal(this.route.paramMap.pipe(map(params => params.get("packageId")),
@@ -63,5 +64,8 @@ export class PackageClassesOverviewComponent {
       packageOverview,
       packageClassesOverview(this.route.snapshot.paramMap.get('packageId') ?? '', this.packageData()?.packageName ?? '')
     ]);
-  protected readonly JSON = JSON;
+
+  viewClassDetails($event: TableRowSelectEvent) {
+    this.#router.navigate(['/class-detail-view/', $event.data.classId]);
+  }
 }

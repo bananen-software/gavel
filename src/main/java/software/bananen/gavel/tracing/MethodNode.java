@@ -7,8 +7,8 @@ public final class MethodNode {
 
     private final String name;
 
-    private Collection<MethodNode> accessTo = new ArrayList<>();
-    private Collection<MethodNode> accessFrom = new ArrayList<>();
+    private final Collection<MethodNode> accessTo = new ArrayList<>();
+    private final Collection<MethodNode> accessFrom = new ArrayList<>();
 
     MethodNode(final String name) {
         this.name = name;

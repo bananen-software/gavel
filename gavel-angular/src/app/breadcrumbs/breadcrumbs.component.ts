@@ -23,6 +23,14 @@ export function packageClassesOverview(packageId: string, packageName: string): 
   }
 }
 
+export function classDetailView(classId: string, className: string): MenuItem {
+  return {
+    label: className,
+    routerLink: ['/class-detail-view', classId],
+    icon: undefined
+  }
+}
+
 @Component({
   selector: 'app-breadcrumbs',
   standalone: true,

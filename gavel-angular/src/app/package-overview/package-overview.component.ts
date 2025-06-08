@@ -69,6 +69,7 @@ export class PackageOverviewComponent {
     ]);
 
   viewPackageDetail($event: TableRowSelectEvent) {
+    console.log($event);
     this.#router.navigate(['/package-classes-overview/', $event.data.packageId]);
   }
 }

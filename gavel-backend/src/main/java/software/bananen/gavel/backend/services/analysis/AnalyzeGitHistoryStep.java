@@ -7,19 +7,39 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.bananen.gavel.backend.services.domain.*;
+import software.bananen.gavel.backend.services.domain.AuthorService;
+import software.bananen.gavel.backend.services.domain.ClassComplexityService;
+import software.bananen.gavel.backend.services.domain.ClassContributionService;
+import software.bananen.gavel.backend.services.domain.ClassLinesOfCodeService;
+import software.bananen.gavel.backend.services.domain.ClassService;
+import software.bananen.gavel.backend.services.domain.PackageComplexityService;
+import software.bananen.gavel.backend.services.domain.PackageLinesOfCodeService;
+import software.bananen.gavel.backend.services.domain.PackageService;
+import software.bananen.gavel.backend.services.domain.ProjectFileService;
 import software.bananen.gavel.behavioralanalysis.Author;
 import software.bananen.gavel.behavioralanalysis.git.GitService;
 import software.bananen.gavel.behavioralanalysis.git.GitUtil;
 import software.bananen.gavel.behavioralanalysis.git.Mailmap;
 import software.bananen.gavel.domain.model.ClassStatus;
 import software.bananen.gavel.infrastructure.javaparser.JavaParserMeasureClassFileStatisticsService;
-import software.bananen.gavel.infrastructure.persistence.jpa.*;
+import software.bananen.gavel.infrastructure.persistence.jpa.AuthorEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.ChangeCouplingEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.ChangeCouplingRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.ClassContributionEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.ClassEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.ProjectFileEntity;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import static software.bananen.gavel.behavioralanalysis.git.GitUtil.loadMailmap;
 
@@ -266,16 +286,6 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
 
             packageLinesOfCodeService.createOrUpdate(packageEntity);
             packageComplexityService.createOrUpdate(packageEntity);
-
-            //TODO: Store AST for RAG?
-            //DotPrinter yamlPrinter = new DotPrinter(true);
-            //System.out.println(yamlPrinter.output(parseResult.get()));
-            //System.out.println("-----------------------------------");
-
-            //TODO: Measure author complexity for package
-            //TODO: Measure author contribution to class
-            //TODO: Measure author contribution to package
-            //TODO: Track issue tracking URL/issue references in comments
 
             LOGGER.debug("Parsed package {} and class {}", parseResult.get().packageName(), parseResult.get().className());
             return Optional.of(classEntity);

@@ -15,6 +15,7 @@ import {ProjectSettingsComponent} from "./project-settings/project-settings.comp
 import {PackageOverviewComponent} from "./package-overview/package-overview.component";
 import {PackageClassesOverviewComponent} from "./package-classes-overview/package-classes-overview.component";
 import {ChangeCouplingComponent} from "./change-coupling/change-coupling.component";
+import {ClassDetailViewComponent} from "./class-detail-view/class-detail-view.component";
 
 export const routes: Routes = [
   {
@@ -64,5 +65,9 @@ export const routes: Routes = [
   {
     path: "change-coupling",
     component: ChangeCouplingComponent
+  },
+  {
+    path: 'class-detail-view/:classId',
+    component: ClassDetailViewComponent
   }
 ];
