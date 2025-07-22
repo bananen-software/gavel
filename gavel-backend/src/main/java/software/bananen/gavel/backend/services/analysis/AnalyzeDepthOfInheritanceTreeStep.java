@@ -1,7 +1,7 @@
 package software.bananen.gavel.backend.services.analysis;
 
 import software.bananen.gavel.contextloader.ProjectContext;
-import software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectEntity;
 import software.bananen.gavel.staticanalysis.DepthOfInheritanceTree;
 import software.bananen.gavel.staticanalysis.DepthOfInheritanceTreeMetricsService;
 
@@ -12,7 +12,7 @@ public class AnalyzeDepthOfInheritanceTreeStep extends AbstractAnalysisStep {
     private static final String STEP_NAME = "Analyze component visibility";
     private final DepthOfInheritanceTreeMetricsService service;
     private final ProjectContext projectContext;
-    private final ProjectEntity project;
+    private final JpaProjectEntity project;
 
     /**
      * Creates a new instance.
@@ -24,7 +24,7 @@ public class AnalyzeDepthOfInheritanceTreeStep extends AbstractAnalysisStep {
     public AnalyzeDepthOfInheritanceTreeStep(
             final DepthOfInheritanceTreeMetricsService service,
             final ProjectContext projectContext,
-            final ProjectEntity project) {
+            final JpaProjectEntity project) {
         super(STEP_NAME);
 
         this.service =

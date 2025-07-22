@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.bananen.gavel.domain.model.*;
 import software.bananen.gavel.domain.ports.driven.ProjectRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectEntity;
 import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectRepository;
 
 import java.nio.file.Path;
@@ -61,7 +62,7 @@ public final class ProjectRepositoryAdapter implements ProjectRepository {
                 Optional.ofNullable(projectAggregate.aggregateRoot().id())
                         .map(ProjectIdValueObject::value)
                         .flatMap(repository::findById)
-                        .orElse(new software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity());
+                        .orElse(new JpaProjectEntity());
 
         entity.setName(projectAggregate.aggregateRoot().name().value());
         entity.setPath(projectAggregate.aggregateRoot().path().value().toString());
@@ -76,7 +77,7 @@ public final class ProjectRepositoryAdapter implements ProjectRepository {
      *
      * @return The mapping function.
      */
-    private static Function<software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity, ProjectAggregate> toAggregate() {
+    private static Function<JpaProjectEntity, ProjectAggregate> toAggregate() {
         return p -> new ProjectAggregate(
                 new ProjectEntity(
                         new ProjectIdValueObject(p.getId()),

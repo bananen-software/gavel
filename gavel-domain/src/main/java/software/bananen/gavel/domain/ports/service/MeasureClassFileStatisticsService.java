@@ -3,6 +3,7 @@ package software.bananen.gavel.domain.ports.service;
 import software.bananen.gavel.domain.model.ClassComplexityRating;
 import software.bananen.gavel.domain.model.Size;
 
+import java.util.Collection;
 import java.util.Optional;
 
 public interface MeasureClassFileStatisticsService {
@@ -16,6 +17,14 @@ public interface MeasureClassFileStatisticsService {
                                int totalLines,
                                double commentToCodeRatio,
                                Size size,
-                               ClassComplexityRating complexityRating) {
+                               ClassComplexityRating complexityRating,
+                               Collection<MethodStatistics> methods) {
+    }
+
+    record MethodStatistics(String methodName,
+                            String signature,
+                            int linesOfCode,
+                            int complexity,
+                            String md5Hash) {
     }
 }

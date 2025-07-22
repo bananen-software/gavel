@@ -13,18 +13,18 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class PackageComplexityService {
 
-    private final PackageComplexityRepository repository;
+    private final JpaPackageComplexityRepository repository;
 
-    public PackageComplexityService(@Autowired final PackageComplexityRepository repository) {
+    public PackageComplexityService(@Autowired final JpaPackageComplexityRepository repository) {
         this.repository = repository;
     }
 
-    public void createOrUpdate(final PackageEntity packageEntity) {
-        final PackageComplexityEntity packageComplexityEntity =
+    public void createOrUpdate(final JpaPackageEntity packageEntity) {
+        final JpaPackageComplexityEntity packageComplexityEntity =
                 packageEntity.getPackageComplexityEntities()
                         .stream()
                         .findFirst()
-                        .orElse(new PackageComplexityEntity());
+                        .orElse(new JpaPackageComplexityEntity());
 
         final Map<ClassComplexityRating, Integer> complexityTypes =
                 measureComplexityTypes(packageEntity);
@@ -64,32 +64,32 @@ public class PackageComplexityService {
         repository.save(packageComplexityEntity);
     }
 
-    private int measurePackageComplexity(final PackageEntity packageEntity) {
+    private int measurePackageComplexity(final JpaPackageEntity packageEntity) {
         int packageComplexity = 0;
 
-        for (final ClassEntity classEntity : packageEntity.getClasses()) {
+        for (final JpaClassEntity classEntity : packageEntity.getClasses()) {
             packageComplexity += classEntity.getClassContributions()
                     .stream()
-                    .max(Comparator.comparing(ClassContributionEntity::getTimestamp))
+                    .max(Comparator.comparing(JpaClassContributionEntity::getTimestamp))
                     .flatMap(c -> c.getClassComplexities().stream().findFirst())
-                    .map(ClassComplexityEntity::getComplexity)
+                    .map(JpaClassComplexityEntity::getComplexity)
                     .orElse(0);
         }
 
         return packageComplexity;
     }
 
-    private Map<ClassComplexityRating, Integer> measureComplexityTypes(final PackageEntity packageEntity) {
+    private Map<ClassComplexityRating, Integer> measureComplexityTypes(final JpaPackageEntity packageEntity) {
         final Map<ClassComplexityRating, Integer> result = new ConcurrentHashMap<>();
 
-        for (final ClassEntity classEntity :
+        for (final JpaClassEntity classEntity :
                 packageEntity.getClasses().stream().filter(e -> Objects
                         .equals(e.getStatus(), ClassStatus.ACTIVE)).toList()) {
             classEntity.getClassContributions()
                     .stream()
-                    .max(Comparator.comparing(ClassContributionEntity::getTimestamp))
+                    .max(Comparator.comparing(JpaClassContributionEntity::getTimestamp))
                     .flatMap(c -> c.getClassComplexities().stream().findFirst())
-                    .map(ClassComplexityEntity::getComplexityRating)
+                    .map(JpaClassComplexityEntity::getComplexityRating)
                     .ifPresent(rating -> result.merge(rating, 1, Integer::sum));
         }
 

@@ -12,13 +12,14 @@ dependencies {
     implementation project(':gavel-git-adapter')
     implementation project(':gavel-static-analysis')
     implementation project(':gavel-owasp-dependency-check-adapter')
+    implementation project(':gavel-persistence-adapter')
     implementation project(':gavel-pmd-adapter')
     implementation project(':gavel-spotbugs-adapter')
 
     implementation project(':gavel-application')
     implementation project(':gavel-domain')
 
-    implementation group: 'net.sourceforge.pmd', name: 'pmd-core', version: '7.10.0'
+    implementation group: 'net.sourceforge.pmd', name: 'pmd-core', version: '7.15.0'
 
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-graphql'

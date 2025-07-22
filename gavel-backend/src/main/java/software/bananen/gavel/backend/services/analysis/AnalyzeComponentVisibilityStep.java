@@ -3,8 +3,8 @@ package software.bananen.gavel.backend.services.analysis;
 import software.bananen.gavel.backend.services.domain.PackageService;
 import software.bananen.gavel.backend.services.domain.PackageVisibilityMetricsService;
 import software.bananen.gavel.contextloader.ProjectContext;
-import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaPackageEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectEntity;
 import software.bananen.gavel.staticanalysis.ComponentVisibility;
 import software.bananen.gavel.staticanalysis.ComponentVisibilityMetricsService;
 
@@ -17,7 +17,7 @@ public class AnalyzeComponentVisibilityStep extends AbstractAnalysisStep {
 
     private final ComponentVisibilityMetricsService service;
     private final ProjectContext projectContext;
-    private final ProjectEntity project;
+    private final JpaProjectEntity project;
     private final PackageService packageService;
     private final PackageVisibilityMetricsService visibilityService;
 
@@ -35,7 +35,7 @@ public class AnalyzeComponentVisibilityStep extends AbstractAnalysisStep {
     public AnalyzeComponentVisibilityStep(
             final ComponentVisibilityMetricsService service,
             final ProjectContext projectContext,
-            final ProjectEntity project,
+            final JpaProjectEntity project,
             final PackageService packageService,
             final PackageVisibilityMetricsService visibilityService) {
         super(STEP_NAME);
@@ -59,7 +59,7 @@ public class AnalyzeComponentVisibilityStep extends AbstractAnalysisStep {
     protected void runAnalysis() {
         for (final ComponentVisibility measurement :
                 service.measure(projectContext.basePackage(), true)) {
-            final PackageEntity existingPackage =
+            final JpaPackageEntity existingPackage =
                     packageService.findOrCreatePackage(project, measurement.packageName());
 
             visibilityService.saveOrUpdate(existingPackage, measurement);

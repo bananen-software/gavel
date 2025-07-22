@@ -4,9 +4,9 @@ import software.bananen.gavel.backend.services.domain.ClassCohesionService;
 import software.bananen.gavel.backend.services.domain.ClassService;
 import software.bananen.gavel.backend.services.domain.PackageService;
 import software.bananen.gavel.contextloader.ProjectContext;
-import software.bananen.gavel.infrastructure.persistence.jpa.ClassEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaPackageEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectEntity;
 import software.bananen.gavel.staticanalysis.LCOM4Metric;
 import software.bananen.gavel.staticanalysis.LCOM4MetricsService;
 
@@ -17,7 +17,7 @@ public class AnalyzeLCOM4MetricStep extends AbstractAnalysisStep {
     private static final String STEP_NAME = "Analyze LCOM4";
     private final LCOM4MetricsService service;
     private final ProjectContext projectContext;
-    private final ProjectEntity project;
+    private final JpaProjectEntity project;
     private final PackageService packageService;
     private final ClassService classService;
     private final ClassCohesionService cohesionService;
@@ -34,7 +34,7 @@ public class AnalyzeLCOM4MetricStep extends AbstractAnalysisStep {
      */
     public AnalyzeLCOM4MetricStep(final LCOM4MetricsService service,
                                   final ProjectContext projectContext,
-                                  final ProjectEntity project,
+                                  final JpaProjectEntity project,
                                   final PackageService packageService,
                                   final ClassService classService,
                                   final ClassCohesionService cohesionService) {
@@ -60,9 +60,9 @@ public class AnalyzeLCOM4MetricStep extends AbstractAnalysisStep {
     @Override
     protected void runAnalysis() {
         for (final LCOM4Metric metric : service.measure(projectContext.javaClasses())) {
-            final PackageEntity packageEntity =
+            final JpaPackageEntity packageEntity =
                     packageService.findOrCreatePackage(project, metric.packageName());
-            final ClassEntity classEntity =
+            final JpaClassEntity classEntity =
                     classService.findOrCreateClass(packageEntity, metric.className());
 
             cohesionService.createOrUpdate(classEntity, metric.value());

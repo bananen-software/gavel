@@ -8,9 +8,9 @@ import java.util.Collection;
 import java.util.Optional;
 
 @Repository
-public interface JpaProjectRepository extends JpaRepository<ProjectEntity, Long> {
+public interface JpaProjectRepository extends JpaRepository<JpaProjectEntity, Long> {
 
-    Optional<ProjectEntity> findByWorkspaceAndName(WorkspaceEntity workspace, String name);
+    Optional<JpaProjectEntity> findByWorkspaceAndName(JpaWorkspaceEntity workspace, String name);
 
-    Collection<ProjectEntity> findByAnalysisStatus(AnalysisStatus status);
+    Collection<JpaProjectEntity> findByAnalysisStatus(AnalysisStatus status);
 }

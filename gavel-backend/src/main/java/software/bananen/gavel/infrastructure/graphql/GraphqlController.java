@@ -22,24 +22,24 @@ public class GraphqlController {
     private static final String PACKAGE_TYPE_NAME = "Package";
 
     private final JpaProjectRepository projectRepository;
-    private final PackageRepository packageRepository;
-    private final ClassRepository classRepository;
-    private final RelationalCohesionRepository relationalCohesionRepository;
-    private final ComponentDependencyMetricsRepository componentDependencyMetricsRepository;
-    private final ClassContributionRepository classContributionRepository;
-    private final AuthorRepository authorRepository;
-    private final ClassComplexityRepository classComplexityRepository;
-    private final ClassFindingRepository classFindingRepository;
+    private final JpaPackageRepository packageRepository;
+    private final JpaClassRepository classRepository;
+    private final JpaRelationalCohesionRepository relationalCohesionRepository;
+    private final JpaComponentDependencyMetricsRepository componentDependencyMetricsRepository;
+    private final JpaClassContributionRepository classContributionRepository;
+    private final JpaAuthorRepository authorRepository;
+    private final JpaClassComplexityRepository classComplexityRepository;
+    private final JpaClassFindingRepository classFindingRepository;
 
     public GraphqlController(@Autowired JpaProjectRepository projectRepository,
-                             @Autowired PackageRepository packageRepository,
-                             @Autowired ClassRepository classRepository,
-                             @Autowired RelationalCohesionRepository relationalCohesionRepository,
-                             @Autowired ComponentDependencyMetricsRepository componentDependencyMetricsRepository,
-                             @Autowired ClassContributionRepository classContributionRepository,
-                             @Autowired AuthorRepository authorRepository,
-                             @Autowired ClassComplexityRepository classComplexityRepository,
-                             @Autowired ClassFindingRepository classFindingRepository) {
+                             @Autowired JpaPackageRepository packageRepository,
+                             @Autowired JpaClassRepository classRepository,
+                             @Autowired JpaRelationalCohesionRepository relationalCohesionRepository,
+                             @Autowired JpaComponentDependencyMetricsRepository componentDependencyMetricsRepository,
+                             @Autowired JpaClassContributionRepository classContributionRepository,
+                             @Autowired JpaAuthorRepository authorRepository,
+                             @Autowired JpaClassComplexityRepository classComplexityRepository,
+                             @Autowired JpaClassFindingRepository classFindingRepository) {
         this.projectRepository = projectRepository;
         this.packageRepository = packageRepository;
         this.classRepository = classRepository;

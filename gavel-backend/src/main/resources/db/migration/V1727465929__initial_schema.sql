@@ -23,12 +23,14 @@ create table "workspaces"
 
 create table "projects"
 (
-    "id"              bigint GENERATED ALWAYS AS IDENTITY,
-    "name"            text not null,
-    "path"            text not null,
-    "workspace"       bigint references workspaces ("id"),
-    "last_analyzed"   timestamp with time zone,
-    "analysis_status" int  not null,
+    "id"                              bigint GENERATED ALWAYS AS IDENTITY,
+    "name"                            text not null,
+    "path"                            text not null,
+    "workspace"                       bigint references workspaces ("id"),
+    "last_analyzed"                   timestamp with time zone,
+    "analysis_status"                 int  not null,
+    "last_processed_commit"           text,
+    "last_processed_commit_timestamp" timestamp with time zone,
 
     primary key ("id")
 );
@@ -45,6 +47,7 @@ create table "packages"
     "lines_of_code"                        int              not null,
     "lines_of_comments"                    int              not null,
     "comment_to_code_ratio"                double precision not null default (0),
+    "comment_to_code_rating"               int              not null default (0),
     "number_of_low_complexity_types"       int              not null default (0),
     "number_of_medium_complexity_types"    int              not null default (0),
     "number_of_high_complexity_types"      int              not null default (0),
@@ -65,6 +68,7 @@ create table "classes"
     "name"                             text                     not null,
     "package"                          bigint references packages ("id"),
     "programming_language"             bigint references "programming_languages" ("id"),
+    "created"                          timestamp with time zone not null,
     "last_modified"                    timestamp with time zone not null,
     "number_of_authors"                int                      not null default (0),
     "number_of_changes"                int                      not null default (0),
@@ -74,6 +78,7 @@ create table "classes"
     "total_lines_of_code"              int                      not null default (0),
     "total_lines_of_comments"          int                      not null default (0),
     "comment_to_code_ratio"            double precision         not null default (0),
+    "comment_to_code_rating"           int                      not null default (0),
     "number_of_responsibilities"       int                      not null default (0),
     "status"                           int                      not null default (0),
     "total_number_of_findings"         int                      not null default (0),
@@ -109,9 +114,18 @@ create table "project_files"
 
 create table "methods"
 (
-    "id"    bigint GENERATED ALWAYS AS IDENTITY,
-    "name"  text not null,
-    "class" bigint references classes ("id"),
+    "id"                bigint GENERATED ALWAYS AS IDENTITY,
+    "name"              text                     not null,
+    "class"             bigint references classes ("id"),
+    "md5_hash"          text                     not null,
+    "signature"         text                     not null,
+    "created"           timestamp with time zone not null,
+    "last_modified"     timestamp with time zone not null,
+    "number_of_authors" int                      not null default (0),
+    "number_of_changes" int                      not null default (0),
+    "complexity"        int                      not null default (0),
+    "lines_of_code"     int                      not null default (0),
+    "status"            int                      not null default (0),
 
     primary key ("id")
 );
@@ -248,6 +262,38 @@ create table "change_coupling"
     "coupled_changes" int              not null default (0),
     "total_changes"   int              not null default (0),
     "change_coupling" double precision not null default (0),
+
+    primary key ("id")
+);
+
+
+create table "method_contributions"
+(
+    "id"             bigint GENERATED ALWAYS AS IDENTITY,
+    "method"         int                      not null references "methods" ("id"),
+    "author"         int                      not null references "authors" ("id"),
+    "timestamp"      timestamp with time zone not null,
+    "vcs_identifier" text                     not null,
+
+    primary key ("id")
+);
+
+create table "method_complexity"
+(
+    "id"               bigint GENERATED ALWAYS AS IDENTITY,
+    "contribution"     bigint not null references "method_contributions" ("id"),
+    "complexity"       int    not null default (0),
+    "added_complexity" int    not null default (0),
+
+    primary key ("id")
+);
+
+create table "method_lines_of_code"
+(
+    "id"                  bigint GENERATED ALWAYS AS IDENTITY,
+    "contribution"        bigint not null references "method_contributions" ("id"),
+    "total_lines_of_code" int    not null default (0),
+    "added_lines_of_code" int    not null default (0),
 
     primary key ("id")
 );

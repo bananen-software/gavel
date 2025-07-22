@@ -12,26 +12,26 @@ import java.util.Optional;
 @Service
 public class LoadRelationalCohesionMetricsUseCase {
 
-    private final WorkspaceRepository workspaceRepository;
+    private final JpaWorkspaceRepository workspaceRepository;
 
     public LoadRelationalCohesionMetricsUseCase(
-            @Autowired final WorkspaceRepository repository) {
+            @Autowired final JpaWorkspaceRepository repository) {
         this.workspaceRepository = repository;
     }
 
     @Transactional
     public Optional<Collection<LoadRelationalCohesionMetricsResponseModel>> load() {
         //TODO: Support multiple workspaces
-        final Optional<WorkspaceEntity> workspace =
+        final Optional<JpaWorkspaceEntity> workspace =
                 workspaceRepository.findAll().stream().findFirst();
 
         if (workspace.isPresent()) {
             final Collection<LoadRelationalCohesionMetricsResponseModel> result =
                     new ArrayList<>();
 
-            for (final ProjectEntity project : workspace.get().getProjects()) {
-                for (final PackageEntity pkg : project.getPackages()) {
-                    final Optional<RelationalCohesionMetricEntity> entity =
+            for (final JpaProjectEntity project : workspace.get().getProjects()) {
+                for (final JpaPackageEntity pkg : project.getPackages()) {
+                    final Optional<JpaRelationalCohesionMetricEntity> entity =
                             pkg.getRelationalCohesionMetrics()
                                     .stream()
                                     .findFirst();

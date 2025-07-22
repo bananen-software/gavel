@@ -1,9 +1,9 @@
 package software.bananen.gavel.backend.services.domain;
 
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.infrastructure.persistence.jpa.CumulativeComponentDependencyEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.PackageCumulativeComponentDependencyMetricsRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaCumulativeComponentDependencyEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaPackageCumulativeComponentDependencyMetricsRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaPackageEntity;
 import software.bananen.gavel.staticanalysis.CumulativeComponentDependency;
 
 import java.util.HashSet;
@@ -12,18 +12,18 @@ import java.util.List;
 @Service
 public class PackageCumulativeComponentDependencyMetricsService {
 
-    private final PackageCumulativeComponentDependencyMetricsRepository repository;
+    private final JpaPackageCumulativeComponentDependencyMetricsRepository repository;
 
     public PackageCumulativeComponentDependencyMetricsService(
-            final PackageCumulativeComponentDependencyMetricsRepository repository) {
+            final JpaPackageCumulativeComponentDependencyMetricsRepository repository) {
         this.repository = repository;
     }
 
-    public void createOrUpdate(final PackageEntity packageEntity,
+    public void createOrUpdate(final JpaPackageEntity packageEntity,
                                final CumulativeComponentDependency measurement) {
-        final CumulativeComponentDependencyEntity entity =
+        final JpaCumulativeComponentDependencyEntity entity =
                 repository.findByPackageField(packageEntity)
-                        .orElse(new CumulativeComponentDependencyEntity());
+                        .orElse(new JpaCumulativeComponentDependencyEntity());
 
         entity.setCumulative(measurement.cumulative());
         entity.setAverage(measurement.average());

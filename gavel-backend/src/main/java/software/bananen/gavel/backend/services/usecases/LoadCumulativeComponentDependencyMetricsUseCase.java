@@ -12,26 +12,26 @@ import java.util.Optional;
 @Service
 public class LoadCumulativeComponentDependencyMetricsUseCase {
 
-    private final WorkspaceRepository workspaceRepository;
+    private final JpaWorkspaceRepository workspaceRepository;
 
     public LoadCumulativeComponentDependencyMetricsUseCase(
-            @Autowired WorkspaceRepository workspaceRepository) {
+            @Autowired JpaWorkspaceRepository workspaceRepository) {
         this.workspaceRepository = workspaceRepository;
     }
 
     @Transactional
     public Optional<Collection<LoadCumulativeComponentDependencyMetricsResponseModel>> load() {
         //TODO: Support multiple workspaces
-        final Optional<WorkspaceEntity> workspace =
+        final Optional<JpaWorkspaceEntity> workspace =
                 workspaceRepository.findAll().stream().findFirst();
 
         if (workspace.isPresent()) {
             final Collection<LoadCumulativeComponentDependencyMetricsResponseModel> result =
                     new ArrayList<>();
 
-            for (final ProjectEntity project : workspace.get().getProjects()) {
-                for (final PackageEntity pkg : project.getPackages()) {
-                    final Optional<CumulativeComponentDependencyEntity> entity =
+            for (final JpaProjectEntity project : workspace.get().getProjects()) {
+                for (final JpaPackageEntity pkg : project.getPackages()) {
+                    final Optional<JpaCumulativeComponentDependencyEntity> entity =
                             pkg.getCumulativeComponentDependencies()
                                     .stream()
                                     .findFirst();

@@ -4,10 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.bananen.gavel.domain.model.ClassComplexityRating;
 import software.bananen.gavel.domain.model.ClassStatus;
+import software.bananen.gavel.domain.model.CommentToCodeRating;
 import software.bananen.gavel.domain.model.Size;
-import software.bananen.gavel.infrastructure.persistence.jpa.ClassEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ClassRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaPackageEntity;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -16,36 +17,28 @@ import java.util.function.Supplier;
 @Service
 public class ClassService {
 
-    private final ClassRepository repository;
+    private final JpaClassRepository repository;
 
-    public ClassService(@Autowired final ClassRepository repository) {
+    public ClassService(@Autowired final JpaClassRepository repository) {
         this.repository = repository;
     }
 
-    public ClassEntity findOrCreateClass(final PackageEntity packageEntity,
-                                         final String className) {
-
-        final Optional<ClassEntity> matchingClass =
-                repository.findByPackageFieldAndName(packageEntity, className);
-
-        return matchingClass.orElseGet(() ->
-                repository.save(mapToEntity(packageEntity, className).get()));
-    }
-
-    private static Supplier<ClassEntity> mapToEntity(
-            final PackageEntity packageEntity,
+    private static Supplier<JpaClassEntity> mapToEntity(
+            final JpaPackageEntity packageEntity,
             final String className) {
         return () -> {
-            final ClassEntity classEntity = new ClassEntity();
+            final JpaClassEntity classEntity = new JpaClassEntity();
 
             classEntity.setName(className);
             classEntity.setPackageField(packageEntity);
+            classEntity.setCreated(LocalDateTime.now());
             classEntity.setLastModified(LocalDateTime.now());
             classEntity.setComplexity(0);
             classEntity.setComplexityRating(ClassComplexityRating.EMPTY);
             classEntity.setNumberOfAuthors(0);
             classEntity.setNumberOfChanges(0);
             classEntity.setCommentToCodeRatio(0.0);
+            classEntity.setCommentToCodeRating(CommentToCodeRating.NORMAL);
             classEntity.setTotalLinesOfComments(0);
             classEntity.setTotalLinesOfCode(0);
             classEntity.setSize(Size.EMPTY);
@@ -63,12 +56,22 @@ public class ClassService {
         };
     }
 
-    public void delete(final ClassEntity classEntity) {
+    public JpaClassEntity findOrCreateClass(final JpaPackageEntity packageEntity,
+                                            final String className) {
+
+        final Optional<JpaClassEntity> matchingClass =
+                repository.findByPackageFieldAndName(packageEntity, className);
+
+        return matchingClass.orElseGet(() ->
+                repository.save(mapToEntity(packageEntity, className).get()));
+    }
+
+    public void delete(final JpaClassEntity classEntity) {
         classEntity.setStatus(ClassStatus.DELETED);
         repository.save(classEntity);
     }
 
-    public void save(final ClassEntity classEntity) {
+    public void save(final JpaClassEntity classEntity) {
         repository.save(classEntity);
     }
 }

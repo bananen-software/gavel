@@ -3,8 +3,8 @@ package software.bananen.gavel.backend.services.domain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.bananen.gavel.domain.model.Author;
-import software.bananen.gavel.infrastructure.persistence.jpa.AuthorEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.AuthorRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaAuthorEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaAuthorRepository;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -17,14 +17,14 @@ import static java.util.Objects.requireNonNull;
 @Service
 public class AuthorService {
 
-    private final AuthorRepository repository;
+    private final JpaAuthorRepository repository;
 
     /**
      * Creates a new instance.
      *
      * @param repository The repository that should be used by this instance.
      */
-    public AuthorService(@Autowired AuthorRepository repository) {
+    public AuthorService(@Autowired JpaAuthorRepository repository) {
         this.repository =
                 requireNonNull(repository, "The repository may not be null");
     }
@@ -36,8 +36,8 @@ public class AuthorService {
      * @param author The authors' data.
      * @return The created author.
      */
-    public AuthorEntity findOrCreate(final Author author) {
-        final Optional<AuthorEntity> matchingAuthor =
+    public JpaAuthorEntity findOrCreate(final Author author) {
+        final Optional<JpaAuthorEntity> matchingAuthor =
                 repository.findByNameAndEmail(author.name(), author.email());
 
         return matchingAuthor.orElseGet(() ->
@@ -50,9 +50,9 @@ public class AuthorService {
      * @param author The author that should be mapped.
      * @return The supplier.
      */
-    private static Supplier<AuthorEntity> mapToEntity(final Author author) {
+    private static Supplier<JpaAuthorEntity> mapToEntity(final Author author) {
         return () -> {
-            final AuthorEntity authorEntity = new AuthorEntity();
+            final JpaAuthorEntity authorEntity = new JpaAuthorEntity();
 
             authorEntity.setName(author.name());
             authorEntity.setEmail(author.email());

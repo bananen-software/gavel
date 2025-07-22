@@ -3,41 +3,43 @@ package software.bananen.gavel.backend.services.domain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.bananen.gavel.domain.service.RateClassSizeService;
-import software.bananen.gavel.infrastructure.persistence.jpa.ClassContributionEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ClassEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ClassLinesOfCodeEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ClassLinesOfCodeRepository;
+import software.bananen.gavel.domain.service.RateCommentToCodeRatioService;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassContributionEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassLinesOfCodeEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassLinesOfCodeRepository;
 
 import java.util.Optional;
 
 @Service
 public class ClassLinesOfCodeService {
 
-    private final ClassLinesOfCodeRepository repository;
+    private final JpaClassLinesOfCodeRepository repository;
+    private static final RateCommentToCodeRatioService COMMENT_TO_CODE_RATING_SERVICE = new RateCommentToCodeRatioService();
 
-    public ClassLinesOfCodeService(@Autowired final ClassLinesOfCodeRepository repository) {
+    public ClassLinesOfCodeService(@Autowired final JpaClassLinesOfCodeRepository repository) {
         this.repository = repository;
     }
 
-    public void createOrUpdate(final ClassContributionEntity contribution,
-                               final Optional<ClassContributionEntity> latestContribution,
+    public void createOrUpdate(final JpaClassContributionEntity contribution,
+                               final Optional<JpaClassContributionEntity> latestContribution,
                                final int totalLines,
                                final int commentLines,
                                final double commentToCodeRatio) {
 
         final Integer latestLinesOfCode =
-                latestContribution.map(ClassContributionEntity::getClassLinesOfCodes)
+                latestContribution.map(JpaClassContributionEntity::getClassLinesOfCodes)
                         .flatMap(cloc -> cloc.stream().findFirst())
-                        .map(ClassLinesOfCodeEntity::getTotalLinesOfCode)
+                        .map(JpaClassLinesOfCodeEntity::getTotalLinesOfCode)
                         .orElse(0);
 
         final Integer addedLinesOfCode =
                 totalLines - latestLinesOfCode;
 
         final Integer latestLinesOfComments =
-                latestContribution.map(ClassContributionEntity::getClassLinesOfCodes)
+                latestContribution.map(JpaClassContributionEntity::getClassLinesOfCodes)
                         .flatMap(cloc -> cloc.stream().findFirst())
-                        .map(ClassLinesOfCodeEntity::getTotalLinesOfComment)
+                        .map(JpaClassLinesOfCodeEntity::getTotalLinesOfComment)
                         .orElse(0);
 
         final Integer addedLinesOfComments =
@@ -45,8 +47,8 @@ public class ClassLinesOfCodeService {
 
         final var size = new RateClassSizeService().rate(totalLines);
 
-        final ClassLinesOfCodeEntity measuredLinesOfCode =
-                repository.findByContribution(contribution).orElse(new ClassLinesOfCodeEntity());
+        final JpaClassLinesOfCodeEntity measuredLinesOfCode =
+                repository.findByContribution(contribution).orElse(new JpaClassLinesOfCodeEntity());
 
         measuredLinesOfCode.setTotalLinesOfCode(totalLines);
         measuredLinesOfCode.setCommentToCodeRatio(commentToCodeRatio);
@@ -59,11 +61,12 @@ public class ClassLinesOfCodeService {
 
         contribution.getClassLinesOfCodes().add(measuredLinesOfCode);
 
-        final ClassEntity classEntity = contribution.getClassField();
+        final JpaClassEntity classEntity = contribution.getClassField();
 
         classEntity.setTotalLinesOfComments(commentLines);
         classEntity.setTotalLinesOfCode(totalLines);
         classEntity.setCommentToCodeRatio(commentToCodeRatio);
+        classEntity.setCommentToCodeRating(COMMENT_TO_CODE_RATING_SERVICE.rate(commentToCodeRatio));
         classEntity.setSize(size);
 
         repository.save(measuredLinesOfCode);

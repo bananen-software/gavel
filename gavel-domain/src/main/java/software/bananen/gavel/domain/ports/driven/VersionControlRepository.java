@@ -23,4 +23,13 @@ public interface VersionControlRepository {
      * @throws VersionControlSystemException Might be thrown in case that loading the commits failed.
      */
     Collection<Commit> commits() throws VersionControlSystemException;
+
+    /**
+     * Loads the commits after the given identifier from the repository.
+     *
+     * @param identifier The identifier.
+     * @return The commits.
+     * @throws VersionControlSystemException Might be thrown in case that loading the commits failed.
+     */
+    Collection<Commit> commitsAfter(String identifier) throws VersionControlSystemException;
 }

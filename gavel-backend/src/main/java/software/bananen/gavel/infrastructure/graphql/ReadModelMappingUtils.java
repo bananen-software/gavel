@@ -1,15 +1,6 @@
 package software.bananen.gavel.infrastructure.graphql;
 
-import software.bananen.gavel.infrastructure.persistence.jpa.AuthorEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ClassComplexityEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ClassContributionEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ClassEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ClassFindingEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ComponentDependencyMetricEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ProgrammingLanguageEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.RelationalCohesionMetricEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.*;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -24,7 +15,7 @@ public final class ReadModelMappingUtils {
         // Private constructor to prevent instantiation
     }
 
-    public static Function<ComponentDependencyMetricEntity, ComponentDependencyReadModel> toComponentDependencyReadModel() {
+    public static Function<JpaComponentDependencyMetricEntity, ComponentDependencyReadModel> toComponentDependencyReadModel() {
         return e -> new ComponentDependencyReadModel(
                 e.getAfferentCoupling(),
                 e.getEfferentCoupling(),
@@ -34,7 +25,7 @@ public final class ReadModelMappingUtils {
         );
     }
 
-    public static Function<RelationalCohesionMetricEntity, RelationalCohesionReadModel> mapToRelationalCohesionReadModel() {
+    public static Function<JpaRelationalCohesionMetricEntity, RelationalCohesionReadModel> mapToRelationalCohesionReadModel() {
         return metric -> new RelationalCohesionReadModel(
                 metric.getRating().name(),
                 metric.getNumberOfTypes(),
@@ -43,7 +34,7 @@ public final class ReadModelMappingUtils {
         );
     }
 
-    public static Function<PackageEntity, PackageReadModel> toPackageReadModel() {
+    public static Function<JpaPackageEntity, PackageReadModel> toPackageReadModel() {
         return pkg -> new PackageReadModel(
                 pkg.getId().intValue(),
                 pkg.getProject().getId().intValue(),
@@ -67,7 +58,7 @@ public final class ReadModelMappingUtils {
         );
     }
 
-    public static Function<ProjectEntity, ProjectReadModel> toProjectReadModel() {
+    public static Function<JpaProjectEntity, ProjectReadModel> toProjectReadModel() {
         return e -> new ProjectReadModel(
                 e.getId().intValue(),
                 e.getName(),
@@ -79,12 +70,12 @@ public final class ReadModelMappingUtils {
     }
 
 
-    public static Function<ClassEntity, ClassReadModel> toClassReadModel() {
+    public static Function<JpaClassEntity, ClassReadModel> toClassReadModel() {
         return c -> new ClassReadModel(
                 c.getId().intValue(),
                 c.getPackageField().getId().intValue(),
                 c.getName(),
-                Optional.ofNullable(c.getProgrammingLanguage()).map(ProgrammingLanguageEntity::getName).orElse(null),
+                Optional.ofNullable(c.getProgrammingLanguage()).map(JpaProgrammingLanguageEntity::getName).orElse(null),
                 c.getLastModified().toString(),
                 c.getNumberOfChanges(),
                 c.getNumberOfAuthors(),
@@ -103,7 +94,7 @@ public final class ReadModelMappingUtils {
     }
 
 
-    public static Function<ClassContributionEntity, ClassContributionReadModel> toClassContributionReadModel() {
+    public static Function<JpaClassContributionEntity, ClassContributionReadModel> toClassContributionReadModel() {
         return contrib -> new ClassContributionReadModel(
                 contrib.getId().intValue(),
                 contrib.getTimestamp().toString(),
@@ -112,14 +103,14 @@ public final class ReadModelMappingUtils {
         );
     }
 
-    public static Function<AuthorEntity, AuthorReadModel> toAuthorReadModel() {
+    public static Function<JpaAuthorEntity, AuthorReadModel> toAuthorReadModel() {
         return author -> new AuthorReadModel(
                 author.getName(), author.getEmail()
         );
     }
 
 
-    public static Function<ClassComplexityEntity, ClassComplexityReadModel> toClassComplexityReadModel() {
+    public static Function<JpaClassComplexityEntity, ClassComplexityReadModel> toClassComplexityReadModel() {
         return c -> new ClassComplexityReadModel(
                 c.getComplexity(),
                 c.getComplexityRating().name(),
@@ -127,7 +118,7 @@ public final class ReadModelMappingUtils {
         );
     }
 
-    public static Function<ClassFindingEntity, FindingReadModel> toFindingReadModel() {
+    public static Function<JpaClassFindingEntity, FindingReadModel> toFindingReadModel() {
         return finding -> new FindingReadModel(
                 finding.getDescription(),
                 finding.getRuleName(),

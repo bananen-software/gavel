@@ -3,8 +3,8 @@ package software.bananen.gavel.backend.services.analysis;
 import software.bananen.gavel.backend.services.domain.PackageCumulativeComponentDependencyMetricsService;
 import software.bananen.gavel.backend.services.domain.PackageService;
 import software.bananen.gavel.contextloader.ProjectContext;
-import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaPackageEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectEntity;
 import software.bananen.gavel.staticanalysis.CumulativeComponentDependency;
 import software.bananen.gavel.staticanalysis.CumulativeComponentDependencyMetricsService;
 
@@ -20,7 +20,7 @@ public class AnalyzeCumulativeComponentDependencyStep extends AbstractAnalysisSt
     private static final String STEP_NAME = "Analyze cumulative component dependency";
     private final CumulativeComponentDependencyMetricsService service;
     private final ProjectContext projectContext;
-    private final ProjectEntity project;
+    private final JpaProjectEntity project;
     private final PackageService packageService;
     private final PackageCumulativeComponentDependencyMetricsService cumulativeComponentDependencyService;
 
@@ -33,7 +33,7 @@ public class AnalyzeCumulativeComponentDependencyStep extends AbstractAnalysisSt
     public AnalyzeCumulativeComponentDependencyStep(
             final CumulativeComponentDependencyMetricsService service,
             final ProjectContext projectContext,
-            final ProjectEntity project,
+            final JpaProjectEntity project,
             final PackageService packageService,
             final PackageCumulativeComponentDependencyMetricsService cumulativeComponentDependencyService) {
         super(STEP_NAME);
@@ -53,7 +53,7 @@ public class AnalyzeCumulativeComponentDependencyStep extends AbstractAnalysisSt
     protected void runAnalysis() {
         for (final CumulativeComponentDependency measurement :
                 service.measure(List.of(projectContext.basePackage()), true)) {
-            final PackageEntity existingPackage =
+            final JpaPackageEntity existingPackage =
                     packageService.findOrCreatePackage(project, measurement.packageName());
 
             cumulativeComponentDependencyService.createOrUpdate(existingPackage, measurement);

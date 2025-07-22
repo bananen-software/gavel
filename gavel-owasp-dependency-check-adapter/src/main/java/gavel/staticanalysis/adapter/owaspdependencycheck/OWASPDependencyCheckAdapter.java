@@ -18,6 +18,7 @@ import software.bananen.gavel.domain.service.RateCVEScoreService;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -27,6 +28,8 @@ import java.util.function.Function;
 public final class OWASPDependencyCheckAdapter implements VulnerabilityCheckPort {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OWASPDependencyCheckAdapter.class);
+
+    private static final RateCVEScoreService RATE_CVE_SCORE_SERVICE = new RateCVEScoreService();
 
     private final Settings settings;
 
@@ -46,14 +49,15 @@ public final class OWASPDependencyCheckAdapter implements VulnerabilityCheckPort
 
         settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
         settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, "org.h2.Driver");
-        settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, true);
+        settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, false);
 
-        //TODO: Make this configurable?
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED, enableYarn);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PNPM_AUDIT_ENABLED, enablePnpm);
 
         settings.setBooleanIfNotNull(Settings.KEYS.UPDATE_NVDCVE_ENABLED, true);
         settings.setStringIfNotEmpty(Settings.KEYS.NVD_API_KEY, nvdApiKey);
+
+        settings.setIntIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_VALID_FOR_HOURS, 24);
     }
 
     /**
@@ -90,7 +94,11 @@ public final class OWASPDependencyCheckAdapter implements VulnerabilityCheckPort
             }
             LOGGER.info("Analyzed dependencies of project: {}", projectPath);
 
-            return Arrays.stream(engine.getDependencies()).map(mapDependency()).toList();
+            return Arrays.stream(engine.getDependencies())
+                    .filter(d -> d.getVulnerabilitiesCount() > 0)
+                    .map(mapDependency())
+                    .filter(dependency -> !Objects.isNull(dependency.name()))
+                    .toList();
         }
     }
 
@@ -119,7 +127,7 @@ public final class OWASPDependencyCheckAdapter implements VulnerabilityCheckPort
                 vulnerability.getName(),
                 vulnerability.getDescription(),
                 getScore(vulnerability),
-                new RateCVEScoreService().rate(getScore(vulnerability)),
+                RATE_CVE_SCORE_SERVICE.rate(getScore(vulnerability)),
                 "https://nvd.nist.gov/vuln/detail/" + vulnerability.getName()
         );
     }

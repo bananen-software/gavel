@@ -3,8 +3,8 @@ package software.bananen.gavel.backend.services.domain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.bananen.gavel.domain.model.AnalysisStatus;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectEntity;
 import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity;
 
 import java.util.Collection;
 
@@ -32,7 +32,7 @@ public class ProjectService {
      *
      * @param projectEntity The project entity.
      */
-    public void save(final ProjectEntity projectEntity) {
+    public void save(final JpaProjectEntity projectEntity) {
         repository.save(projectEntity);
     }
 
@@ -41,7 +41,7 @@ public class ProjectService {
      *
      * @return The projects pending analysis.
      */
-    public Collection<ProjectEntity> findProjectsPendingForAnalysis() {
+    public Collection<JpaProjectEntity> findProjectsPendingForAnalysis() {
         return repository.findByAnalysisStatus(AnalysisStatus.PENDING);
     }
 }

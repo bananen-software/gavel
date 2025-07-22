@@ -12,7 +12,6 @@ import software.bananen.gavel.domain.model.Severity;
 import software.bananen.gavel.domain.model.StaticAnalysisClassFinding;
 import software.bananen.gavel.domain.ports.driven.StaticCodeAnalysisPort;
 
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,9 +27,7 @@ public final class PMDAdapter implements StaticCodeAnalysisPort {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PMDAdapter.class);
 
-    private static final URL DEFAULT_RULESET_PATH =
-            requireNonNull(Thread.currentThread().getContextClassLoader()
-                    .getResource("rulesets/default-ruleset.xml"));
+    private static final String DEFAULT_RULESET_PATH = "category/java/bestpractices.xml";
 
     private final String rulesetPath;
     private final RulePriority minimumPriority;
@@ -39,7 +36,7 @@ public final class PMDAdapter implements StaticCodeAnalysisPort {
      * Creates a new instance.
      */
     public PMDAdapter() {
-        this(DEFAULT_RULESET_PATH.getPath(), RulePriority.MEDIUM);
+        this(DEFAULT_RULESET_PATH, RulePriority.MEDIUM);
     }
 
     /**
@@ -64,6 +61,8 @@ public final class PMDAdapter implements StaticCodeAnalysisPort {
         final Collection<StaticAnalysisClassFinding> findings = new ArrayList<>();
 
         final PMDConfiguration configuration = new PMDConfiguration();
+
+        LOGGER.info("Loading rulesets from {}", rulesetPath);
 
         configuration.setRuleSets(List.of(rulesetPath));
         configuration.setInputPathList(List.of(projectPath));

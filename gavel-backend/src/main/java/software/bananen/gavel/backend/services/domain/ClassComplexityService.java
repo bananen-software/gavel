@@ -4,36 +4,36 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.bananen.gavel.domain.model.ClassComplexityRating;
 import software.bananen.gavel.domain.service.RateClassComplexityService;
-import software.bananen.gavel.infrastructure.persistence.jpa.ClassComplexityEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ClassComplexityRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.ClassContributionEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ClassEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassComplexityEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassComplexityRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassContributionEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassEntity;
 
 import java.util.Optional;
 
 @Service
 public class ClassComplexityService {
 
-    private final ClassComplexityRepository repository;
+    private final JpaClassComplexityRepository repository;
 
-    public ClassComplexityService(@Autowired final ClassComplexityRepository repository) {
+    public ClassComplexityService(@Autowired final JpaClassComplexityRepository repository) {
         this.repository = repository;
     }
 
-    public void createOrUpdate(final ClassContributionEntity classContributionEntity,
-                               final Optional<ClassContributionEntity> latestContribution,
+    public void createOrUpdate(final JpaClassContributionEntity classContributionEntity,
+                               final Optional<JpaClassContributionEntity> latestContribution,
                                final Integer complexity) {
         final Integer latestComplexity =
-                latestContribution.map(ClassContributionEntity::getClassComplexities)
+                latestContribution.map(JpaClassContributionEntity::getClassComplexities)
                         .flatMap(cc -> cc.stream().findFirst())
-                        .map(ClassComplexityEntity::getComplexity)
+                        .map(JpaClassComplexityEntity::getComplexity)
                         .orElse(0);
 
         final Integer addedComplexity =
                 complexity - latestComplexity;
 
-        final ClassComplexityEntity measuredComplexity =
-                repository.findByContribution(classContributionEntity).orElse(new ClassComplexityEntity());
+        final JpaClassComplexityEntity measuredComplexity =
+                repository.findByContribution(classContributionEntity).orElse(new JpaClassComplexityEntity());
 
         final ClassComplexityRating complexityRating =
                 new RateClassComplexityService().rate(complexity);
@@ -44,7 +44,7 @@ public class ClassComplexityService {
                 complexityRating);
         measuredComplexity.setAddedComplexity(addedComplexity);
 
-        final ClassEntity classEntity = classContributionEntity.getClassField();
+        final JpaClassEntity classEntity = classContributionEntity.getClassField();
 
         classEntity.setComplexity(complexity);
         classEntity.setComplexityRating(complexityRating);

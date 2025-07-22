@@ -12,26 +12,26 @@ import java.util.Optional;
 @Service
 public class LoadVisibilityMetricsUseCase {
 
-    private final WorkspaceRepository workspaceRepository;
+    private final JpaWorkspaceRepository workspaceRepository;
 
     public LoadVisibilityMetricsUseCase(
-            @Autowired final WorkspaceRepository workspaceRepository) {
+            @Autowired final JpaWorkspaceRepository workspaceRepository) {
         this.workspaceRepository = workspaceRepository;
     }
 
     @Transactional
     public Optional<Collection<LoadVisibilityMetricsResponseModel>> load() {
         //TODO: Support multiple workspaces
-        final Optional<WorkspaceEntity> workspace =
+        final Optional<JpaWorkspaceEntity> workspace =
                 workspaceRepository.findAll().stream().findFirst();
 
         if (workspace.isPresent()) {
             final Collection<LoadVisibilityMetricsResponseModel> result =
                     new ArrayList<>();
 
-            for (final ProjectEntity project : workspace.get().getProjects()) {
-                for (final PackageEntity pkg : project.getPackages()) {
-                    final Optional<VisibilityMetricEntity> visibilityMetricsEntity =
+            for (final JpaProjectEntity project : workspace.get().getProjects()) {
+                for (final JpaPackageEntity pkg : project.getPackages()) {
+                    final Optional<JpaVisibilityMetricEntity> visibilityMetricsEntity =
                             pkg.getVisibilityMetrics()
                                     .stream()
                                     .findFirst();

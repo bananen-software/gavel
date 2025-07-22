@@ -2,9 +2,9 @@ package software.bananen.gavel.backend.services.domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.infrastructure.persistence.jpa.ComponentDependencyMetricEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ComponentDependencyMetricsRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaComponentDependencyMetricEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaComponentDependencyMetricsRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaPackageEntity;
 import software.bananen.gavel.staticanalysis.ComponentDependency;
 
 import java.util.HashSet;
@@ -13,18 +13,18 @@ import java.util.Set;
 @Service
 public class PackageComponentDependencyMetricsService {
 
-    private final ComponentDependencyMetricsRepository repository;
+    private final JpaComponentDependencyMetricsRepository repository;
 
     public PackageComponentDependencyMetricsService(
-            @Autowired ComponentDependencyMetricsRepository repository) {
+            @Autowired JpaComponentDependencyMetricsRepository repository) {
         this.repository = repository;
     }
 
-    public void createOrUpdate(final PackageEntity packageEntity,
+    public void createOrUpdate(final JpaPackageEntity packageEntity,
                                final ComponentDependency measurement) {
-        final ComponentDependencyMetricEntity matchingEntity =
+        final JpaComponentDependencyMetricEntity matchingEntity =
                 repository.findByPackageField(packageEntity)
-                        .orElse(new ComponentDependencyMetricEntity());
+                        .orElse(new JpaComponentDependencyMetricEntity());
 
         matchingEntity.setAbstractness(measurement.abstractness());
         matchingEntity.setInstability(measurement.instability());

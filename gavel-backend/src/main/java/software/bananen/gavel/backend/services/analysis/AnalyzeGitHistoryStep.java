@@ -16,7 +16,12 @@ import software.bananen.gavel.infrastructure.persistence.jpa.*;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static software.bananen.gavel.domain.ports.service.MeasureClassFileStatisticsService.MethodStatistics;
+import static software.bananen.gavel.infrastructure.javaparser.JavaParserMeasureClassFileStatisticsService.ClassFileStatistics;
 
 public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
 
@@ -25,7 +30,7 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
 
     private static final String STEP_NAME = "Analyze git history";
 
-    private final ProjectEntity project;
+    private final JpaProjectEntity project;
     private final AuthorService authorService;
     private final PackageService packageService;
     private final ClassService classService;
@@ -35,12 +40,13 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
     private final PackageComplexityService packageComplexityService;
     private final PackageLinesOfCodeService packageLinesOfCodeService;
     private final ProjectFileService projectFileService;
-    private final ChangeCouplingRepository changeCouplingRepository;
+    private final JpaChangeCouplingRepository changeCouplingRepository;
+    private final JpaProjectRepository projectRepository;
 
     /**
      * Creates a new instance.
      */
-    public AnalyzeGitHistoryStep(final ProjectEntity project,
+    public AnalyzeGitHistoryStep(final JpaProjectEntity project,
                                  final AuthorService authorService,
                                  final PackageService packageService,
                                  final ClassService classService,
@@ -50,7 +56,8 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
                                  final PackageComplexityService packageComplexityService,
                                  final PackageLinesOfCodeService packageLinesOfCodeService,
                                  final ProjectFileService projectFileService,
-                                 final ChangeCouplingRepository changeCouplingRepository) {
+                                 final JpaChangeCouplingRepository changeCouplingRepository,
+                                 final JpaProjectRepository projectRepository) {
         super(STEP_NAME);
         this.project = project;
         this.authorService = authorService;
@@ -63,6 +70,7 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
         this.packageLinesOfCodeService = packageLinesOfCodeService;
         this.projectFileService = projectFileService;
         this.changeCouplingRepository = changeCouplingRepository;
+        this.projectRepository = projectRepository;
     }
 
     /**
@@ -74,21 +82,24 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
 
         try {
             for (final VersionControlRepository repository : vcs.findRepositoriesIn(Paths.get(project.getPath()))) {
+                LOGGER.info("Analyzing {} commits for project {}", repository.commits().size(), repository.projectName());
 
-                LOGGER.info("Analyzing {} commits for project {}",
-                        repository.commits().size(),
-                        repository.projectName());
+                final var commits = repository.commitsAfter(project.getLastProcessedCommit());
 
-                final int numberOfCommits = repository.commits().size();
+                final int numberOfCommits = commits.size();
                 int numberOfProcessedCommits = 0;
+                String lastProcessedCommit = null;
+                LocalDateTime lastProcessedCommitTimestamp = null;
 
-                for (final Commit commit : repository.commits()) {
+                for (final Commit commit : commits) {
+                    lastProcessedCommit = commit.identifier();
+                    lastProcessedCommitTimestamp = commit.timestamp();
                     //TODO: Measure author contribution to project
-                    final AuthorEntity authorEntity = authorService.findOrCreate(commit.author());
+                    final JpaAuthorEntity authorEntity = authorService.findOrCreate(commit.author());
 
-                    final Collection<ClassEntity> modifiedClasses = new ArrayList<>();
+                    final Collection<JpaClassEntity> modifiedClasses = new ArrayList<>();
 
-                    LOGGER.info("Processing commit {} [{}/[{}]", commit.identifier(), ++numberOfProcessedCommits, numberOfCommits);
+                    LOGGER.info("Processing commit {} [{}/{}]", commit.identifier(), ++numberOfProcessedCommits, numberOfCommits);
                     for (final FileDiff diff : commit.diffs()) {
                         LOGGER.debug("Processing diff {} file {} => {}", diff.type(), diff.oldPath(), diff.newPath());
 
@@ -108,7 +119,7 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
                             case DELETED -> {
                                 if (isNotExcludedType(diff.oldPath())) {
                                     projectFileService.findByPath(project, diff.oldPath())
-                                            .map(ProjectFileEntity::getClassField)
+                                            .map(JpaProjectFileEntity::getClassField)
                                             .ifPresent(classService::delete);
                                 }
                             }
@@ -117,8 +128,16 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
 
                     recordChangeCoupling(modifiedClasses);
 
-                    LOGGER.info("Processed commit {} [{}/[{}]", commit.identifier(), ++numberOfProcessedCommits, numberOfCommits);
+                    LOGGER.info("Processed commit {} [{}/{}]", commit.identifier(), numberOfProcessedCommits, numberOfCommits);
                 }
+
+                if (lastProcessedCommit != null) {
+                    project.setLastProcessedCommit(lastProcessedCommit);
+                }
+                if (lastProcessedCommitTimestamp != null) {
+                    project.setLastProcessedCommitTimestamp(lastProcessedCommitTimestamp);
+                }
+                projectRepository.save(project);
 
                 LOGGER.info("Analyzed {} commits for project {}", numberOfCommits, repository.projectName());
             }
@@ -132,40 +151,40 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
      *
      * @param modifiedClasses The modified classes.
      */
-    private void recordChangeCoupling(final Collection<ClassEntity> modifiedClasses) {
+    private void recordChangeCoupling(final Collection<JpaClassEntity> modifiedClasses) {
         /*
          * This method is more complex than it should be due to the fact, that
          * hibernate currently does not support querying tuples.
          */
-        final Collection<ChangeCouplingRepository.ClassPair> classPairs = new HashSet<>();
+        final Collection<JpaChangeCouplingRepository.ClassPair> classPairs = new HashSet<>();
 
-        for (final ClassEntity sourceClass : modifiedClasses) {
-            for (final ClassEntity targetClass : modifiedClasses) {
+        for (final JpaClassEntity sourceClass : modifiedClasses) {
+            for (final JpaClassEntity targetClass : modifiedClasses) {
                 if (!Objects.equals(sourceClass, targetClass)) {
-                    classPairs.add(new ChangeCouplingRepository.ClassPair(sourceClass, targetClass));
+                    classPairs.add(new JpaChangeCouplingRepository.ClassPair(sourceClass, targetClass));
                 }
             }
         }
 
         if (!classPairs.isEmpty()) {
-            final Collection<ClassEntity> sourceClasses =
+            final Collection<JpaClassEntity> sourceClasses =
                     classPairs.stream()
-                            .map(ChangeCouplingRepository.ClassPair::sourceClass)
+                            .map(JpaChangeCouplingRepository.ClassPair::sourceClass)
                             .toList();
 
-            final Collection<ClassEntity> targetClasses =
+            final Collection<JpaClassEntity> targetClasses =
                     classPairs.stream()
-                            .map(ChangeCouplingRepository.ClassPair::targetClass)
+                            .map(JpaChangeCouplingRepository.ClassPair::targetClass)
                             .toList();
 
-            final Collection<ChangeCouplingEntity> changeCouplingEntities =
+            final Collection<JpaChangeCouplingEntity> changeCouplingEntities =
                     new HashSet<>(changeCouplingRepository.findBySourceClassesAndTargetClasses(sourceClasses, targetClasses));
 
-            for (final ChangeCouplingRepository.ClassPair classPair : classPairs) {
+            for (final JpaChangeCouplingRepository.ClassPair classPair : classPairs) {
                 if (changeCouplingEntities.stream()
                         .noneMatch(e -> Objects.equals(e.getSourceClass(), classPair.sourceClass()) &&
                                 Objects.equals(e.getTargetClass(), classPair.targetClass()))) {
-                    final ChangeCouplingEntity entity = new ChangeCouplingEntity();
+                    final JpaChangeCouplingEntity entity = new JpaChangeCouplingEntity();
 
                     entity.setSourceClass(classPair.sourceClass());
                     entity.setTargetClass(classPair.targetClass());
@@ -175,7 +194,7 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
                 }
             }
 
-            for (final ChangeCouplingEntity changeCouplingEntity :
+            for (final JpaChangeCouplingEntity changeCouplingEntity :
                     changeCouplingEntities.stream()
                             .filter(e ->
                                     classPairs.stream().anyMatch(p -> Objects.equals(e.getSourceClass(), p.sourceClass()) &&
@@ -191,23 +210,23 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
         }
     }
 
-    private Optional<ClassEntity> processJavaClass(final Commit commit,
-                                                   final FileDiff diff,
-                                                   final AuthorEntity authorEntity) throws IOException, VersionControlSystemException {
+    private Optional<JpaClassEntity> processJavaClass(final Commit commit,
+                                                      final FileDiff diff,
+                                                      final JpaAuthorEntity authorEntity) throws IOException, VersionControlSystemException {
         final String content = new String(diff.loadContent(), StandardCharsets.UTF_8);
 
-        final Optional<JavaParserMeasureClassFileStatisticsService.ClassFileStatistics> parseResult =
+        final Optional<ClassFileStatistics> parseResult =
                 JAVA_PARSER_SERVICE.measureClassFileStatistics(content);
 
         if (parseResult.isPresent()) {
-            final PackageEntity packageEntity =
+            final JpaPackageEntity packageEntity =
                     packageService.findOrCreatePackage(project, parseResult.get().packageName());
 
-            final ClassEntity classEntity =
+            final JpaClassEntity classEntity =
                     classService.findOrCreateClass(packageEntity, parseResult.get().className());
 
             if (diff.type() == DiffType.MOVED) {
-                final ProjectFileEntity projectFileEntity =
+                final JpaProjectFileEntity projectFileEntity =
                         projectFileService.saveOrUpdate(project, diff.newPath());
 
                 projectFileEntity.setClassField(classEntity);
@@ -218,12 +237,63 @@ public class AnalyzeGitHistoryStep extends AbstractAnalysisStep {
                 packageEntity.getClasses().add(classEntity);
             }
 
+            final Collection<String> currentMethodSignatures =
+                    parseResult.get().methods().stream().map(MethodStatistics::signature).collect(Collectors.toSet());
+
+            for (final MethodStatistics method : parseResult.get().methods()) {
+                final JpaMethodEntity methodEntity =
+                        classEntity.getMethods()
+                                .stream()
+                                .filter(m -> Objects.equals(m.getSignature(), method.signature()))
+                                .findFirst()
+                                .orElse(new JpaMethodEntity());
+
+                if (!Objects.equals(methodEntity.getMd5Hash(), method.md5Hash())) {
+                    if (methodEntity.getId() == null) {
+                        methodEntity.setCreated(commit.timestamp());
+                        methodEntity.setSignature(method.signature());
+                        methodEntity.setName(method.methodName());
+                        classEntity.getMethods().add(methodEntity);
+                    }
+
+                    methodEntity.setLastModified(commit.timestamp());
+                    methodEntity.setMd5Hash(method.md5Hash());
+                    methodEntity.setLinesOfCode(method.linesOfCode());
+                    methodEntity.setComplexity(method.complexity());
+                    methodEntity.setStatus(ClassStatus.ACTIVE);
+                    methodEntity.setClassField(classEntity);
+
+                    final JpaMethodContributionEntity contribution = new JpaMethodContributionEntity();
+
+                    contribution.setTimestamp(commit.timestamp());
+                    contribution.setVcsIdentifier(commit.identifier());
+                    contribution.setAuthorEntity(authorEntity);
+                    contribution.setMethod(methodEntity);
+
+                    methodEntity.getContributions().add(contribution);
+                    methodEntity.setNumberOfChanges(methodEntity.getContributions().size());
+                    methodEntity.setNumberOfAuthors(methodEntity.getContributions()
+                            .stream()
+                            .map(JpaMethodContributionEntity::getAuthorEntity)
+                            .map(JpaAuthorEntity::getId)
+                            .collect(Collectors.toSet()).size());
+                }
+            }
+
+            classEntity.getMethods()
+                    .stream()
+                    .filter(m -> !currentMethodSignatures.contains(m.getSignature()))
+                    .forEach(m -> {
+                        m.setStatus(ClassStatus.DELETED);
+                        m.setLastModified(commit.timestamp());
+                    });
+
             classEntity.setStatus(ClassStatus.ACTIVE);
 
-            final Optional<ClassContributionEntity> latestContribution =
+            final Optional<JpaClassContributionEntity> latestContribution =
                     classContributionService.findLatestContributionTo(classEntity);
 
-            final ClassContributionEntity classContributionEntity =
+            final JpaClassContributionEntity classContributionEntity =
                     classContributionService.findOrCreate(classEntity, commit.timestamp(), commit.identifier(), authorEntity);
 
             classComplexityService.createOrUpdate(classContributionEntity, latestContribution, parseResult.get().complexity());

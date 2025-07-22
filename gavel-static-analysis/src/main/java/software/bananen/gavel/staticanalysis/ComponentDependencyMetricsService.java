@@ -24,13 +24,13 @@ public class ComponentDependencyMetricsService {
      */
     public Collection<ComponentDependency> measure(final JavaPackage pkg,
                                                    boolean resolveSubpackages) {
-        MetricsComponents<JavaClass> components =
+        final MetricsComponents<JavaClass> components =
                 MetricsComponents.fromPackages(pkg.getSubpackages());
-        ComponentDependencyMetrics metrics = ArchitectureMetrics.componentDependencyMetrics(components);
+        final ComponentDependencyMetrics metrics = ArchitectureMetrics.componentDependencyMetrics(components);
 
         final Collection<ComponentDependency> measurements = new ArrayList<>();
 
-        for (JavaPackage subpackage : pkg.getSubpackages()) {
+        for (final JavaPackage subpackage : pkg.getSubpackages()) {
             measurements.add(new ComponentDependency(
                     subpackage.getName(),
                     metrics.getEfferentCoupling(subpackage.getName()),

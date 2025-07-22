@@ -2,10 +2,7 @@ package software.bananen.gavel.backend.services.domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.infrastructure.persistence.jpa.AuthorEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ClassContributionEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ClassContributionRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.ClassEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.*;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -15,38 +12,49 @@ import java.util.stream.Collectors;
 @Service
 public class ClassContributionService {
 
-    private final ClassContributionRepository repository;
+    private final JpaClassContributionRepository repository;
+    private final JpaClassRepository classRepository;
 
-    public ClassContributionService(@Autowired final ClassContributionRepository repository) {
+    public ClassContributionService(@Autowired final JpaClassContributionRepository repository,
+                                    @Autowired final JpaClassRepository classRepository) {
         this.repository = repository;
+        this.classRepository = classRepository;
     }
 
-    public ClassContributionEntity findOrCreate(ClassEntity classEntity,
-                                                LocalDateTime timestamp,
-                                                String commitHash,
-                                                AuthorEntity authorEntity) {
+    public JpaClassContributionEntity findOrCreate(JpaClassEntity classEntity,
+                                                   LocalDateTime timestamp,
+                                                   String commitHash,
+                                                   JpaAuthorEntity authorEntity) {
 
-        final Optional<ClassContributionEntity> matchingContribution =
+        final Optional<JpaClassContributionEntity> matchingContribution =
                 repository.findByClassFieldAndTimestampAndVcsIdentifierAndAuthor(classEntity, timestamp, commitHash, authorEntity);
+
+        final var contribution = matchingContribution.orElseGet(
+                () -> repository.save(mapToEntity(classEntity, timestamp, commitHash, authorEntity).get()));
+
+        if (classEntity.getNumberOfChanges() == 0) {
+            classEntity.setCreated(timestamp);
+        }
 
         classEntity.setLastModified(timestamp);
         classEntity.setNumberOfChanges(classEntity.getNumberOfChanges() + 1);
         classEntity.setNumberOfAuthors(classEntity.getClassContributions()
                 .stream()
-                .map(ClassContributionEntity::getAuthor)
+                .map(JpaClassContributionEntity::getAuthor)
                 .collect(Collectors.toSet())
                 .size());
 
-        return matchingContribution.orElseGet(
-                () -> repository.save(mapToEntity(classEntity, timestamp, commitHash, authorEntity).get()));
+        classRepository.save(classEntity);
+
+        return contribution;
     }
 
-    private Supplier<ClassContributionEntity> mapToEntity(ClassEntity classEntity,
-                                                          LocalDateTime timestamp,
-                                                          String vcsIdentifier,
-                                                          AuthorEntity authorEntity) {
+    private Supplier<JpaClassContributionEntity> mapToEntity(final JpaClassEntity classEntity,
+                                                             final LocalDateTime timestamp,
+                                                             final String vcsIdentifier,
+                                                             final JpaAuthorEntity authorEntity) {
         return () -> {
-            final ClassContributionEntity contribution = new ClassContributionEntity();
+            final JpaClassContributionEntity contribution = new JpaClassContributionEntity();
 
             contribution.setVcsIdentifier(vcsIdentifier);
             contribution.setTimestamp(timestamp);
@@ -60,7 +68,7 @@ public class ClassContributionService {
         };
     }
 
-    public Optional<ClassContributionEntity> findLatestContributionTo(final ClassEntity classEntity) {
+    public Optional<JpaClassContributionEntity> findLatestContributionTo(final JpaClassEntity classEntity) {
         return repository.findTopByClassFieldOrderByTimestampDesc(classEntity);
     }
 }

@@ -3,13 +3,17 @@ package software.bananen.gavel.infrastructure.persistence.adapter;
 import org.springframework.stereotype.Service;
 import software.bananen.gavel.domain.model.*;
 import software.bananen.gavel.domain.ports.driven.WorkspaceRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaWorkspaceEntity;
 import software.bananen.gavel.infrastructure.persistence.jpa.JpaWorkspaceRepository;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
+import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
@@ -21,15 +25,18 @@ import static java.util.Objects.requireNonNull;
 public final class WorkspaceRepositoryAdapter implements WorkspaceRepository {
 
     private final JpaWorkspaceRepository repository;
+    private final JpaProjectRepository projectRepository;
 
     /**
      * Creates a new instance.
      *
      * @param repository The jpa repository that should be used.
      */
-    public WorkspaceRepositoryAdapter(final JpaWorkspaceRepository repository) {
+    public WorkspaceRepositoryAdapter(final JpaWorkspaceRepository repository,
+                                      final JpaProjectRepository projectRepository) {
         this.repository =
                 requireNonNull(repository, "The repository may not be null");
+        this.projectRepository = projectRepository;
     }
 
     /**
@@ -37,49 +44,40 @@ public final class WorkspaceRepositoryAdapter implements WorkspaceRepository {
      */
     @Override
     public WorkspaceAggregate save(final WorkspaceAggregate workspace) {
-        final Optional<Long> workspaceId =
-                Optional.ofNullable(workspace.getAggregateRoot().id())
-                        .map(WorkspaceIdValueObject::value);
+        final Optional<Long> workspaceId = Optional.ofNullable(workspace.getAggregateRoot().id())
+                .map(WorkspaceIdValueObject::value);
 
-        final var entity =
-                workspaceId.flatMap(repository::findById)
-                        .orElse(new software.bananen.gavel.infrastructure.persistence.jpa.WorkspaceEntity());
+        final var jpaWorkspaceEntity = workspaceId.flatMap(repository::findById).orElse(new JpaWorkspaceEntity());
 
-        entity.setName(workspace.getAggregateRoot().name().value());
-        entity.setExcludedPath(workspace.getAggregateRoot()
+        jpaWorkspaceEntity.setPath(workspace.getAggregateRoot().path().asStringValue());
+        jpaWorkspaceEntity.setName(workspace.getAggregateRoot().name().value());
+        jpaWorkspaceEntity.setExcludedPath(workspace.getAggregateRoot()
                 .excludedPaths()
                 .stream()
                 .map(WorkspaceExcludedPathValueObject::value)
                 .toList());
-        entity.setBasePackage(workspace.getAggregateRoot().basePackage().value());
+        jpaWorkspaceEntity.setBasePackage(workspace.getAggregateRoot().basePackage().value());
 
-        for (final var project : workspace.listProjects()) {
-            if (project.id() == null) {
-                final var newProject = new software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity();
+        for (final var projectEntity : workspace.listProjects()) {
+            final var jpaProjectEntity = jpaWorkspaceEntity.getProjects()
+                    .stream()
+                    .filter(existingProjectEntity -> Objects.equals(projectEntity.id().value(), existingProjectEntity.getId()))
+                    .findFirst()
+                    .orElse(new JpaProjectEntity());
 
-                newProject.setWorkspace(entity);
-                newProject.setName(project.name().value());
-                newProject.setPath(project.path().value().toString());
-                newProject.setAnalysisStatus(project.analysisStatus());
-                newProject.setLastAnalyzed(project.lastAnalyzed());
+            jpaProjectEntity.setWorkspace(jpaWorkspaceEntity);
+            jpaProjectEntity.setName(projectEntity.name().value());
+            jpaProjectEntity.setPath(projectEntity.path().value().toString());
+            jpaProjectEntity.setAnalysisStatus(projectEntity.analysisStatus());
+            jpaProjectEntity.setLastAnalyzed(projectEntity.lastAnalyzed());
 
-                entity.getProjects().add(newProject);
-            } else {
-                entity.getProjects()
-                        .stream()
-                        .filter(projectEntity -> Objects.equals(project.id().value(), projectEntity.getId()))
-                        .findFirst()
-                        .ifPresent(projectEntity -> {
-                            projectEntity.setWorkspace(entity);
-                            projectEntity.setName(project.name().value());
-                            projectEntity.setPath(project.path().value().toString());
-                            projectEntity.setAnalysisStatus(project.analysisStatus());
-                            projectEntity.setLastAnalyzed(project.lastAnalyzed());
-                        });
+            if (jpaProjectEntity.getId() == null) {
+                jpaWorkspaceEntity.getProjects().add(jpaProjectEntity);
             }
         }
 
-        return toAggregate().apply(repository.save(entity));
+        projectRepository.saveAllAndFlush(jpaWorkspaceEntity.getProjects());
+        return toAggregate().apply(repository.saveAndFlush(jpaWorkspaceEntity));
     }
 
     /**
@@ -103,7 +101,7 @@ public final class WorkspaceRepositoryAdapter implements WorkspaceRepository {
      *
      * @return The mapping function.
      */
-    private static Function<software.bananen.gavel.infrastructure.persistence.jpa.WorkspaceEntity, WorkspaceAggregate> toAggregate() {
+    private static Function<JpaWorkspaceEntity, WorkspaceAggregate> toAggregate() {
         return ws -> new WorkspaceAggregate(
                 new WorkspaceEntity(
                         Optional.ofNullable(ws.getId()).map(WorkspaceIdValueObject::new).orElse(null),
@@ -114,7 +112,16 @@ public final class WorkspaceRepositoryAdapter implements WorkspaceRepository {
                                 .toList(),
                         new WorkspaceBasePackageValueObject(ws.getBasePackage())
                 ),
-                new ArrayList<>()
+                ws.getProjects()
+                        .stream()
+                        .map(p -> new ProjectEntity(
+                                new ProjectIdValueObject(p.getId()),
+                                new ProjectNameValueObject(p.getName()),
+                                new ProjectPathValueObject(Paths.get(p.getPath())),
+                                p.getAnalysisStatus(),
+                                p.getLastAnalyzed()
+                        ))
+                        .collect(Collectors.toSet())
         );
     }
 }

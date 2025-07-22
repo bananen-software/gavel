@@ -13,7 +13,7 @@ import software.bananen.gavel.contextloader.ProjectContextData;
 import software.bananen.gavel.contextloader.ProjectContextLoader;
 import software.bananen.gavel.contextloader.ProjectContextLoaderException;
 import software.bananen.gavel.domain.model.AnalysisStatus;
-import software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectEntity;
 
 import java.time.LocalDateTime;
 
@@ -40,7 +40,7 @@ public class RunProjectAnalysisBatchJob implements Runnable {
     public void run() {
         LOGGER.debug("Starting background task");
 
-        for (final ProjectEntity project :
+        for (final JpaProjectEntity project :
                 projectService.findProjectsPendingForAnalysis()) {
             try {
                 LOGGER.info("Starting analysis for project {}[{}]",

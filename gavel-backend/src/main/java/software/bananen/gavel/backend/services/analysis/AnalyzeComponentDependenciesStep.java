@@ -3,8 +3,8 @@ package software.bananen.gavel.backend.services.analysis;
 import software.bananen.gavel.backend.services.domain.PackageComponentDependencyMetricsService;
 import software.bananen.gavel.backend.services.domain.PackageService;
 import software.bananen.gavel.contextloader.ProjectContext;
-import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaPackageEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectEntity;
 import software.bananen.gavel.staticanalysis.ComponentDependency;
 import software.bananen.gavel.staticanalysis.ComponentDependencyMetricsService;
 
@@ -19,7 +19,7 @@ public class AnalyzeComponentDependenciesStep extends AbstractAnalysisStep {
 
     private final ComponentDependencyMetricsService service;
     private final ProjectContext projectContext;
-    private final ProjectEntity project;
+    private final JpaProjectEntity project;
     private final PackageService packageService;
     private final PackageComponentDependencyMetricsService componentDependencyService;
 
@@ -35,7 +35,7 @@ public class AnalyzeComponentDependenciesStep extends AbstractAnalysisStep {
     public AnalyzeComponentDependenciesStep(
             final ComponentDependencyMetricsService service,
             final ProjectContext projectContext,
-            final ProjectEntity project,
+            final JpaProjectEntity project,
             final PackageService packageService,
             final PackageComponentDependencyMetricsService componentDependencyService) {
         super(STEP_NAME);
@@ -58,7 +58,7 @@ public class AnalyzeComponentDependenciesStep extends AbstractAnalysisStep {
     @Override
     protected void runAnalysis() {
         for (final ComponentDependency measurement : service.measure(projectContext.basePackage(), true)) {
-            final PackageEntity existingPackage =
+            final JpaPackageEntity existingPackage =
                     packageService.findOrCreatePackage(project, measurement.packageName());
 
             componentDependencyService.createOrUpdate(existingPackage, measurement);

@@ -1,8 +1,8 @@
 package software.bananen.gavel.backend.services.usecases;
 
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.infrastructure.persistence.jpa.ChangeCouplingEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ChangeCouplingRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaChangeCouplingEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaChangeCouplingRepository;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -10,9 +10,9 @@ import java.util.function.Function;
 @Service
 public class ListChangeCouplingUseCase {
 
-    private final ChangeCouplingRepository couplingRepository;
+    private final JpaChangeCouplingRepository couplingRepository;
 
-    public ListChangeCouplingUseCase(final ChangeCouplingRepository couplingRepository) {
+    public ListChangeCouplingUseCase(final JpaChangeCouplingRepository couplingRepository) {
         this.couplingRepository = couplingRepository;
     }
 
@@ -24,7 +24,7 @@ public class ListChangeCouplingUseCase {
                 .toList();
     }
 
-    private static Function<ChangeCouplingEntity, ChangeCouplingResponseModel> toResponseModel() {
+    private static Function<JpaChangeCouplingEntity, ChangeCouplingResponseModel> toResponseModel() {
         return c -> new ChangeCouplingResponseModel(
                 c.getSourceClass().getPackageField().getPackageName(),
                 c.getSourceClass().getName(),

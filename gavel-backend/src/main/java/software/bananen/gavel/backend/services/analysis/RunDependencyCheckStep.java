@@ -1,10 +1,11 @@
 package software.bananen.gavel.backend.services.analysis;
 
 import software.bananen.gavel.backend.services.domain.ProjectService;
+import software.bananen.gavel.domain.model.VulnerabilityFinding;
 import software.bananen.gavel.domain.model.VulnerableDependency;
 import software.bananen.gavel.domain.ports.driven.StaticAnalysisAdapterException;
 import software.bananen.gavel.domain.ports.driven.VulnerabilityCheckPort;
-import software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectEntity;
 
 import java.io.File;
 
@@ -12,7 +13,7 @@ import static java.util.Objects.requireNonNull;
 
 public class RunDependencyCheckStep extends AbstractAnalysisStep {
 
-    private final ProjectEntity project;
+    private final JpaProjectEntity project;
     private final ProjectService projectService;
     private final VulnerabilityCheckPort dependencyCheckAdapter;
 
@@ -23,7 +24,7 @@ public class RunDependencyCheckStep extends AbstractAnalysisStep {
      * @param projectService         The project repository.
      * @param dependencyCheckAdapter The adapter that performs dependency checks.
      */
-    public RunDependencyCheckStep(final ProjectEntity project,
+    public RunDependencyCheckStep(final JpaProjectEntity project,
                                   final ProjectService projectService,
                                   final VulnerabilityCheckPort dependencyCheckAdapter) {
         super("OWASP Dependency Check");
@@ -44,11 +45,14 @@ public class RunDependencyCheckStep extends AbstractAnalysisStep {
         try {
             final File projectPath = new File(project.getPath());
 
-            for (final VulnerableDependency vulnerableDependency :
-                    dependencyCheckAdapter.checkDependencies(projectPath)) {
-                if (vulnerableDependency.vulnerabilitiesCount() > 0) {
-                    //TODO: Record these vulnerabilities
-                    System.out.println("Found vulnerabilities: " + vulnerableDependency);
+            for (final VulnerableDependency vulnerableDependency : dependencyCheckAdapter.checkDependencies(projectPath)) {
+                System.out.println(vulnerableDependency.name() + " " + vulnerableDependency.fileName() + " " + vulnerableDependency.vulnerabilitiesCount());
+
+                for (final VulnerabilityFinding finding : vulnerableDependency.findings()) {
+                    finding.description();
+                    finding.cveRating();
+                    finding.name();
+                    finding.detailUrl();
                 }
             }
         } catch (final StaticAnalysisAdapterException e) {

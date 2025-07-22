@@ -3,8 +3,8 @@ package software.bananen.gavel.backend.services.analysis;
 import software.bananen.gavel.backend.services.domain.PackageRelationalCohesionMetricsService;
 import software.bananen.gavel.backend.services.domain.PackageService;
 import software.bananen.gavel.contextloader.ProjectContext;
-import software.bananen.gavel.infrastructure.persistence.jpa.PackageEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaPackageEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectEntity;
 import software.bananen.gavel.staticanalysis.RelationalCohesion;
 import software.bananen.gavel.staticanalysis.RelationalCohesionMetricsService;
 
@@ -17,7 +17,7 @@ public class AnalyzeRelationalCohesionStep extends AbstractAnalysisStep {
     private static final String STEP_NAME = "Analyze relative cohesion";
     private final RelationalCohesionMetricsService service;
     private final ProjectContext projectContext;
-    private final ProjectEntity project;
+    private final JpaProjectEntity project;
     private final PackageService packageService;
     private final PackageRelationalCohesionMetricsService relationalCohesionService;
 
@@ -40,7 +40,7 @@ public class AnalyzeRelationalCohesionStep extends AbstractAnalysisStep {
     public AnalyzeRelationalCohesionStep(
             final RelationalCohesionMetricsService service,
             final ProjectContext projectContext,
-            final ProjectEntity project,
+            final JpaProjectEntity project,
             final PackageService packageService,
             final PackageRelationalCohesionMetricsService relationalCohesionService) {
         super(STEP_NAME);
@@ -64,7 +64,7 @@ public class AnalyzeRelationalCohesionStep extends AbstractAnalysisStep {
     protected void runAnalysis() {
         for (final RelationalCohesion measurement :
                 service.measure(List.of(projectContext.basePackage()))) {
-            final PackageEntity packageEntity =
+            final JpaPackageEntity packageEntity =
                     packageService.findOrCreatePackage(project, measurement.packageName());
 
             relationalCohesionService.createOrUpdate(packageEntity, measurement);

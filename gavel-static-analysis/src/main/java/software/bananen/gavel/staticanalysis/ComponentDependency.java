@@ -10,8 +10,9 @@ import java.util.Collection;
  * @param afferentCoupling                   The afferent coupling.
  * @param instability                        The instability.
  * @param abstractness                       The abstractness.
- * @param normalizedDistanceFromMainSequence The normalized distance from the
- *                                           main sequence.
+ * @param normalizedDistanceFromMainSequence The normalized distance from the main sequence.
+ * @param afferentDependencies               The afferent dependencies.
+ * @param efferentDependencies               The efferent dependencies.
  */
 public record ComponentDependency(String packageName,
                                   int efferentCoupling,

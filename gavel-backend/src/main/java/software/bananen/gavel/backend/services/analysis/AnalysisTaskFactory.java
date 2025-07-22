@@ -7,9 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.bananen.gavel.backend.services.domain.*;
 import software.bananen.gavel.contextloader.ProjectContext;
-import software.bananen.gavel.infrastructure.persistence.jpa.ChangeCouplingRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.ClassFindingRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.ProjectEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaChangeCouplingRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassFindingRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectEntity;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectRepository;
 import software.bananen.gavel.staticanalysis.*;
 
 import java.util.Collection;
@@ -54,8 +55,9 @@ public class AnalysisTaskFactory {
     private final PMDAdapter pmdAdapter;
     private final SpotbugsAdapter spotbugsAdapter;
     private final OWASPDependencyCheckAdapter owaspDependencyCheckAdapter;
-    private final ClassFindingRepository classFindingRepository;
-    private final ChangeCouplingRepository changeCouplingRepository;
+    private final JpaClassFindingRepository classFindingRepository;
+    private final JpaChangeCouplingRepository changeCouplingRepository;
+    private final JpaProjectRepository jpaProjectRepository;
 
     public AnalysisTaskFactory(@Autowired final ProjectService projectService,
                                @Autowired final AuthorService authorService,
@@ -75,8 +77,9 @@ public class AnalysisTaskFactory {
                                @Autowired final PMDAdapter pmdAdapter,
                                @Autowired final SpotbugsAdapter spotbugsAdapter,
                                @Autowired final OWASPDependencyCheckAdapter owaspDependencyCheckAdapter,
-                               @Autowired final ClassFindingRepository classFindingRepository,
-                               @Autowired final ChangeCouplingRepository changeCouplingRepository) {
+                               @Autowired final JpaClassFindingRepository classFindingRepository,
+                               @Autowired final JpaChangeCouplingRepository changeCouplingRepository,
+                               @Autowired final JpaProjectRepository jpaProjectRepository) {
         this.projectService = projectService;
         this.authorService = authorService;
         this.packageService = packageService;
@@ -97,6 +100,7 @@ public class AnalysisTaskFactory {
         this.owaspDependencyCheckAdapter = owaspDependencyCheckAdapter;
         this.classFindingRepository = classFindingRepository;
         this.changeCouplingRepository = changeCouplingRepository;
+        this.jpaProjectRepository = jpaProjectRepository;
     }
 
     /**
@@ -106,7 +110,7 @@ public class AnalysisTaskFactory {
      * @return The assembled steps.
      */
     public Collection<AbstractAnalysisStep> assembleSteps(final ProjectContext projectContext,
-                                                          final ProjectEntity project) {
+                                                          final JpaProjectEntity project) {
         return List.of(
                 new AnalyzeGitHistoryStep(
                         project,
@@ -119,7 +123,8 @@ public class AnalysisTaskFactory {
                         packageComplexityService,
                         packageLinesOfCodeService,
                         projectFileService,
-                        changeCouplingRepository
+                        changeCouplingRepository,
+                        jpaProjectRepository
                 ),
                 new RunStaticCodeAnalysisStep(
                         pmdAdapter,

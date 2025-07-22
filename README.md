@@ -34,6 +34,10 @@ The database can e.g. be started in a Docker container with this command:
 
 `docker run --name gavel-postgres -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432 -d postgres:17-alpine`
 
+If you are using podman the equivalent command would look like this:
+
+`podman run --name gavel-postgres -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432 -d docker.io/postgres:17-alpine`
+
 Some things are currently hardcoded in the backend, so you might have to adjust the code to match your local workspace.
 As described under Status the project is still a WIP and very hacky.
 

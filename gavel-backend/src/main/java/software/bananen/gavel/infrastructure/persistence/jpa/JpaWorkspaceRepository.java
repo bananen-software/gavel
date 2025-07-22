@@ -10,7 +10,7 @@ import java.util.Optional;
  * A repository that can be used to access workspaces.
  */
 @Repository
-public interface JpaWorkspaceRepository extends JpaRepository<WorkspaceEntity, Long> {
+public interface JpaWorkspaceRepository extends JpaRepository<JpaWorkspaceEntity, Long> {
 
     /**
      * Attempts to find a workspace by its value.
@@ -18,5 +18,5 @@ public interface JpaWorkspaceRepository extends JpaRepository<WorkspaceEntity, L
      * @param name The value of the workspace.
      * @return The workspace.
      */
-    Optional<WorkspaceEntity> findByName(String name);
+    Optional<JpaWorkspaceEntity> findByName(String name);
 }

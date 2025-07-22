@@ -18,25 +18,25 @@ import static java.util.Objects.requireNonNull;
  */
 public class RunStaticCodeAnalysisStep extends AbstractAnalysisStep {
     private final StaticCodeAnalysisPort adapter;
-    private final ProjectEntity project;
+    private final JpaProjectEntity project;
     private final PackageService packageService;
     private final ClassService classService;
-    private final ClassFindingRepository classFindingRepository;
+    private final JpaClassFindingRepository classFindingRepository;
 
     /**
      * Creates a new instance.
      *
-     * @param adapter
-     * @param project
-     * @param packageService
-     * @param classService
-     * @param classFindingRepository
+     * @param adapter                The adapter that should be used.
+     * @param project                The project that should be analyzed.
+     * @param packageService         The package service.
+     * @param classService           The class service.
+     * @param classFindingRepository The class finding repository.
      */
     public RunStaticCodeAnalysisStep(final StaticCodeAnalysisPort adapter,
-                                     final ProjectEntity project,
+                                     final JpaProjectEntity project,
                                      final PackageService packageService,
                                      final ClassService classService,
-                                     final ClassFindingRepository classFindingRepository) {
+                                     final JpaClassFindingRepository classFindingRepository) {
         super("Run static code analysis");
 
         this.adapter =
@@ -58,12 +58,12 @@ public class RunStaticCodeAnalysisStep extends AbstractAnalysisStep {
     protected void runAnalysis() {
         try {
             for (final StaticAnalysisClassFinding finding : adapter.analyze(Path.of(project.getPath()))) {
-                final PackageEntity packageEntity =
+                final JpaPackageEntity packageEntity =
                         packageService.findOrCreatePackage(project, finding.packageName());
-                final ClassEntity classEntity =
+                final JpaClassEntity classEntity =
                         classService.findOrCreateClass(packageEntity, finding.className());
 
-                final ClassFindingEntity entity = new ClassFindingEntity();
+                final JpaClassFindingEntity entity = new JpaClassFindingEntity();
 
                 entity.setClassField(classEntity);
                 entity.setDescription(finding.description());
@@ -96,13 +96,13 @@ public class RunStaticCodeAnalysisStep extends AbstractAnalysisStep {
                 packageEntity.setTotalNumberOfFindings(
                         packageEntity.getActiveClasses()
                                 .stream()
-                                .mapToInt(ClassEntity::getTotalNumberOfFindings)
+                                .mapToInt(JpaClassEntity::getTotalNumberOfFindings)
                                 .sum());
 
                 packageEntity.setHighDefectDensity(
                         packageEntity.getActiveClasses()
                                 .stream()
-                                .mapToInt(ClassEntity::getNumberOfHighPriorityFindings)
+                                .mapToInt(JpaClassEntity::getNumberOfHighPriorityFindings)
                                 .sum());
 
                 if (packageEntity.getLinesOfCode() > 0) {
