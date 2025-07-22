@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.bananen.gavel.backend.services.domain.*;
 import software.bananen.gavel.contextloader.ProjectContext;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaChangeCouplingRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassFindingRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectRepository;
+import gavel.adapter.persistence.jpa.JpaChangeCouplingRepository;
+import gavel.adapter.persistence.jpa.JpaClassFindingRepository;
+import gavel.adapter.persistence.jpa.JpaProjectRepository;
 import software.bananen.gavel.staticanalysis.*;
 
 import java.util.Collection;

@@ -12,8 +12,8 @@ import software.bananen.gavel.domain.model.FileDiff;
 import software.bananen.gavel.domain.ports.driven.VersionControlRepository;
 import software.bananen.gavel.domain.ports.driven.VersionControlSystemException;
 import software.bananen.gavel.infrastructure.javaparser.JavaParserMeasureClassFileStatisticsService;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaChangeCouplingRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectRepository;
+import gavel.adapter.persistence.jpa.JpaChangeCouplingRepository;
+import gavel.adapter.persistence.jpa.JpaProjectRepository;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

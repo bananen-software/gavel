@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.bananen.gavel.domain.service.RateClassSizeService;
 import software.bananen.gavel.domain.service.RateCommentToCodeRatioService;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassLinesOfCodeRepository;
+import gavel.adapter.persistence.jpa.JpaClassLinesOfCodeRepository;
 
 import java.util.Optional;
 

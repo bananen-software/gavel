@@ -7,7 +7,7 @@ import software.bananen.gavel.domain.model.Size;
 import software.bananen.gavel.domain.service.MeasureCommentToCodeRatioService;
 import software.bananen.gavel.domain.service.RateCommentToCodeRatioService;
 import software.bananen.gavel.domain.service.RatePackageSizeService;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaPackageLinesOfCodeRepository;
+import gavel.adapter.persistence.jpa.JpaPackageLinesOfCodeRepository;
 
 import java.util.Comparator;
 import java.util.LinkedHashSet;

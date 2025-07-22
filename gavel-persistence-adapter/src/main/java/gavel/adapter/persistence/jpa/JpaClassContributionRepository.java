@@ -1,14 +1,13 @@
-package software.bananen.gavel.infrastructure.persistence.jpa;
+package gavel.adapter.persistence.jpa;
 
-import gavel.adapter.persistence.jpa.JpaAuthorEntity;
-import gavel.adapter.persistence.jpa.JpaClassContributionEntity;
-import gavel.adapter.persistence.jpa.JpaClassEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Optional;
 
+@Repository
 public interface JpaClassContributionRepository
         extends JpaRepository<JpaClassContributionEntity, Long> {
 

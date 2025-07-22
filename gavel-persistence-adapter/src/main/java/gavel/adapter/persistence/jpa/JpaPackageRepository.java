@@ -1,12 +1,12 @@
-package software.bananen.gavel.infrastructure.persistence.jpa;
+package gavel.adapter.persistence.jpa;
 
-import gavel.adapter.persistence.jpa.JpaPackageEntity;
-import gavel.adapter.persistence.jpa.JpaProjectEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface JpaPackageRepository extends JpaRepository<JpaPackageEntity, Long> {
 
     Optional<JpaPackageEntity> findByProjectAndPackageName(final JpaProjectEntity project, String packageName);

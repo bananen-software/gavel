@@ -5,7 +5,7 @@ import gavel.adapter.persistence.jpa.JpaPackageEntity;
 import gavel.adapter.persistence.jpa.JpaProjectEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectRepository;
+import gavel.adapter.persistence.jpa.JpaProjectRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;

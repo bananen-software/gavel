@@ -4,7 +4,7 @@ import gavel.adapter.persistence.jpa.JpaClassCohesionEntity;
 import gavel.adapter.persistence.jpa.JpaClassEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassCohesionRepository;
+import gavel.adapter.persistence.jpa.JpaClassCohesionRepository;
 
 import java.util.Optional;
 

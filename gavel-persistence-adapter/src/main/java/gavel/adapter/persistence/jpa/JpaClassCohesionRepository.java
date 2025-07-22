@@ -1,11 +1,11 @@
-package software.bananen.gavel.infrastructure.persistence.jpa;
+package gavel.adapter.persistence.jpa;
 
-import gavel.adapter.persistence.jpa.JpaClassCohesionEntity;
-import gavel.adapter.persistence.jpa.JpaClassEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+@Repository
 public interface JpaClassCohesionRepository
         extends JpaRepository<JpaClassCohesionEntity, Long> {
 

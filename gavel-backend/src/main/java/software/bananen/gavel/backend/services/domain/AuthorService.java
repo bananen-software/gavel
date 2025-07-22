@@ -4,7 +4,7 @@ import gavel.adapter.persistence.jpa.JpaAuthorEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.bananen.gavel.domain.model.Author;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaAuthorRepository;
+import gavel.adapter.persistence.jpa.JpaAuthorRepository;
 
 import java.util.Optional;
 import java.util.function.Supplier;

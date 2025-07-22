@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.bananen.gavel.domain.model.*;
 import software.bananen.gavel.domain.ports.driven.ProjectRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectRepository;
+import gavel.adapter.persistence.jpa.JpaProjectRepository;
 
 import java.nio.file.Path;
 import java.util.Collection;

@@ -1,5 +1,6 @@
 package software.bananen.gavel.infrastructure.graphql;
 
+import gavel.adapter.persistence.jpa.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
@@ -7,7 +8,6 @@ import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import software.bananen.gavel.infrastructure.persistence.jpa.*;
 
 import java.util.Collection;
 import java.util.List;

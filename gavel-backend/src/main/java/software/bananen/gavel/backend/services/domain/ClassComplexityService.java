@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.bananen.gavel.domain.model.ClassComplexityRating;
 import software.bananen.gavel.domain.service.RateClassComplexityService;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassComplexityRepository;
+import gavel.adapter.persistence.jpa.JpaClassComplexityRepository;
 
 import java.util.Optional;
 

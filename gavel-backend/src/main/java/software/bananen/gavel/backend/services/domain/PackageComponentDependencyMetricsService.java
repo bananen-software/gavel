@@ -4,7 +4,7 @@ import gavel.adapter.persistence.jpa.JpaComponentDependencyMetricEntity;
 import gavel.adapter.persistence.jpa.JpaPackageEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaComponentDependencyMetricsRepository;
+import gavel.adapter.persistence.jpa.JpaComponentDependencyMetricsRepository;
 import software.bananen.gavel.staticanalysis.ComponentDependency;
 
 import java.util.HashSet;

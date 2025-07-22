@@ -5,8 +5,8 @@ import gavel.adapter.persistence.jpa.JpaWorkspaceEntity;
 import org.springframework.stereotype.Service;
 import software.bananen.gavel.domain.model.*;
 import software.bananen.gavel.domain.ports.driven.WorkspaceRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaWorkspaceRepository;
+import gavel.adapter.persistence.jpa.JpaProjectRepository;
+import gavel.adapter.persistence.jpa.JpaWorkspaceRepository;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import software.bananen.gavel.backend.services.usecases.AuthorComplexityMetricsResponseModel;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaAuthorRepository;
+import gavel.adapter.persistence.jpa.JpaAuthorRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;

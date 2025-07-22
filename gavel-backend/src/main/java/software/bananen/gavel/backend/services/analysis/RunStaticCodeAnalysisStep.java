@@ -10,7 +10,7 @@ import software.bananen.gavel.domain.model.Severity;
 import software.bananen.gavel.domain.model.StaticAnalysisClassFinding;
 import software.bananen.gavel.domain.ports.driven.StaticAnalysisAdapterException;
 import software.bananen.gavel.domain.ports.driven.StaticCodeAnalysisPort;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassFindingRepository;
+import gavel.adapter.persistence.jpa.JpaClassFindingRepository;
 
 import java.nio.file.Path;
 import java.util.Objects;

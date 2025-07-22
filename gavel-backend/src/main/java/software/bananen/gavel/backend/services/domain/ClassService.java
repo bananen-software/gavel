@@ -8,7 +8,7 @@ import software.bananen.gavel.domain.model.ClassComplexityRating;
 import software.bananen.gavel.domain.model.ClassStatus;
 import software.bananen.gavel.domain.model.CommentToCodeRating;
 import software.bananen.gavel.domain.model.Size;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassRepository;
+import gavel.adapter.persistence.jpa.JpaClassRepository;
 
 import java.time.LocalDateTime;
 import java.util.Optional;

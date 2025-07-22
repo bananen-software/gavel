@@ -1,12 +1,12 @@
-package software.bananen.gavel.infrastructure.persistence.jpa;
+package gavel.adapter.persistence.jpa;
 
-import gavel.adapter.persistence.jpa.JpaClassComplexityEntity;
-import gavel.adapter.persistence.jpa.JpaClassContributionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface JpaClassComplexityRepository
         extends JpaRepository<JpaClassComplexityEntity, Long> {
 

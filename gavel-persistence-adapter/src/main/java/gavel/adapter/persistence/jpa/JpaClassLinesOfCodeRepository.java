@@ -1,11 +1,11 @@
-package software.bananen.gavel.infrastructure.persistence.jpa;
+package gavel.adapter.persistence.jpa;
 
-import gavel.adapter.persistence.jpa.JpaClassContributionEntity;
-import gavel.adapter.persistence.jpa.JpaClassLinesOfCodeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+@Repository
 public interface JpaClassLinesOfCodeRepository
         extends JpaRepository<JpaClassLinesOfCodeEntity, Long> {
 

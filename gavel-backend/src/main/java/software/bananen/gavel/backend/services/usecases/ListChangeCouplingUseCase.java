@@ -2,7 +2,7 @@ package software.bananen.gavel.backend.services.usecases;
 
 import gavel.adapter.persistence.jpa.JpaChangeCouplingEntity;
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaChangeCouplingRepository;
+import gavel.adapter.persistence.jpa.JpaChangeCouplingRepository;
 
 import java.util.Collection;
 import java.util.function.Function;

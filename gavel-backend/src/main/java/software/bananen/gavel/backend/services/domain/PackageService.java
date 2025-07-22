@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import software.bananen.gavel.domain.model.CommentToCodeRating;
 import software.bananen.gavel.domain.model.PackageComplexityRating;
 import software.bananen.gavel.domain.model.Size;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaPackageRepository;
+import gavel.adapter.persistence.jpa.JpaPackageRepository;
 
 import java.util.Optional;
 
