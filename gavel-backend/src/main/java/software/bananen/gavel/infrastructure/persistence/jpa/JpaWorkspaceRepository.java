@@ -1,5 +1,6 @@
 package software.bananen.gavel.infrastructure.persistence.jpa;
 
+import gavel.adapter.persistence.jpa.JpaWorkspaceEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

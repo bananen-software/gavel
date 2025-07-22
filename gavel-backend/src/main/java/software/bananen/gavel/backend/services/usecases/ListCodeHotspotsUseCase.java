@@ -1,10 +1,10 @@
 package software.bananen.gavel.backend.services.usecases;
 
+import gavel.adapter.persistence.jpa.JpaClassEntity;
+import gavel.adapter.persistence.jpa.JpaPackageEntity;
+import gavel.adapter.persistence.jpa.JpaProjectEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaPackageEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectEntity;
 import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectRepository;
 
 import java.util.ArrayList;

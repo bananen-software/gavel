@@ -1,11 +1,12 @@
 package software.bananen.gavel.backend.services.domain;
 
+import gavel.adapter.persistence.jpa.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.bananen.gavel.domain.model.ClassComplexityRating;
 import software.bananen.gavel.domain.model.ClassStatus;
 import software.bananen.gavel.domain.service.RatePackageComplexityService;
-import software.bananen.gavel.infrastructure.persistence.jpa.*;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaPackageComplexityRepository;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

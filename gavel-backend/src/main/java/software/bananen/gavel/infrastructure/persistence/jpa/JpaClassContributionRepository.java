@@ -1,5 +1,8 @@
 package software.bananen.gavel.infrastructure.persistence.jpa;
 
+import gavel.adapter.persistence.jpa.JpaAuthorEntity;
+import gavel.adapter.persistence.jpa.JpaClassContributionEntity;
+import gavel.adapter.persistence.jpa.JpaClassEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;

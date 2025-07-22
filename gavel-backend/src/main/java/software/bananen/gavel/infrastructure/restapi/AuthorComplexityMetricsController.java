@@ -1,5 +1,8 @@
 package software.bananen.gavel.infrastructure.restapi;
 
+import gavel.adapter.persistence.jpa.JpaAuthorEntity;
+import gavel.adapter.persistence.jpa.JpaClassComplexityEntity;
+import gavel.adapter.persistence.jpa.JpaClassContributionEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -7,10 +10,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import software.bananen.gavel.backend.services.usecases.AuthorComplexityMetricsResponseModel;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaAuthorEntity;
 import software.bananen.gavel.infrastructure.persistence.jpa.JpaAuthorRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassComplexityEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassContributionEntity;
 
 import java.util.ArrayList;
 import java.util.Collection;

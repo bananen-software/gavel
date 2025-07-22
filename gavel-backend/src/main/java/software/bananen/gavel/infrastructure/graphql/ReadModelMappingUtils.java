@@ -1,6 +1,6 @@
 package software.bananen.gavel.infrastructure.graphql;
 
-import software.bananen.gavel.infrastructure.persistence.jpa.*;
+import gavel.adapter.persistence.jpa.*;
 
 import java.time.LocalDateTime;
 import java.util.Optional;

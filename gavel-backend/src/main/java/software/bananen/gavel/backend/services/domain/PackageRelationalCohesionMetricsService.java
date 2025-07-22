@@ -1,10 +1,10 @@
 package software.bananen.gavel.backend.services.domain;
 
+import gavel.adapter.persistence.jpa.JpaPackageEntity;
+import gavel.adapter.persistence.jpa.JpaRelationalCohesionMetricEntity;
 import org.springframework.stereotype.Service;
 import software.bananen.gavel.domain.service.RateRelationalCohesionService;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaPackageEntity;
 import software.bananen.gavel.infrastructure.persistence.jpa.JpaPackageRelationalCohesionMetricsRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaRelationalCohesionMetricEntity;
 import software.bananen.gavel.staticanalysis.RelationalCohesion;
 
 import java.util.HashSet;

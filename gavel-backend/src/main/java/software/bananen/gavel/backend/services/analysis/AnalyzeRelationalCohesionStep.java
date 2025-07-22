@@ -1,10 +1,10 @@
 package software.bananen.gavel.backend.services.analysis;
 
+import gavel.adapter.persistence.jpa.JpaPackageEntity;
+import gavel.adapter.persistence.jpa.JpaProjectEntity;
 import software.bananen.gavel.backend.services.domain.PackageRelationalCohesionMetricsService;
 import software.bananen.gavel.backend.services.domain.PackageService;
 import software.bananen.gavel.contextloader.ProjectContext;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaPackageEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectEntity;
 import software.bananen.gavel.staticanalysis.RelationalCohesion;
 import software.bananen.gavel.staticanalysis.RelationalCohesionMetricsService;
 

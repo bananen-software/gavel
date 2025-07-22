@@ -1,4 +1,4 @@
-package software.bananen.gavel.infrastructure.persistence.jpa;
+package gavel.adapter.persistence.jpa;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;

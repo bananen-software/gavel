@@ -1,5 +1,6 @@
 package software.bananen.gavel.backend.services.analysis;
 
+import gavel.adapter.persistence.jpa.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.bananen.gavel.backend.services.domain.*;
@@ -11,7 +12,8 @@ import software.bananen.gavel.domain.model.FileDiff;
 import software.bananen.gavel.domain.ports.driven.VersionControlRepository;
 import software.bananen.gavel.domain.ports.driven.VersionControlSystemException;
 import software.bananen.gavel.infrastructure.javaparser.JavaParserMeasureClassFileStatisticsService;
-import software.bananen.gavel.infrastructure.persistence.jpa.*;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaChangeCouplingRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectRepository;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

@@ -1,12 +1,12 @@
 package software.bananen.gavel.backend.services.domain;
 
+import gavel.adapter.persistence.jpa.JpaClassContributionEntity;
+import gavel.adapter.persistence.jpa.JpaClassEntity;
+import gavel.adapter.persistence.jpa.JpaClassLinesOfCodeEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.bananen.gavel.domain.service.RateClassSizeService;
 import software.bananen.gavel.domain.service.RateCommentToCodeRatioService;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassContributionEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassLinesOfCodeEntity;
 import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassLinesOfCodeRepository;
 
 import java.util.Optional;

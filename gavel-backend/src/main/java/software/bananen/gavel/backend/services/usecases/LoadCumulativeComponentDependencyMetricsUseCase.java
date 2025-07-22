@@ -1,9 +1,13 @@
 package software.bananen.gavel.backend.services.usecases;
 
+import gavel.adapter.persistence.jpa.JpaCumulativeComponentDependencyEntity;
+import gavel.adapter.persistence.jpa.JpaPackageEntity;
+import gavel.adapter.persistence.jpa.JpaProjectEntity;
+import gavel.adapter.persistence.jpa.JpaWorkspaceEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import software.bananen.gavel.infrastructure.persistence.jpa.*;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaWorkspaceRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;

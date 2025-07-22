@@ -1,12 +1,12 @@
 package software.bananen.gavel.backend.services.analysis;
 
+import gavel.adapter.persistence.jpa.JpaClassEntity;
+import gavel.adapter.persistence.jpa.JpaPackageEntity;
+import gavel.adapter.persistence.jpa.JpaProjectEntity;
 import software.bananen.gavel.backend.services.domain.ClassCohesionService;
 import software.bananen.gavel.backend.services.domain.ClassService;
 import software.bananen.gavel.backend.services.domain.PackageService;
 import software.bananen.gavel.contextloader.ProjectContext;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaPackageEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectEntity;
 import software.bananen.gavel.staticanalysis.LCOM4Metric;
 import software.bananen.gavel.staticanalysis.LCOM4MetricsService;
 

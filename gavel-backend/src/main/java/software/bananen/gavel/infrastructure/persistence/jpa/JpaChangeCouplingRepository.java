@@ -1,5 +1,7 @@
 package software.bananen.gavel.infrastructure.persistence.jpa;
 
+import gavel.adapter.persistence.jpa.JpaChangeCouplingEntity;
+import gavel.adapter.persistence.jpa.JpaClassEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

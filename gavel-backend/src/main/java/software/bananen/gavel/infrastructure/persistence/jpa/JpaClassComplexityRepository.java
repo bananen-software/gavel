@@ -1,5 +1,7 @@
 package software.bananen.gavel.infrastructure.persistence.jpa;
 
+import gavel.adapter.persistence.jpa.JpaClassComplexityEntity;
+import gavel.adapter.persistence.jpa.JpaClassContributionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

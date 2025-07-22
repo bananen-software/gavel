@@ -1,11 +1,11 @@
 package software.bananen.gavel.backend.services.analysis;
 
+import gavel.adapter.persistence.jpa.JpaProjectEntity;
 import software.bananen.gavel.backend.services.domain.ProjectService;
 import software.bananen.gavel.domain.model.VulnerabilityFinding;
 import software.bananen.gavel.domain.model.VulnerableDependency;
 import software.bananen.gavel.domain.ports.driven.StaticAnalysisAdapterException;
 import software.bananen.gavel.domain.ports.driven.VulnerabilityCheckPort;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectEntity;
 
 import java.io.File;
 

@@ -1,5 +1,6 @@
 package software.bananen.gavel.backend.services.analysis;
 
+import gavel.adapter.persistence.jpa.JpaProjectEntity;
 import gavel.staticanalysis.adapter.owaspdependencycheck.OWASPDependencyCheckAdapter;
 import gavel.staticanalysis.adapter.pmd.PMDAdapter;
 import gavel.staticanalysis.adapter.spotbugs.SpotbugsAdapter;
@@ -9,7 +10,6 @@ import software.bananen.gavel.backend.services.domain.*;
 import software.bananen.gavel.contextloader.ProjectContext;
 import software.bananen.gavel.infrastructure.persistence.jpa.JpaChangeCouplingRepository;
 import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassFindingRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectEntity;
 import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectRepository;
 import software.bananen.gavel.staticanalysis.*;
 

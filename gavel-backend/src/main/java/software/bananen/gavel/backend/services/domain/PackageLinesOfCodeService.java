@@ -1,12 +1,13 @@
 package software.bananen.gavel.backend.services.domain;
 
+import gavel.adapter.persistence.jpa.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.bananen.gavel.domain.model.Size;
 import software.bananen.gavel.domain.service.MeasureCommentToCodeRatioService;
 import software.bananen.gavel.domain.service.RateCommentToCodeRatioService;
 import software.bananen.gavel.domain.service.RatePackageSizeService;
-import software.bananen.gavel.infrastructure.persistence.jpa.*;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaPackageLinesOfCodeRepository;
 
 import java.util.Comparator;
 import java.util.LinkedHashSet;

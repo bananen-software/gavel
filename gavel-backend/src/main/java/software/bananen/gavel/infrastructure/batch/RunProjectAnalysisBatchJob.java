@@ -1,5 +1,6 @@
 package software.bananen.gavel.infrastructure.batch;
 
+import gavel.adapter.persistence.jpa.JpaProjectEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,6 @@ import software.bananen.gavel.contextloader.ProjectContextData;
 import software.bananen.gavel.contextloader.ProjectContextLoader;
 import software.bananen.gavel.contextloader.ProjectContextLoaderException;
 import software.bananen.gavel.domain.model.AnalysisStatus;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectEntity;
 
 import java.time.LocalDateTime;
 

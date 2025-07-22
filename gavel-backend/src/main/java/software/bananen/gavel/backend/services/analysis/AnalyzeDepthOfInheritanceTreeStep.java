@@ -1,7 +1,7 @@
 package software.bananen.gavel.backend.services.analysis;
 
+import gavel.adapter.persistence.jpa.JpaProjectEntity;
 import software.bananen.gavel.contextloader.ProjectContext;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaProjectEntity;
 import software.bananen.gavel.staticanalysis.DepthOfInheritanceTree;
 import software.bananen.gavel.staticanalysis.DepthOfInheritanceTreeMetricsService;
 

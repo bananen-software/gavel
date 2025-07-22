@@ -1,13 +1,13 @@
 package software.bananen.gavel.backend.services.domain;
 
+import gavel.adapter.persistence.jpa.JpaClassComplexityEntity;
+import gavel.adapter.persistence.jpa.JpaClassContributionEntity;
+import gavel.adapter.persistence.jpa.JpaClassEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.bananen.gavel.domain.model.ClassComplexityRating;
 import software.bananen.gavel.domain.service.RateClassComplexityService;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassComplexityEntity;
 import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassComplexityRepository;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassContributionEntity;
-import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassEntity;
 
 import java.util.Optional;
 

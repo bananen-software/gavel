@@ -1,8 +1,12 @@
 package software.bananen.gavel.backend.services.domain;
 
+import gavel.adapter.persistence.jpa.JpaAuthorEntity;
+import gavel.adapter.persistence.jpa.JpaClassContributionEntity;
+import gavel.adapter.persistence.jpa.JpaClassEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.infrastructure.persistence.jpa.*;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassContributionRepository;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassRepository;
 
 import java.time.LocalDateTime;
 import java.util.Optional;

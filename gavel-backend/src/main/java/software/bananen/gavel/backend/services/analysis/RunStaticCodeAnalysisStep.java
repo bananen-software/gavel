@@ -1,12 +1,16 @@
 package software.bananen.gavel.backend.services.analysis;
 
+import gavel.adapter.persistence.jpa.JpaClassEntity;
+import gavel.adapter.persistence.jpa.JpaClassFindingEntity;
+import gavel.adapter.persistence.jpa.JpaPackageEntity;
+import gavel.adapter.persistence.jpa.JpaProjectEntity;
 import software.bananen.gavel.backend.services.domain.ClassService;
 import software.bananen.gavel.backend.services.domain.PackageService;
 import software.bananen.gavel.domain.model.Severity;
 import software.bananen.gavel.domain.model.StaticAnalysisClassFinding;
 import software.bananen.gavel.domain.ports.driven.StaticAnalysisAdapterException;
 import software.bananen.gavel.domain.ports.driven.StaticCodeAnalysisPort;
-import software.bananen.gavel.infrastructure.persistence.jpa.*;
+import software.bananen.gavel.infrastructure.persistence.jpa.JpaClassFindingRepository;
 
 import java.nio.file.Path;
 import java.util.Objects;
