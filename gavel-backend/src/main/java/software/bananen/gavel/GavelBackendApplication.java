@@ -10,7 +10,10 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
                 SecurityAutoConfiguration.class,
                 ManagementWebSecurityAutoConfiguration.class
         },
-        scanBasePackages = {"software.bananen.gavel"}
+        scanBasePackages = {
+                "software.bananen.gavel",
+                "gavel"
+        }
 )
 public class GavelBackendApplication {
     public static void main(String[] args) {
