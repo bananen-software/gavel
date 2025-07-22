@@ -2,7 +2,7 @@ dependencies {
     api project(':gavel-domain')
 
     implementation 'commons-io:commons-io:2.16.1'
-    implementation 'org.apache.commons:commons-lang3:3.15.0'
+    implementation 'org.apache.commons:commons-lang3:3.18.0'
 
     api 'org.eclipse.jgit:org.eclipse.jgit:6.9.0.202403050737-r'
     api 'com.github.javaparser:javaparser-core:3.26.2'
