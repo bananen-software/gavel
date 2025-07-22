@@ -9,6 +9,9 @@ import software.bananen.gavel.domain.model.CommentToCodeRating;
  */
 public class RateCommentToCodeRatioService {
 
+    private static final double LOW_CODE_TO_COMMENT_THRESHOLD = 0.10;
+    private static final double HIGH_CODE_TO_COMMENT_THRESHOLD = 0.50;
+    
     /**
      * Determines the code to comment rating for the given code to comment ratio.
      *
@@ -16,9 +19,9 @@ public class RateCommentToCodeRatioService {
      * @return The code to comment rating.
      */
     public CommentToCodeRating rate(double codeToCommentRatio) {
-        if (codeToCommentRatio <= 0.10) {
+        if (codeToCommentRatio <= LOW_CODE_TO_COMMENT_THRESHOLD) {
             return CommentToCodeRating.LOW;
-        } else if (codeToCommentRatio > 0.50) {
+        } else if (codeToCommentRatio > HIGH_CODE_TO_COMMENT_THRESHOLD) {
             return CommentToCodeRating.HIGH;
         } else {
             return CommentToCodeRating.NORMAL;
