@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-    id 'application'
 }
 
 group = 'bananen.software.gavel'
@@ -10,49 +9,10 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation project(':gavel-static-analysis')
-
-    implementation 'com.tngtech.archunit:archunit-junit5:1.3.0'
-
-    implementation 'commons-io:commons-io:2.16.1'
-    implementation 'org.apache.commons:commons-csv:1.10.0'
-    implementation 'org.apache.commons:commons-lang3:3.14.0'
-
-    implementation 'org.eclipse.jgit:org.eclipse.jgit:6.9.0.202403050737-r'
-
-    implementation 'info.picocli:picocli:4.7.6'
-
-    implementation 'org.slf4j:slf4j-api:2.0.12'
-    implementation 'org.slf4j:slf4j-simple:2.0.13'
-
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
-
-    testImplementation platform('org.junit:junit-bom:5.10.3')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testImplementation 'org.assertj:assertj-core:3.26.3'
-}
-
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
-}
-
-test {
-    useJUnitPlatform()
-}
-
-jar {
-    manifest {
-        attributes(
-                'Main-Class': 'software.bananen.gavel.cli.Application'
-        )
-    }
-}
-
-application {
-    mainClass = 'software.bananen.gavel.cli.Application'
 }
 
 configure(subprojects.findAll()) {

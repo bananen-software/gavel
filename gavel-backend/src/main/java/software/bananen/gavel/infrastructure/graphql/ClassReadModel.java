@@ -17,6 +17,7 @@ public record ClassReadModel(int id,
                              int totalNumberOfFindings,
                              int numberOfHighPriorityFindings,
                              double defectDensity,
-                             double highDefectDensity) {
+                             double highDefectDensity,
+                             String stratum) {
 
 }

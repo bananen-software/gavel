@@ -1,14 +1,11 @@
 package software.bananen.gavel.backend.services.domain;
 
 import gavel.adapter.persistence.jpa.JpaClassEntity;
+import gavel.adapter.persistence.jpa.JpaClassRepository;
 import gavel.adapter.persistence.jpa.JpaPackageEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.domain.model.ClassComplexityRating;
-import software.bananen.gavel.domain.model.ClassStatus;
-import software.bananen.gavel.domain.model.CommentToCodeRating;
-import software.bananen.gavel.domain.model.Size;
-import gavel.adapter.persistence.jpa.JpaClassRepository;
+import software.bananen.gavel.domain.model.*;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -48,6 +45,7 @@ public class ClassService {
             classEntity.setNumberOfHighPriorityFindings(0);
             classEntity.setDefectDensity(0.0);
             classEntity.setHighDefectDensity(0.0);
+            classEntity.setStratum(Stratum.SURFACE);
 
             packageEntity.getClasses().add(classEntity);
             packageEntity.setNumberOfTypes(packageEntity.getClasses().size());
