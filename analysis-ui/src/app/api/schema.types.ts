@@ -11,11 +11,11 @@ export type AnalysisStatus = 'NOT_RUN' | 'PENDING' | 'RUNNING' | 'COMPLETED' | '
 export type Stratum = 'SURFACE' | 'INTERMEDIATE' | 'DEEP' | 'SEDIMENT' | 'NONE';
 export type ClassComplexityRating = 'EMPTY' | 'LOW' | 'MEDIUM' | 'HIGH' | 'UNKNOWN' | 'VERY_HIGH';
 export type PackageComplexityRating =
-  | 'EMPTY'
-  | 'MOSTLY_SIMPLE'
-  | 'BALANCED'
-  | 'COMPLEX'
-  | 'HIGHLY_COMPLEX';
+    | 'EMPTY'
+    | 'MOSTLY_SIMPLE'
+    | 'BALANCED'
+    | 'COMPLEX'
+    | 'HIGHLY_COMPLEX';
 export type ClassStatus = 'ACTIVE' | 'DELETED';
 export type RelationalCohesionRating = 'LOW' | 'GOOD' | 'HIGH';
 export type Severity = 'LOW' | 'MEDIUM' | 'HIGH';
@@ -25,135 +25,148 @@ export type Size = 'UNKNOWN' | 'EMPTY' | 'SMALL' | 'MEDIUM' | 'LARGE' | 'VERY_LA
 type Nullable<T> = T | null;
 
 export interface WorkspaceSummary {
-  id: string;
-  name: Nullable<string>;
-  path: Nullable<string>;
-  basePackage: Nullable<string>;
-  excludedPaths: string[];
-  projects: ProjectRef[];
+    id: string;
+    name: Nullable<string>;
+    path: Nullable<string>;
+    basePackage: Nullable<string>;
+    excludedPaths: string[];
+    projects: ProjectRef[];
 }
 
 export interface ProjectRef {
-  id: string;
-  name: Nullable<string>;
-  analysisStatus: Nullable<AnalysisStatus>;
-  lastAnalyzed: Nullable<string>;
+    id: string;
+    name: Nullable<string>;
+    analysisStatus: Nullable<AnalysisStatus>;
+    lastAnalyzed: Nullable<string>;
+    numberOfTypes: number;
+    totalLinesOfCode: number;
+    totalLinesOfComments: number;
+    numberOfFindings: number;
+    numberOfHighPriorityFindings: number;
+    numberOfPackages: number;
+    defectDensity: number;
+    highDefectDensity: number;
+    commentToCodeRatio: number;
 }
 
 export interface RelationalCohesion {
-  rating: Nullable<RelationalCohesionRating>;
-  numberOfTypes: Nullable<number>;
-  numberOfInternalRelationships: Nullable<number>;
-  relationalCohesion: Nullable<number>;
+    rating: Nullable<RelationalCohesionRating>;
+    numberOfTypes: Nullable<number>;
+    numberOfInternalRelationships: Nullable<number>;
+    relationalCohesion: Nullable<number>;
 }
 
 export interface ComponentDependency {
-  afferentCoupling: Nullable<number>;
-  efferentCoupling: Nullable<number>;
-  abstractness: Nullable<number>;
-  instability: Nullable<number>;
-  distance: Nullable<number>;
+    afferentCoupling: Nullable<number>;
+    efferentCoupling: Nullable<number>;
+    abstractness: Nullable<number>;
+    instability: Nullable<number>;
+    distance: Nullable<number>;
 }
 
 export interface PackageSummary {
-  id: string;
-  name: Nullable<string>;
-  complexity: Nullable<number>;
-  complexityRating: Nullable<PackageComplexityRating>;
-  complexityOrdinal: Nullable<number>;
-  numberOfTypes: Nullable<number>;
-  defectDensity: Nullable<number>;
-  highDefectDensity: Nullable<number>;
-  linesOfCode: Nullable<number>;
-  linesOfComments: Nullable<number>;
-  commentToCodeRatio: Nullable<number>;
-  numberOfVeryHighComplexityTypes: Nullable<number>;
-  numberOfHighComplexityTypes: Nullable<number>;
-  numberOfMediumComplexityTypes: Nullable<number>;
-  numberOfLowComplexityTypes: Nullable<number>;
-  numberOfHighPriorityFindings: Nullable<number>;
-  totalNumberOfFindings: Nullable<number>;
-  size: Nullable<Size>;
-  stratum: Nullable<Stratum>;
-  stratumOrdinal: Nullable<number>;
-  relationalCohesion: Nullable<RelationalCohesion>;
-  componentDependency: Nullable<ComponentDependency>;
+    id: string;
+    name: Nullable<string>;
+    complexity: Nullable<number>;
+    complexityRating: Nullable<PackageComplexityRating>;
+    complexityOrdinal: Nullable<number>;
+    numberOfTypes: Nullable<number>;
+    defectDensity: Nullable<number>;
+    highDefectDensity: Nullable<number>;
+    linesOfCode: Nullable<number>;
+    linesOfComments: Nullable<number>;
+    commentToCodeRatio: Nullable<number>;
+    numberOfVeryHighComplexityTypes: Nullable<number>;
+    numberOfHighComplexityTypes: Nullable<number>;
+    numberOfMediumComplexityTypes: Nullable<number>;
+    numberOfLowComplexityTypes: Nullable<number>;
+    numberOfHighPriorityFindings: Nullable<number>;
+    totalNumberOfFindings: Nullable<number>;
+    size: Nullable<Size>;
+    stratum: Nullable<Stratum>;
+    stratumOrdinal: Nullable<number>;
+    relationalCohesion: Nullable<RelationalCohesion>;
+    componentDependency: Nullable<ComponentDependency>;
 }
 
 export interface ClassSummary {
-  id: string;
-  packageId: Nullable<string>;
-  name: Nullable<string>;
-  programmingLanguage: Nullable<string>;
-  lastModified: Nullable<string>;
-  numberOfChanges: Nullable<number>;
-  numberOfAuthors: Nullable<number>;
-  size: Nullable<Size>;
-  complexity: Nullable<number>;
-  complexityRating: Nullable<ClassComplexityRating>;
-  totalLinesOfCode: Nullable<number>;
-  totalLinesOfComments: Nullable<number>;
-  commentToCodeRatio: Nullable<number>;
-  numberOfResponsibilities: Nullable<number>;
-  status: Nullable<ClassStatus>;
-  totalNumberOfFindings: Nullable<number>;
-  numberOfHighPriorityFindings: Nullable<number>;
-  defectDensity: Nullable<number>;
-  highDefectDensity: Nullable<number>;
-  stratum: Nullable<Stratum>;
+    id: string;
+    packageId: Nullable<string>;
+    name: Nullable<string>;
+    programmingLanguage: Nullable<string>;
+    lastModified: Nullable<string>;
+    numberOfChanges: Nullable<number>;
+    numberOfAuthors: Nullable<number>;
+    size: Nullable<Size>;
+    complexity: Nullable<number>;
+    complexityRating: Nullable<ClassComplexityRating>;
+    totalLinesOfCode: Nullable<number>;
+    totalLinesOfComments: Nullable<number>;
+    commentToCodeRatio: Nullable<number>;
+    numberOfResponsibilities: Nullable<number>;
+    status: Nullable<ClassStatus>;
+    totalNumberOfFindings: Nullable<number>;
+    numberOfHighPriorityFindings: Nullable<number>;
+    defectDensity: Nullable<number>;
+    highDefectDensity: Nullable<number>;
+    stratum: Nullable<Stratum>;
 }
 
 export interface Author {
-  id: Nullable<string>;
-  name: Nullable<string>;
-  email: Nullable<string>;
+    id: Nullable<string>;
+    name: Nullable<string>;
+    email: Nullable<string>;
 }
 
 export interface ClassComplexity {
-  complexity: Nullable<number>;
-  rating: Nullable<ClassComplexityRating>;
-  addedComplexity: Nullable<number>;
+    complexity: Nullable<number>;
+    rating: Nullable<ClassComplexityRating>;
+    addedComplexity: Nullable<number>;
 }
 
 export interface ClassContribution {
-  id: Nullable<string>;
-  timestamp: Nullable<string>;
-  vcsIdentifier: Nullable<string>;
-  authorId: Nullable<string>;
-  author: Nullable<Author>;
-  complexity: Nullable<ClassComplexity>;
+    id: Nullable<string>;
+    timestamp: Nullable<string>;
+    vcsIdentifier: Nullable<string>;
+    authorId: Nullable<string>;
+    author: Nullable<Author>;
+    complexity: Nullable<ClassComplexity>;
 }
 
 export interface Finding {
-  id: Nullable<string>;
-  description: Nullable<string>;
-  ruleName: Nullable<string>;
-  ruleDescription: Nullable<string>;
-  severity: Nullable<Severity>;
-  tool: Nullable<string>;
+    id: Nullable<string>;
+    description: Nullable<string>;
+    ruleName: Nullable<string>;
+    ruleDescription: Nullable<string>;
+    severity: Nullable<Severity>;
+    tool: Nullable<string>;
 }
 
 export interface ClassDetail extends ClassSummary {
-  contributions: ClassContribution[];
-  findings: Finding[];
+    contributions: ClassContribution[];
+    findings: Finding[];
 }
 
 export interface ProjectSnapshot extends ProjectRef {
-  packages: PackageSummary[];
+    packages: PackageSummary[];
 }
 
 export interface WorkspacesQuery {
-  workspaces: WorkspaceSummary[];
+    workspaces: WorkspaceSummary[];
 }
+
 export interface ProjectsQuery {
-  projects: ProjectRef[];
+    projects: ProjectRef[];
 }
+
 export interface ProjectSnapshotQuery {
-  projectById: Nullable<ProjectSnapshot>;
+    projectById: Nullable<ProjectSnapshot>;
 }
+
 export interface ClassesByPackageQuery {
-  classesByPackage: ClassSummary[];
+    classesByPackage: ClassSummary[];
 }
+
 export interface ClassDetailQuery {
-  classById: Nullable<ClassDetail>;
+    classById: Nullable<ClassDetail>;
 }

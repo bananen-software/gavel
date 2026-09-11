@@ -100,6 +100,7 @@ logging:
     org.hibernate.SQL: INFO
     org.hibernate.type.descriptor.sql.BasicBinder: INFO
     org.hibernate.orm.jdbc.bind: INFO
+    org.owasp.dependencycheck: DEBUG
   # Spring Boot 3.2+ already appends traceId/spanId automatically once the
   # tracing bridge is on the classpath. Uncomment only if you want to control
   # the format yourself.

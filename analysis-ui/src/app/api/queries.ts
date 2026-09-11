@@ -18,154 +18,163 @@
  * query fails, so a mismatch degrades rather than breaks.
  */
 export const WORKSPACES = /* GraphQL */ `
-  query Workspaces {
-    workspaces {
-      id
-      name
-      path
-      basePackage
-      excludedPaths
-      projects {
-        id
-        name
-        analysisStatus
-        lastAnalyzed
-      }
+    query Workspaces {
+        workspaces {
+            id
+            name
+            path
+            basePackage
+            excludedPaths
+            projects {
+                id
+                name
+                analysisStatus
+                lastAnalyzed
+            }
+        }
     }
-  }
 `;
 
 export const PROJECTS = /* GraphQL */ `
-  query Projects {
-    projects {
-      id
-      name
-      analysisStatus
-      lastAnalyzed
+    query Projects {
+        projects {
+            id
+            name
+            analysisStatus
+            lastAnalyzed
+        }
     }
-  }
 `;
 
 export const PROJECT_SNAPSHOT = /* GraphQL */ `
-  query ProjectSnapshot($id: ID) {
-    projectById(id: $id) {
-      id
-      name
-      analysisStatus
-      lastAnalyzed
-      packages {
-        id
-        name
-        complexity
-        complexityRating
-        complexityOrdinal
-        numberOfTypes
-        defectDensity
-        highDefectDensity
-        linesOfCode
-        linesOfComments
-        commentToCodeRatio
-        numberOfVeryHighComplexityTypes
-        numberOfHighComplexityTypes
-        numberOfMediumComplexityTypes
-        numberOfLowComplexityTypes
-        numberOfHighPriorityFindings
-        totalNumberOfFindings
-        size
-        stratum
-        stratumOrdinal
-        relationalCohesion {
-          rating
-          numberOfTypes
-          numberOfInternalRelationships
-          relationalCohesion
+    query ProjectSnapshot($id: ID) {
+        projectById(id: $id) {
+            id
+            name
+            analysisStatus
+            lastAnalyzed
+            numberOfTypes
+            totalLinesOfCode
+            totalLinesOfComments
+            numberOfFindings
+            numberOfHighPriorityFindings
+            numberOfPackages
+            defectDensity
+            highDefectDensity
+            commentToCodeRatio
+            packages {
+                id
+                name
+                complexity
+                complexityRating
+                complexityOrdinal
+                numberOfTypes
+                defectDensity
+                highDefectDensity
+                linesOfCode
+                linesOfComments
+                commentToCodeRatio
+                numberOfVeryHighComplexityTypes
+                numberOfHighComplexityTypes
+                numberOfMediumComplexityTypes
+                numberOfLowComplexityTypes
+                numberOfHighPriorityFindings
+                totalNumberOfFindings,
+                size
+                stratum
+                stratumOrdinal
+                relationalCohesion {
+                    rating
+                    numberOfTypes
+                    numberOfInternalRelationships
+                    relationalCohesion
+                }
+                componentDependency {
+                    afferentCoupling
+                    efferentCoupling
+                    abstractness
+                    instability
+                    distance
+                }
+            }
         }
-        componentDependency {
-          afferentCoupling
-          efferentCoupling
-          abstractness
-          instability
-          distance
-        }
-      }
     }
-  }
 `;
 
 export const CLASSES_BY_PACKAGE = /* GraphQL */ `
-  query ClassesByPackage($packageId: ID) {
-    classesByPackage(packageId: $packageId) {
-      id
-      packageId
-      name
-      programmingLanguage
-      lastModified
-      numberOfChanges
-      numberOfAuthors
-      size
-      complexity
-      complexityRating
-      totalLinesOfCode
-      totalLinesOfComments
-      commentToCodeRatio
-      numberOfResponsibilities
-      status
-      totalNumberOfFindings
-      numberOfHighPriorityFindings
-      defectDensity
-      highDefectDensity
-      stratum
+    query ClassesByPackage($packageId: ID) {
+        classesByPackage(packageId: $packageId) {
+            id
+            packageId
+            name
+            programmingLanguage
+            lastModified
+            numberOfChanges
+            numberOfAuthors
+            size
+            complexity
+            complexityRating
+            totalLinesOfCode
+            totalLinesOfComments
+            commentToCodeRatio
+            numberOfResponsibilities
+            status
+            totalNumberOfFindings
+            numberOfHighPriorityFindings
+            defectDensity
+            highDefectDensity
+            stratum
+        }
     }
-  }
 `;
 
 export const CLASS_DETAIL = /* GraphQL */ `
-  query ClassDetail($classId: ID) {
-    classById(classId: $classId) {
-      id
-      packageId
-      name
-      programmingLanguage
-      lastModified
-      numberOfChanges
-      numberOfAuthors
-      size
-      complexity
-      complexityRating
-      totalLinesOfCode
-      totalLinesOfComments
-      commentToCodeRatio
-      numberOfResponsibilities
-      status
-      totalNumberOfFindings
-      numberOfHighPriorityFindings
-      defectDensity
-      highDefectDensity
-      stratum
-      contributions {
-        id
-        timestamp
-        vcsIdentifier
-        authorId
-        author {
-          id
-          name
-          email
+    query ClassDetail($classId: ID) {
+        classById(classId: $classId) {
+            id
+            packageId
+            name
+            programmingLanguage
+            lastModified
+            numberOfChanges
+            numberOfAuthors
+            size
+            complexity
+            complexityRating
+            totalLinesOfCode
+            totalLinesOfComments
+            commentToCodeRatio
+            numberOfResponsibilities
+            status
+            totalNumberOfFindings
+            numberOfHighPriorityFindings
+            defectDensity
+            highDefectDensity
+            stratum
+            contributions {
+                id
+                timestamp
+                vcsIdentifier
+                authorId
+                author {
+                    id
+                    name
+                    email
+                }
+                complexity {
+                    complexity
+                    rating
+                    addedComplexity
+                }
+            }
+            findings {
+                id
+                description
+                ruleName
+                ruleDescription
+                severity
+                tool
+            }
         }
-        complexity {
-          complexity
-          rating
-          addedComplexity
-        }
-      }
-      findings {
-        id
-        description
-        ruleName
-        ruleDescription
-        severity
-        tool
-      }
     }
-  }
 `;

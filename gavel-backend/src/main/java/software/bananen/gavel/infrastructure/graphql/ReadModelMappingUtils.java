@@ -77,7 +77,16 @@ public final class ReadModelMappingUtils {
                 e.getAnalysisStatus().name(),
                 Optional.ofNullable(e.getLastAnalyzed())
                         .map(LocalDateTime::toString)
-                        .orElse(null)
+                        .orElse(null),
+                e.getNumberOfTypes(),
+                e.getTotalLinesOfCode(),
+                e.getTotalLinesOfComments(),
+                e.getNumberOfFindings(),
+                e.getNumberOfHighPriorityFindings(),
+                e.getNumberOfPackages(),
+                e.getDefectDensity(),
+                e.getHighDefectDensity(),
+                e.getCommentToCodeRatio()
         );
     }
 

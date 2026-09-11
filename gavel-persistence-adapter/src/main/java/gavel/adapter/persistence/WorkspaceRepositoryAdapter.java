@@ -61,7 +61,11 @@ public final class WorkspaceRepositoryAdapter implements WorkspaceRepository {
         for (final var projectEntity : workspace.listProjects()) {
             final var jpaProjectEntity = jpaWorkspaceEntity.getProjects()
                     .stream()
-                    .filter(existingProjectEntity -> Objects.equals(projectEntity.id().value(), existingProjectEntity.getId()))
+                    .filter(existingProjectEntity ->
+                            Objects.equals(Optional.ofNullable(projectEntity.id())
+                                            .map(ProjectIdValueObject::value)
+                                            .orElse(null),
+                                    existingProjectEntity.getId()))
                     .findFirst()
                     .orElse(new JpaProjectEntity());
 

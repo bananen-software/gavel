@@ -3,19 +3,19 @@ import {GraphQlClient} from '../api/graphql.client';
 import {CreateWorkspaceRequest, RestClient} from '../api/rest.client';
 import {CLASS_DETAIL, CLASSES_BY_PACKAGE, PROJECT_SNAPSHOT, PROJECTS, WORKSPACES,} from '../api/queries';
 import type {
-  ClassDetail,
-  ClassDetailQuery,
-  ClassesByPackageQuery,
-  ClassSummary,
-  PackageSummary,
-  ProjectRef,
-  ProjectSnapshot,
-  ProjectSnapshotQuery,
-  ProjectsQuery,
-  WorkspaceSummary,
-  WorkspacesQuery,
+    ClassDetail,
+    ClassDetailQuery,
+    ClassesByPackageQuery,
+    ClassSummary,
+    PackageSummary,
+    ProjectRef,
+    ProjectSnapshot,
+    ProjectSnapshotQuery,
+    ProjectsQuery,
+    WorkspacesQuery,
+    WorkspaceSummary,
 } from '../api/schema.types';
-import {num, ratio, sum} from '../shared/format';
+import {num, sum} from '../shared/format';
 import {isAnalysisInProgress} from '../shared/ratings';
 
 interface Loadable<T> {
@@ -95,22 +95,6 @@ export class AnalysisStore implements OnDestroy {
     packageById(id: string) {
         return computed(() => this.packages().find((p) => p.id === id) ?? null);
     }
-
-    /** Project-level rollups. The API has no aggregate query, so they live here. */
-    readonly totals = computed(() => {
-        const packages = this.packages();
-        const linesOfCode = sum(packages, (p) => p.linesOfCode);
-        const linesOfComments = sum(packages, (p) => p.linesOfComments);
-        return {
-            packages: packages.length,
-            types: sum(packages, (p) => p.numberOfTypes),
-            linesOfCode,
-            linesOfComments,
-            commentToCodeRatio: ratio(linesOfComments, linesOfCode),
-            findings: sum(packages, (p) => p.totalNumberOfFindings),
-            highPriorityFindings: sum(packages, (p) => p.numberOfHighPriorityFindings),
-        };
-    });
 
     readonly complexityMix = computed(() => {
         const packages = this.packages();

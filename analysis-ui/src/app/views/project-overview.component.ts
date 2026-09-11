@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, inject, input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, input} from '@angular/core';
 import {Router, RouterLink} from '@angular/router';
 import {NzTableModule} from 'ng-zorro-antd/table';
 import {NzTooltipModule} from 'ng-zorro-antd/tooltip';
@@ -32,21 +32,21 @@ import {AnalysisStore} from '../state/analysis.store';
             />
         } @else {
             <div class="metrics">
-                <app-metric label="Lines of code" [value]="count(totals().linesOfCode)"/>
+                <app-metric label="Lines of code" [value]="count(store.project()?.totalLinesOfCode)"/>
                 <app-metric
                         label="Types"
-                        [value]="count(totals().types)"
-                        [hint]="count(totals().packages) + ' packages'"
+                        [value]="count(store.project()?.numberOfTypes)"
+                        [hint]="count(store.project()?.numberOfPackages) + ' packages'"
                 />
                 <app-metric
                         label="Findings"
-                        [value]="count(totals().findings)"
-                        [hint]="count(totals().highPriorityFindings) + ' high priority'"
+                        [value]="count(store.project()?.numberOfFindings)"
+                        [hint]="count(store.project()?.numberOfHighPriorityFindings) + ' high priority'"
                 />
                 <app-metric
                         label="Comment ratio"
-                        [value]="percent(totals().commentToCodeRatio)"
-                        [hint]="count(totals().linesOfComments) + ' comment lines'"
+                        [value]="percent(store.project()?.commentToCodeRatio)"
+                        [hint]="count(store.project()?.totalLinesOfComments) + ' comment lines'"
                 />
             </div>
 
@@ -157,8 +157,6 @@ export class ProjectOverviewComponent {
 
     protected readonly store = inject(AnalysisStore);
     private readonly router = inject(Router);
-
-    protected readonly totals = computed(() => this.store.totals());
 
     protected readonly count = count;
     protected readonly decimal = decimal;

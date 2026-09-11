@@ -25,6 +25,15 @@ type Project {
     analysisStatus: AnalysisStatus,
     lastAnalyzed: String,
     packages: [Package!]!
+    numberOfTypes: Int,
+    totalLinesOfCode: Int,
+    totalLinesOfComments: Int,
+    numberOfFindings: Int,
+    numberOfHighPriorityFindings: Int,
+    numberOfPackages: Int,
+    defectDensity: Float,
+    highDefectDensity: Float,
+    commentToCodeRatio: Float
 }
 
 enum AnalysisStatus {

@@ -39,7 +39,7 @@ public final class LocateProjectsInWorkspaceUseCase {
         if (request == null) {
             return new LocateProjectsInWorkspaceResponseModel.Failure("The request may not be null");
         }
-
+        
         if (request.workspaceId() == null) {
             return new LocateProjectsInWorkspaceResponseModel.Failure(
                     "The workspace ID may not be null");

@@ -1,6 +1,7 @@
 package software.bananen.gavel.infrastructure.graphql;
 
 import gavel.adapter.persistence.jpa.*;
+import io.micrometer.observation.annotation.Observed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
@@ -54,11 +55,13 @@ public class GraphqlController {
         this.classFindingRepository = classFindingRepository;
     }
 
+    @Observed
     @QueryMapping
     public Collection<WorkspaceReadModel> workspaces() {
         return workspaceRepository.findAll().stream().map(toWorkspaceReadModel()).toList();
     }
 
+    @Observed
     @QueryMapping
     public WorkspaceReadModel workspaceById(@Argument Integer id) {
         return workspaceRepository.findById((long) id)
@@ -66,11 +69,13 @@ public class GraphqlController {
                 .orElse(null);
     }
 
+    @Observed
     @QueryMapping
     public Collection<ProjectReadModel> projects() {
         return projectRepository.findAll().stream().map(toProjectReadModel()).toList();
     }
 
+    @Observed
     @QueryMapping
     public List<ProjectReadModel> projectsByWorkspace(@Argument Long id) {
         return projectRepository.findByWorkspaceId(id)
@@ -79,6 +84,7 @@ public class GraphqlController {
                 .toList();
     }
 
+    @Observed
     @QueryMapping
     public ProjectReadModel projectById(@Argument Integer id) {
         return projectRepository.findById((long) id)
@@ -86,6 +92,7 @@ public class GraphqlController {
                 .orElse(null);
     }
 
+    @Observed
     @QueryMapping
     public List<PackageReadModel> packagesByProject(@Argument Integer projectId) {
         return packageRepository.findByProjectId((long) projectId)
@@ -94,6 +101,7 @@ public class GraphqlController {
                 .toList();
     }
 
+    @Observed
     @QueryMapping
     public PackageReadModel packageById(@Argument Integer id) {
         return packageRepository.findById((long) id)
@@ -101,6 +109,7 @@ public class GraphqlController {
                 .orElse(null);
     }
 
+    @Observed
     @QueryMapping
     public ClassReadModel classById(@Argument Integer classId) {
         return classRepository.findById((long) classId)
@@ -108,6 +117,7 @@ public class GraphqlController {
                 .orElse(null);
     }
 
+    @Observed
     @QueryMapping
     public List<ClassReadModel> classesByPackage(@Argument Integer packageId) {
         return classRepository.findByPackageFieldId((long) packageId)
