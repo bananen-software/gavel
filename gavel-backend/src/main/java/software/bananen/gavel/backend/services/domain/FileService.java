@@ -6,6 +6,7 @@ import software.bananen.gavel.domain.model.ClassComplexityRating;
 import software.bananen.gavel.domain.model.ClassStatus;
 import software.bananen.gavel.domain.model.CodeUnitType;
 import software.bananen.gavel.domain.model.Commit;
+import software.bananen.gavel.domain.model.DiffType;
 import software.bananen.gavel.domain.model.FileDiff;
 import software.bananen.gavel.domain.model.PackageComplexityRating;
 import software.bananen.gavel.domain.ports.driven.ClassCodeUnitMetrics;
@@ -88,6 +89,7 @@ public class FileService {
                     newFile.setNumberOfChanges(0);
                     newFile.setContentType("");
                     newFile.setStatus(ClassStatus.ACTIVE);
+
                     return newFile;
                 });
     }
@@ -96,9 +98,10 @@ public class FileService {
      * Saves the given file.
      *
      * @param file The file that shall be saved.
+     * @return The saved file.
      */
-    public void save(final JpaFileEntity file) {
-        projectFileRepository.save(file);
+    public JpaFileEntity save(final JpaFileEntity file) {
+        return projectFileRepository.save(file);
     }
 
     /**
@@ -117,7 +120,12 @@ public class FileService {
                                    final Commit commit,
                                    final FileDiff diff,
                                    final String detectedLanguage) {
-        final var file = findOrCreate(project, diff.oldPath());
+        var file = findOrCreate(project, diff.oldPath());
+
+        if (file.getId() == null) {
+            file = findOrCreate(project, diff.newPath());
+        }
+
         final var fileHistoryEntry = new JpaFileHistoryEntity();
 
         fileHistoryEntry.setComplexity(metrics.complexity());
@@ -146,14 +154,12 @@ public class FileService {
                         .map(JpaAuthorEntity::getId)
                         .collect(Collectors.toSet())
                         .size());
-        fileHistoryEntry.setNumberOfAuthors(
-                file.getFileHistoryEntities()
-                        .stream()
-                        .map(JpaFileHistoryEntity::getAuthor)
-                        .map(JpaAuthorEntity::getId)
-                        .collect(Collectors.toSet())
-                        .size());
         fileHistoryEntry.setFile(file);
+
+        if (file.getId() == null || diff.hasType(DiffType.MOVED)) {
+            // Saving file to prevent duplicates?
+            file = save(file);
+        }
 
         for (final CodeUnitMetrics codeUnit : metrics.codeUnits()) {
             if (codeUnit instanceof ClassCodeUnitMetrics classMetrics) {
@@ -261,7 +267,6 @@ public class FileService {
                         complexityCounts.getOrDefault(ClassComplexityRating.MEDIUM, 0));
                 packageEntity.setNumberOfLowComplexityTypes(
                         complexityCounts.getOrDefault(ClassComplexityRating.LOW, 0));
-
 
                 final PackageComplexityRating packageComplexityRating =
                         ratePackageComplexityService.rate(packageEntity.getNumberOfLowComplexityTypes(),
