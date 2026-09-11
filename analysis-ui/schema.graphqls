@@ -1,10 +1,22 @@
 type Query {
+    workspaces: [Workspace!]!,
+    workspaceById(id: ID): Workspace,
     projects: [Project!]!,
+    projectsByWorkspace(id: ID): Workspace,
     projectById(id: ID): Project,
     packageById(id: ID): Package,
     packagesByProject(projectId: ID): [Package!]!
     classesByPackage(packageId: ID): [Class!]!
     classById(classId: ID): Class
+}
+
+type Workspace {
+    id: ID,
+    name: String,
+    path: String,
+    basePackage: String,
+    excludedPaths: [String!]!
+    projects: [Project!]!
 }
 
 type Project {

@@ -1,12 +1,12 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  effect,
-  ElementRef,
-  inject,
-  input,
-  viewChild,
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    effect,
+    ElementRef,
+    inject,
+    input,
+    viewChild,
 } from '@angular/core';
 import {Chart} from 'chart.js';
 import type {ClassContribution} from '../api/schema.types';
@@ -71,7 +71,7 @@ export class ComplexityTimelineComponent {
                         borderWidth: 2,
                         pointRadius: 0,
                         pointHitRadius: 12,
-                        fill: true,
+                        fill: false,
                         stepped: 'after',
                         yAxisID: 'y',
                     },

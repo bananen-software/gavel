@@ -18,7 +18,10 @@ public final class ReadModelMappingUtils {
     public static Function<JpaWorkspaceEntity, WorkspaceReadModel> toWorkspaceReadModel() {
         return e -> new WorkspaceReadModel(
                 e.getId(),
-                e.getName()
+                e.getName(),
+                e.getPath(),
+                e.getBasePackage(),
+                e.getExcludedPath()
         );
     }
 

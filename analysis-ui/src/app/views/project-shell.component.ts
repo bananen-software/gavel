@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, computed, effect, inject, input, sig
 import {FormsModule} from '@angular/forms';
 import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {NzAlertModule} from 'ng-zorro-antd/alert';
+import {NzButtonModule} from 'ng-zorro-antd/button';
 import {NzInputModule} from 'ng-zorro-antd/input';
 import {NzSelectModule} from 'ng-zorro-antd/select';
 import {NzSpinModule} from 'ng-zorro-antd/spin';
@@ -45,6 +46,7 @@ interface RailItem {
         RouterLinkActive,
         FormsModule,
         NzAlertModule,
+        NzButtonModule,
         NzInputModule,
         NzSelectModule,
         NzSpinModule,
@@ -61,6 +63,15 @@ interface RailItem {
                         [concern]="analysisStatusConcern(project.analysisStatus)"
                 />
                 <span class="meta right">analysed {{ formatDateTime(project.lastAnalyzed) }}</span>
+                <button
+                    nz-button
+                    nzSize="small"
+                    [disabled]="inProgress()"
+                    [nzLoading]="store.busy().has('analysis:' + projectId())"
+                    (click)="store.scheduleAnalysis(projectId())"
+                >
+                    {{ inProgress() ? 'Analysing' : 'Re-analyse' }}
+                </button>
             }
         </header>
 
@@ -332,5 +343,9 @@ export class ProjectShellComponent {
             const id = this.projectId();
             untracked(() => this.store.loadProject(id));
         });
+
+        // An analysis may already be running when this view opens; polling stops
+        // itself on the first tick that finds nothing in progress.
+        this.store.startPolling();
     }
 }

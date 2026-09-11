@@ -7,6 +7,34 @@
  * open. Classes arrive lazily, per package.
  */
 
+/**
+ * ⚠️ Adjust this to match your schema.
+ *
+ * The workspace additions were not in the schema.graphqls I was given, so the
+ * field names below are inferred from your CreateWorkspaceRequest record
+ * (name, path, excludedPaths, basePackage). If your query is called something
+ * other than `workspaces`, or the fields differ, this is the only place that
+ * needs changing — and the app falls back to the flat project list if this
+ * query fails, so a mismatch degrades rather than breaks.
+ */
+export const WORKSPACES = /* GraphQL */ `
+  query Workspaces {
+    workspaces {
+      id
+      name
+      path
+      basePackage
+      excludedPaths
+      projects {
+        id
+        name
+        analysisStatus
+        lastAnalyzed
+      }
+    }
+  }
+`;
+
 export const PROJECTS = /* GraphQL */ `
   query Projects {
     projects {

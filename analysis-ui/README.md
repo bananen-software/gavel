@@ -14,8 +14,10 @@ npm start        # http://localhost:4200
 ```
 
 `npm run mock` exists so you can look at the UI before wiring the real backend.
-It serves deterministic fake data for all four operations on the same port
-Spring Boot uses, so switching to the real thing means stopping it and starting
+It serves deterministic fake data for the GraphQL queries and implements all
+three REST commands — including walking a scheduled analysis through PENDING,
+RUNNING and COMPLETED over about sixteen seconds so the polling can be seen
+working — on the same port Spring Boot uses, so switching to the real thing means stopping it and starting
 your backend — nothing in the app changes.
 
 ## Why these libraries
@@ -39,15 +41,53 @@ the store keyed by id.
 **D3 by submodule** (`d3-array`, `d3-axis`, `d3-scale`, `d3-selection`) rather
 than the umbrella package, which is roughly 250 kB for four functions.
 
+## Workspaces
+
+The landing view is workspace-oriented, because the three write operations form
+a chain rather than a menu: create a workspace pointing at a directory, let the
+backend locate its projects, then analyse them. Those are the REST controllers,
+not GraphQL — `api/rest.client.ts` holds everything that changes server state
+and `api/graphql.client.ts` everything that only reads.
+
+| Action | Call |
+|---|---|
+| Create workspace | `POST /workspaces` with name, path, excludedPaths, basePackage |
+| Locate projects | `POST /workspaces/{id}` |
+| Schedule analysis | `POST /projects/{id}` |
+
+Scheduling an analysis starts a poll: one timer, five second interval, stopped
+on the first tick that finds nothing in progress, with a hard cap of ten minutes
+so a status that never leaves RUNNING cannot leave requests firing in the
+background for the rest of the session.
+
+### One thing to check
+
+The `WORKSPACES` document in `src/app/api/queries.ts` is **inferred**, not taken
+from your schema — the `schema.graphqls` I was given had no workspace types. The
+field names come from your `CreateWorkspaceRequest` record. If your query is
+named differently the app does not break: it shows a warning and falls back to
+the flat project list, and the write actions keep working, since those are REST.
+Correcting the document in that one file is the whole fix.
+
+### Route and REST path collision
+
+The backend maps REST to `/projects` and `/workspaces`, which are also Angular
+route prefixes. In dev both are on port 4200, so `proxy.conf.mjs` separates them
+by intent: a GET asking for HTML is a browser navigating and gets the app,
+anything else is the app calling the API and gets proxied. In production there
+is no collision, because the app is served under `/ui/`. Moving the controllers
+under `/api/...` would remove the overlap outright and is the cleaner long-term
+fix.
+
 ## Structure
 
 ```
 src/app/
-  api/            GraphQL client, query documents, schema types
+  api/            GraphQL client (reads), REST client (writes), queries, types
   state/          One signal store: snapshot, lazy classes, lazy class detail
   shared/         Rating scale, formatting, four UI primitives
   charts/         Main sequence (D3) + three Chart.js charts
-  views/          Picker, shell, project overview, package detail, class detail
+  views/          Workspaces, shell, project overview, package detail, class detail
 ```
 
 ### The two decisions worth knowing
@@ -131,8 +171,6 @@ Deliberately left out, in rough order of value:
 
 - **Dark mode.** The token layer is ready for it; it needs a `[data-theme]`
   scope and NG-ZORRO's dark stylesheet.
-- **Polling while `analysisStatus` is `RUNNING`.** The banner appears, but the
-  snapshot does not refresh itself yet.
 - **A treemap of packages by lines of code.** The best "whole system at once"
   view, about thirty lines with `d3-hierarchy`.
 - **Cross-package class views** (project-wide hotspots, author knowledge map).

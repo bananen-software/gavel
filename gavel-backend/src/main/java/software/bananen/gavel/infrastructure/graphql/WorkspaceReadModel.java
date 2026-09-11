@@ -1,4 +1,10 @@
 package software.bananen.gavel.infrastructure.graphql;
 
-public record WorkspaceReadModel(Long id, String name) {
+import java.util.Collection;
+
+public record WorkspaceReadModel(Long id,
+                                 String name,
+                                 String path,
+                                 String basePackage,
+                                 Collection<String> excludedPaths) {
 }

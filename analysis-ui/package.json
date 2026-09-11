@@ -2,7 +2,7 @@
   "name": "analysis-ui",
   "version": "1.0.0",
   "scripts": {
-    "start": "ng serve --proxy-config proxy.conf.json --open",
+    "start": "ng serve --proxy-config proxy.conf.mjs --open",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "mock": "node mock/server.mjs",

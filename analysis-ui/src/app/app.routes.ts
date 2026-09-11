@@ -5,7 +5,7 @@ export const routes: Routes = [
     path: '',
     pathMatch: 'full',
     loadComponent: () =>
-      import('./views/project-picker.component').then((m) => m.ProjectPickerComponent),
+      import('./views/workspace-list.component').then((m) => m.WorkspaceListComponent),
   },
   {
     path: 'projects/:projectId',

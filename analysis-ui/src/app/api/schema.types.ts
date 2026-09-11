@@ -24,6 +24,15 @@ export type Size = 'UNKNOWN' | 'EMPTY' | 'SMALL' | 'MEDIUM' | 'LARGE' | 'VERY_LA
 /** Every scalar field in the schema is nullable, so the model says so too. */
 type Nullable<T> = T | null;
 
+export interface WorkspaceSummary {
+  id: string;
+  name: Nullable<string>;
+  path: Nullable<string>;
+  basePackage: Nullable<string>;
+  excludedPaths: string[];
+  projects: ProjectRef[];
+}
+
 export interface ProjectRef {
   id: string;
   name: Nullable<string>;
@@ -133,6 +142,9 @@ export interface ProjectSnapshot extends ProjectRef {
   packages: PackageSummary[];
 }
 
+export interface WorkspacesQuery {
+  workspaces: WorkspaceSummary[];
+}
 export interface ProjectsQuery {
   projects: ProjectRef[];
 }

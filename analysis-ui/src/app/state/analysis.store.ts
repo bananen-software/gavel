@@ -1,6 +1,7 @@
-import {computed, inject, Injectable, signal, untracked} from '@angular/core';
+import {computed, inject, Injectable, OnDestroy, signal, untracked} from '@angular/core';
 import {GraphQlClient} from '../api/graphql.client';
-import {CLASS_DETAIL, CLASSES_BY_PACKAGE, PROJECT_SNAPSHOT, PROJECTS,} from '../api/queries';
+import {CreateWorkspaceRequest, RestClient} from '../api/rest.client';
+import {CLASS_DETAIL, CLASSES_BY_PACKAGE, PROJECT_SNAPSHOT, PROJECTS, WORKSPACES,} from '../api/queries';
 import type {
   ClassDetail,
   ClassDetailQuery,
@@ -11,8 +12,11 @@ import type {
   ProjectSnapshot,
   ProjectSnapshotQuery,
   ProjectsQuery,
+  WorkspaceSummary,
+  WorkspacesQuery,
 } from '../api/schema.types';
 import {num, ratio, sum} from '../shared/format';
+import {isAnalysisInProgress} from '../shared/ratings';
 
 interface Loadable<T> {
     value: T | null;
@@ -30,7 +34,7 @@ const idle = <T>(): Loadable<T> => ({value: null, loading: false, error: null});
  * whole app is built on: one round trip, then instant interaction.
  */
 @Injectable({providedIn: 'root'})
-export class AnalysisStore {
+export class AnalysisStore implements OnDestroy {
     private readonly gql = inject(GraphQlClient);
 
     private readonly projectsState = signal<Loadable<ProjectRef[]>>(idle());
@@ -54,6 +58,29 @@ export class AnalysisStore {
     private requestedProjectId: string | null = null;
     private readonly requestedPackageIds = new Set<string>();
     private readonly requestedClassIds = new Set<string>();
+    private requestedWorkspaces = false;
+
+    private readonly rest = inject(RestClient);
+
+    private readonly workspacesState = signal<Loadable<WorkspaceSummary[]>>(idle());
+
+    /**
+     * Keys of actions currently in flight, so a button can disable itself
+     * without every caller inventing its own loading flag. Keys look like
+     * 'analysis:12' or 'locate:3'.
+     */
+    private readonly busyKeys = signal<ReadonlySet<string>>(new Set<string>());
+    private readonly actionErrorState = signal<string | null>(null);
+
+    private pollHandle: ReturnType<typeof setInterval> | null = null;
+    private pollsRemaining = 0;
+
+    readonly workspaces = computed(() => this.workspacesState().value ?? []);
+    readonly workspacesLoading = computed(() => this.workspacesState().loading);
+    readonly workspacesError = computed(() => this.workspacesState().error);
+    readonly busy = this.busyKeys.asReadonly();
+    readonly actionError = this.actionErrorState.asReadonly();
+
 
     readonly projects = computed(() => this.projectsState().value ?? []);
     readonly projectsLoading = computed(() => this.projectsState().loading);
@@ -186,6 +213,149 @@ export class AnalysisStore {
                 this.patchClassDetail(classId, {value: null, loading: false, error: err.message});
             },
         });
+    }
+
+
+    // ---- Workspaces -------------------------------------------------------
+
+    loadWorkspaces(options: { force?: boolean } = {}): void {
+        if (!options.force && this.requestedWorkspaces) return;
+        this.requestedWorkspaces = true;
+        const current = untracked(this.workspacesState).value;
+        this.workspacesState.set({value: current, loading: true, error: null});
+        this.gql.query<WorkspacesQuery>(WORKSPACES).subscribe({
+            next: (data) =>
+                this.workspacesState.set({value: data.workspaces, loading: false, error: null}),
+            error: (err: Error) => {
+                this.requestedWorkspaces = false;
+                this.workspacesState.set({value: null, loading: false, error: err.message});
+            },
+        });
+    }
+
+    createWorkspace(request: CreateWorkspaceRequest, onSuccess?: (id: string) => void): void {
+        const key = 'create-workspace';
+        if (!this.beginAction(key)) return;
+        this.rest.createWorkspace(request).subscribe({
+            next: (response) => {
+                this.endAction(key);
+                this.loadWorkspaces({force: true});
+                onSuccess?.(response.id);
+            },
+            error: (err: Error) => this.endAction(key, err.message),
+        });
+    }
+
+    locateProjects(workspaceId: string): void {
+        const key = `locate:${workspaceId}`;
+        if (!this.beginAction(key)) return;
+        this.rest.locateProjects(workspaceId).subscribe({
+            next: () => {
+                this.endAction(key);
+                this.loadWorkspaces({force: true});
+            },
+            error: (err: Error) => this.endAction(key, err.message),
+        });
+    }
+
+    scheduleAnalysis(projectId: string): void {
+        const key = `analysis:${projectId}`;
+        if (!this.beginAction(key)) return;
+        this.rest.scheduleAnalysis(projectId).subscribe({
+            next: () => {
+                this.endAction(key);
+                // Reflect the queued state immediately rather than waiting for
+                // the first poll, so the button does not look inert.
+                this.markProjectPending(projectId);
+                this.loadWorkspaces({force: true});
+                this.startPolling();
+            },
+            error: (err: Error) => this.endAction(key, err.message),
+        });
+    }
+
+    dismissActionError(): void {
+        this.actionErrorState.set(null);
+    }
+
+    // ---- Action and polling plumbing --------------------------------------
+
+    /** Returns false when the same action is already running. */
+    private beginAction(key: string): boolean {
+        const keys = untracked(this.busyKeys);
+        if (keys.has(key)) return false;
+        this.actionErrorState.set(null);
+        this.busyKeys.set(new Set(keys).add(key));
+        return true;
+    }
+
+    private endAction(key: string, error?: string): void {
+        const keys = new Set(untracked(this.busyKeys));
+        keys.delete(key);
+        this.busyKeys.set(keys);
+        if (error) this.actionErrorState.set(error);
+    }
+
+    private markProjectPending(projectId: string): void {
+        this.workspacesState.update((state) => {
+            if (!state.value) return state;
+            return {
+                ...state,
+                value: state.value.map((workspace) => ({
+                    ...workspace,
+                    projects: workspace.projects.map((project) =>
+                        project.id === projectId ? {...project, analysisStatus: 'PENDING' as const} : project,
+                    ),
+                })),
+            };
+        });
+    }
+
+    /**
+     * Polls while an analysis is running, and only then.
+     *
+     * One timer, started on demand and stopped as soon as nothing is in
+     * progress, with a hard cap so a status that never leaves RUNNING cannot
+     * leave a request loop running in the background for the rest of the
+     * session.
+     */
+    startPolling(): void {
+        this.pollsRemaining = 120; // ten minutes at a five second interval
+        if (this.pollHandle !== null) return;
+        this.pollHandle = setInterval(() => this.pollOnce(), 5000);
+    }
+
+    stopPolling(): void {
+        if (this.pollHandle === null) return;
+        clearInterval(this.pollHandle);
+        this.pollHandle = null;
+    }
+
+    private pollOnce(): void {
+        if (this.pollsRemaining-- <= 0) {
+            this.stopPolling();
+            return;
+        }
+
+        const workspaces = untracked(this.workspacesState).value ?? [];
+        const snapshot = untracked(this.snapshotState).value;
+
+        const running =
+            workspaces.some((workspace) =>
+                workspace.projects.some((project) => isAnalysisInProgress(project.analysisStatus)),
+            ) || isAnalysisInProgress(snapshot?.analysisStatus ?? null);
+
+        if (!running) {
+            this.stopPolling();
+            return;
+        }
+
+        if (workspaces.length > 0) this.loadWorkspaces({force: true});
+        if (snapshot) this.loadProject(snapshot.id, {force: true});
+    }
+
+    ngOnDestroy(): void {
+        this.stopPolling();
     }
 
     private patchClasses(packageId: string, state: Loadable<ClassSummary[]>): void {

@@ -185,10 +185,51 @@ function buildClassDetail(classId) {
 
 const PROJECTS = [
   { id: '1', name: 'petclinic', analysisStatus: 'COMPLETED', lastAnalyzed: new Date().toISOString() },
-  { id: '2', name: 'billing-service', analysisStatus: 'RUNNING', lastAnalyzed: new Date(Date.now() - 86400000).toISOString() },
+  { id: '2', name: 'billing-service', analysisStatus: 'NOT_RUN', lastAnalyzed: null },
 ];
 
+/** Mutable so the REST endpoints below have something to act on. */
+const WORKSPACES = [
+  {
+    id: '1',
+    name: 'Backend services',
+    path: '/home/me/src/backend',
+    basePackage: 'org.example',
+    excludedPaths: ['target', 'build', '.git'],
+    projectIds: ['1', '2'],
+  },
+];
+
+let nextWorkspaceId = 2;
+
+const workspaceView = (workspace) => ({
+  id: workspace.id,
+  name: workspace.name,
+  path: workspace.path,
+  basePackage: workspace.basePackage,
+  excludedPaths: workspace.excludedPaths,
+  projects: workspace.projectIds
+    .map((id) => PROJECTS.find((project) => project.id === id))
+    .filter(Boolean),
+});
+
+/** Walks a scheduled analysis through PENDING → RUNNING → COMPLETED. */
+function runAnalysis(projectId) {
+  const project = PROJECTS.find((candidate) => candidate.id === projectId);
+  if (!project) return false;
+  project.analysisStatus = 'PENDING';
+  setTimeout(() => { project.analysisStatus = 'RUNNING'; }, 4000);
+  setTimeout(() => {
+    project.analysisStatus = 'COMPLETED';
+    project.lastAnalyzed = new Date().toISOString();
+  }, 16000);
+  return true;
+}
+
 function resolve(query, variables) {
+  if (query.includes('query Workspaces')) {
+    return { workspaces: WORKSPACES.map(workspaceView) };
+  }
   if (query.includes('query Projects')) {
     return { projects: PROJECTS };
   }
@@ -225,7 +266,7 @@ createServer((req, res) => {
     res.writeHead(204).end();
     return;
   }
-  if (req.method !== 'POST' || !req.url?.startsWith('/graphql')) {
+  if (req.method !== 'POST') {
     res.writeHead(404).end();
     return;
   }
@@ -233,6 +274,67 @@ createServer((req, res) => {
   let body = '';
   req.on('data', (chunk) => (body += chunk));
   req.on('end', () => {
+    const url = req.url ?? '';
+
+    // ---- REST command endpoints ----
+    if (url === '/workspaces') {
+      const request = JSON.parse(body || '{}');
+      if (!request.name || !request.path) {
+        res.writeHead(400, { 'content-type': 'application/json' });
+        res.end(JSON.stringify({ status: 400, message: 'Name and path are required.' }));
+        return;
+      }
+      const workspace = {
+        id: String(nextWorkspaceId++),
+        name: request.name,
+        path: request.path,
+        basePackage: request.basePackage ?? '',
+        excludedPaths: request.excludedPaths ?? [],
+        projectIds: [],
+      };
+      WORKSPACES.push(workspace);
+      res.writeHead(200, { 'content-type': 'application/json' });
+      res.end(JSON.stringify({ id: workspace.id }));
+      return;
+    }
+
+    const workspaceMatch = /^\/workspaces\/(\w+)$/.exec(url);
+    if (workspaceMatch) {
+      const workspace = WORKSPACES.find((candidate) => candidate.id === workspaceMatch[1]);
+      if (!workspace) {
+        res.writeHead(400, { 'content-type': 'application/json' });
+        res.end(JSON.stringify({ status: 400, message: 'No such workspace.' }));
+        return;
+      }
+      // Pretend the scan found a project the workspace did not have yet.
+      const discovered = {
+        id: String(PROJECTS.length + 1),
+        name: `${workspace.name.toLowerCase().replace(/\s+/g, '-')}-app`,
+        analysisStatus: 'NOT_RUN',
+        lastAnalyzed: null,
+      };
+      PROJECTS.push(discovered);
+      workspace.projectIds.push(discovered.id);
+      res.writeHead(200).end();
+      return;
+    }
+
+    const projectMatch = /^\/projects\/(\w+)$/.exec(url);
+    if (projectMatch) {
+      if (!runAnalysis(projectMatch[1])) {
+        res.writeHead(400, { 'content-type': 'application/json' });
+        res.end(JSON.stringify({ status: 400, message: 'No such project.' }));
+        return;
+      }
+      res.writeHead(200).end();
+      return;
+    }
+
+    if (!url.startsWith('/graphql')) {
+      res.writeHead(404).end();
+      return;
+    }
+
     try {
       const { query, variables = {} } = JSON.parse(body);
       const data = resolve(query, variables);
