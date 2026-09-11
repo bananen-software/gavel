@@ -22,7 +22,7 @@ dependencies {
     implementation project(':gavel-application')
     implementation project(':gavel-domain')
 
-    implementation "net.sourceforge.pmd:pmd-core:7.27.0"
+    //implementation "net.sourceforge.pmd:pmd-core:7.27.0"
 
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-graphql'
