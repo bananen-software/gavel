@@ -1,0 +1,51 @@
+server:
+  http_listen_port: 3200
+  grpc_listen_port: 9096
+
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+        http:
+          endpoint: 0.0.0.0:4318
+
+ingester:
+  # flush quickly so traces show up in Grafana within seconds, not minutes
+  max_block_duration: 5m
+
+compactor:
+  compaction:
+    block_retention: 24h
+
+# Turns spans into RED metrics (rate / errors / duration) and pushes them
+# into Prometheus. This is what gives you execution times per endpoint
+# without instrumenting anything extra.
+metrics_generator:
+  registry:
+    external_labels:
+      source: tempo
+  storage:
+    path: /var/tempo/generator/wal
+    remote_write:
+      - url: http://prometheus:9090/api/v1/write
+        send_exemplars: true
+  traces_storage:
+    path: /var/tempo/generator/traces
+
+storage:
+  trace:
+    backend: local
+    wal:
+      path: /var/tempo/wal
+    local:
+      path: /var/tempo/blocks
+
+overrides:
+  defaults:
+    metrics_generator:
+      processors:
+        - service-graphs
+        - span-metrics
+        - local-blocks

@@ -1,0 +1,24 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # Your Spring Boot app, running on the host via ./gradlew bootRun or the IDE.
+  # If you later containerise it inside this compose file, replace the target
+  # with the service name, e.g. 'gavel-app:8080'.
+  - job_name: gavel-app
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: [ "host.containers.internal:8080" ]
+        labels:
+          application: gavel
+
+  # Span metrics produced by Tempo's metrics-generator arrive via remote_write,
+  # but scraping Tempo itself gives you its own health metrics.
+  - job_name: tempo
+    static_configs:
+      - targets: [ "tempo:3200" ]
+
+  - job_name: prometheus
+    static_configs:
+      - targets: [ "localhost:9090" ]

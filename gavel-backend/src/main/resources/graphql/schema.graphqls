@@ -1,24 +1,67 @@
 type Query {
-    projectById(id: Int): Project,
-    packageById(id: Int): Package,
-    packagesByProject(projectId: Int): [Package!]!
-    classesByPackage(packageId: Int): [Class!]!
-    classById(classId: Int): Class
+    workspaces: [Workspace!]!,
+    workspaceById(id: ID): Workspace,
+    projects: [Project!]!,
+    projectsByWorkspace(id: ID): Workspace,
+    projectById(id: ID): Project,
+    packageById(id: ID): Package,
+    packagesByProject(projectId: ID): [Package!]!
+    classesByPackage(packageId: ID): [Class!]!
+    classById(classId: ID): Class
+}
+
+type Workspace {
+    id: ID,
+    name: String,
+    projects: [Project!]!
 }
 
 type Project {
     id: ID,
     name: String
-    analysisStatus: String,
+    analysisStatus: AnalysisStatus,
     lastAnalyzed: String,
     packages: [Package!]!
 }
+
+enum AnalysisStatus {
+    NOT_RUN, PENDING, RUNNING, COMPLETED, FAILED
+}
+
+enum Stratum {
+    SURFACE, INTERMEDIATE, DEEP, SEDIMENT, NONE
+}
+
+enum ClassComplexityRating {
+    EMPTY, LOW, MEDIUM, HIGH, UNKNOWN, VERY_HIGH
+}
+
+enum PackageComplexityRating {
+    EMPTY, MOSTLY_SIMPLE, BALANCED, COMPLEX, HIGHLY_COMPLEX
+}
+
+enum ClassStatus {
+    ACTIVE, DELETED
+}
+
+enum RelationalCohesionRating {
+    LOW, GOOD, HIGH
+}
+
+enum Severity {
+    LOW, MEDIUM, HIGH
+}
+
+enum Size {
+    UNKNOWN, EMPTY, SMALL, MEDIUM, LARGE, VERY_LARGE
+}
+
 
 type Package {
     id: ID,
     name: String,
     complexity: Int,
-    complexityRating: String
+    complexityRating: PackageComplexityRating
     complexityOrdinal: Int,
     numberOfTypes: Int,
     defectDensity: Float,
@@ -32,39 +75,43 @@ type Package {
     numberOfLowComplexityTypes: Int,
     numberOfHighPriorityFindings: Int,
     totalNumberOfFindings: Int,
-    size: String,
+    size: Size,
     project: Project,
     classes: [Class!]!,
-    relationalCohesion: RelationalCohesion
-    componentDependency: ComponentDependency
+    relationalCohesion: RelationalCohesion,
+    componentDependency: ComponentDependency,
+    stratum: Stratum,
+    stratumOrdinal: Int
 }
 
 type Class {
     id: ID,
-    packageId: Int,
+    packageId: ID,
     name: String,
     programmingLanguage: String,
     lastModified: String,
     numberOfChanges: Int,
     numberOfAuthors: Int,
+    size: Size,
     complexity: Int,
-    complexityRating: String,
+    complexityRating: ClassComplexityRating,
     totalLinesOfCode: Int,
     totalLinesOfComments: Int,
     commentToCodeRatio: Float,
     numberOfResponsibilities: Int,
-    status: String,
+    status: ClassStatus,
     totalNumberOfFindings: Int,
     numberOfHighPriorityFindings: Int,
     defectDensity: Float,
     highDefectDensity: Float,
     package: Package,
     contributions: [ClassContribution!]!,
-    findings: [Finding!]!
+    findings: [Finding!]!,
+    stratum: Stratum
 }
 
 type RelationalCohesion {
-    rating: String,
+    rating: RelationalCohesionRating,
     numberOfTypes: Int,
     numberOfInternalRelationships: Int,
     relationalCohesion: Float
@@ -79,29 +126,31 @@ type ComponentDependency {
 }
 
 type ClassContribution {
-    id: Int
+    id: ID,
     timestamp: String,
     vcsIdentifier: String,
-    authorId: Int,
+    authorId: ID,
     author: Author,
     complexity: ClassComplexity
 }
 
 type ClassComplexity {
     complexity: Int,
-    rating: String,
+    rating: ClassComplexityRating,
     addedComplexity: Int
 }
 
 type Author {
+    id: ID,
     name: String,
     email: String
 }
 
 type Finding {
+    id: ID,
     description: String,
     ruleName: String,
     ruleDescription: String,
-    severity: String,
+    severity: Severity,
     tool: String
 }

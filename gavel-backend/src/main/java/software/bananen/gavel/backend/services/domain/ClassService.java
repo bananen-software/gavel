@@ -5,10 +5,16 @@ import gavel.adapter.persistence.jpa.JpaClassRepository;
 import gavel.adapter.persistence.jpa.JpaPackageEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.bananen.gavel.domain.model.*;
+import software.bananen.gavel.domain.model.ClassComplexityRating;
+import software.bananen.gavel.domain.model.ClassStatus;
+import software.bananen.gavel.domain.model.CommentToCodeRating;
+import software.bananen.gavel.domain.model.Size;
+import software.bananen.gavel.domain.model.Stratum;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 
 @Service
@@ -45,7 +51,7 @@ public class ClassService {
             classEntity.setNumberOfHighPriorityFindings(0);
             classEntity.setDefectDensity(0.0);
             classEntity.setHighDefectDensity(0.0);
-            classEntity.setStratum(Stratum.SURFACE);
+            classEntity.setStratum(Stratum.NONE);
 
             packageEntity.getClasses().add(classEntity);
             packageEntity.setNumberOfTypes(packageEntity.getClasses().size());
@@ -71,5 +77,18 @@ public class ClassService {
 
     public void save(final JpaClassEntity classEntity) {
         repository.save(classEntity);
+    }
+
+    public void deleteAll(final Set<JpaClassEntity> classes) {
+        final var defensiveCopy = new ArrayList<>(classes);
+
+        for (final JpaClassEntity aClass : defensiveCopy) {
+            aClass.setStatus(ClassStatus.DELETED);
+            aClass.setTotalLinesOfComments(0);
+            aClass.setTotalLinesOfCode(0);
+            aClass.setComplexity(0);
+        }
+
+        repository.saveAll(defensiveCopy);
     }
 }

@@ -6,6 +6,8 @@ include 'gavel-backend'
 include 'gavel-static-analysis'
 
 include 'gavel-git-adapter'
+include 'gavel-language-adapter-generic'
+include 'gavel-language-adapter-java'
 include 'gavel-owasp-dependency-check-adapter'
 include 'gavel-persistence-adapter'
 include 'gavel-pmd-adapter'

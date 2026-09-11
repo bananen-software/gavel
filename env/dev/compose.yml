@@ -1,0 +1,71 @@
+name: gavel
+
+services:
+  postgres:
+    image: docker.io/postgres:17-alpine
+    container_name: gavel-postgres
+    environment:
+      POSTGRES_PASSWORD: mysecretpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  tempo:
+    image: docker.io/grafana/tempo:2.7.1
+    container_name: gavel-tempo
+    command: [ "-config.file=/etc/tempo/tempo.yaml" ]
+    # Tempo's image runs as uid 10001; running as root avoids permission
+    # trouble on the named volume. Drop this if you fix ownership yourself.
+    user: "0"
+    volumes:
+      - ./tempo/tempo.yaml:/etc/tempo/tempo.yaml:z
+      - tempo-data:/var/tempo
+    ports:
+      - "3200:3200"   # Tempo HTTP API (Grafana queries this)
+      - "4317:4317"   # OTLP gRPC  <- your Spring app
+      - "4318:4318"   # OTLP HTTP  <- your Spring app
+
+  prometheus:
+    image: docker.io/prom/prometheus:v3.1.0
+    container_name: gavel-prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      # needed so Tempo's metrics-generator can remote_write span metrics
+      - --web.enable-remote-write-receiver
+      # needed for the trace_id exemplars that link metrics -> traces
+      - --enable-feature=exemplar-storage
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:z
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: docker.io/grafana/grafana:11.5.1
+    container_name: gavel-grafana
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      GF_FEATURE_TOGGLES_ENABLE: traceqlEditor
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:z
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - tempo
+      - prometheus
+
+volumes:
+  pgdata:
+  tempo-data:
+  prometheus-data:
+  grafana-data:

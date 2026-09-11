@@ -1,0 +1,90 @@
+@use 'styles/tokens';
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.01em; }
+h1 { font-size: 20px; }
+h2 { font-size: 16px; }
+h3 { font-size: 14px; }
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-hover); text-decoration: underline; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Monospace is reserved for text that exists in the user's codebase:
+   package names, class names, rule names. It is information, not decoration. */
+.identifier {
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.numeric {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.muted { color: var(--ink-2); }
+.meta { color: var(--ink-3); font-size: 12px; }
+
+.truncate-start {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  direction: rtl;
+  text-align: left;
+}
+
+.section-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+}
+
+/* ---- NG-ZORRO overrides: adopt the token system, drop the Ant defaults ---- */
+
+.ant-table {
+  font-family: var(--font-sans);
+  font-size: 13px;
+}
+.ant-table-thead > tr > th {
+  background: var(--surface) !important;
+  border-bottom: 1px solid var(--line) !important;
+  color: var(--ink-2);
+  font-weight: 500;
+  font-size: 12px;
+  padding: 8px 12px !important;
+}
+.ant-table-tbody > tr > td {
+  border-bottom: 1px solid var(--line-soft) !important;
+  padding: 7px 12px !important;
+}
+.ant-table-tbody > tr:hover > td { background: var(--accent-bg) !important; }
+.ant-table-tbody > tr { cursor: pointer; }
+.ant-table-container, .ant-table-content { border-radius: 0 !important; }
+
+.ant-btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.ant-btn-primary:hover { background: var(--accent-hover) !important; border-color: var(--accent-hover) !important; }
+
+.ant-select-focused .ant-select-selector,
+.ant-input:focus, .ant-input-focused {
+  border-color: var(--accent) !important;
+  box-shadow: none !important;
+}
+
+.ant-spin-dot-item { background-color: var(--accent); }

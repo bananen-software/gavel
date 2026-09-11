@@ -1,0 +1,147 @@
+type Query {
+    projects: [Project!]!,
+    projectById(id: ID): Project,
+    packageById(id: ID): Package,
+    packagesByProject(projectId: ID): [Package!]!
+    classesByPackage(packageId: ID): [Class!]!
+    classById(classId: ID): Class
+}
+
+type Project {
+    id: ID,
+    name: String
+    analysisStatus: AnalysisStatus,
+    lastAnalyzed: String,
+    packages: [Package!]!
+}
+
+enum AnalysisStatus {
+    NOT_RUN, PENDING, RUNNING, COMPLETED, FAILED
+}
+
+enum Stratum {
+    SURFACE, INTERMEDIATE, DEEP, SEDIMENT, NONE
+}
+
+enum ClassComplexityRating {
+    EMPTY, LOW, MEDIUM, HIGH, UNKNOWN, VERY_HIGH
+}
+
+enum PackageComplexityRating {
+    EMPTY, MOSTLY_SIMPLE, BALANCED, COMPLEX, HIGHLY_COMPLEX
+}
+
+enum ClassStatus {
+    ACTIVE, DELETED
+}
+
+enum RelationalCohesionRating {
+    LOW, GOOD, HIGH
+}
+
+enum Severity {
+    LOW, MEDIUM, HIGH
+}
+
+enum Size {
+    UNKNOWN, EMPTY, SMALL, MEDIUM, LARGE, VERY_LARGE
+}
+
+
+type Package {
+    id: ID,
+    name: String,
+    complexity: Int,
+    complexityRating: PackageComplexityRating
+    complexityOrdinal: Int,
+    numberOfTypes: Int,
+    defectDensity: Float,
+    highDefectDensity: Float,
+    linesOfCode: Int,
+    linesOfComments: Int,
+    commentToCodeRatio: Float,
+    numberOfVeryHighComplexityTypes: Int,
+    numberOfHighComplexityTypes: Int,
+    numberOfMediumComplexityTypes: Int,
+    numberOfLowComplexityTypes: Int,
+    numberOfHighPriorityFindings: Int,
+    totalNumberOfFindings: Int,
+    size: Size,
+    project: Project,
+    classes: [Class!]!,
+    relationalCohesion: RelationalCohesion,
+    componentDependency: ComponentDependency,
+    stratum: Stratum,
+    stratumOrdinal: Int
+}
+
+type Class {
+    id: ID,
+    packageId: ID,
+    name: String,
+    programmingLanguage: String,
+    lastModified: String,
+    numberOfChanges: Int,
+    numberOfAuthors: Int,
+    size: Size,
+    complexity: Int,
+    complexityRating: ClassComplexityRating,
+    totalLinesOfCode: Int,
+    totalLinesOfComments: Int,
+    commentToCodeRatio: Float,
+    numberOfResponsibilities: Int,
+    status: ClassStatus,
+    totalNumberOfFindings: Int,
+    numberOfHighPriorityFindings: Int,
+    defectDensity: Float,
+    highDefectDensity: Float,
+    package: Package,
+    contributions: [ClassContribution!]!,
+    findings: [Finding!]!,
+    stratum: Stratum
+}
+
+type RelationalCohesion {
+    rating: RelationalCohesionRating,
+    numberOfTypes: Int,
+    numberOfInternalRelationships: Int,
+    relationalCohesion: Float
+}
+
+type ComponentDependency {
+    afferentCoupling: Int,
+    efferentCoupling: Int,
+    abstractness: Float,
+    instability: Float,
+    distance: Float
+}
+
+type ClassContribution {
+    id: ID,
+    timestamp: String,
+    vcsIdentifier: String,
+    authorId: ID,
+    author: Author,
+    complexity: ClassComplexity
+}
+
+type ClassComplexity {
+    complexity: Int,
+    rating: ClassComplexityRating,
+    addedComplexity: Int
+}
+
+type Author {
+    id: ID,
+    name: String,
+    email: String
+}
+
+type Finding {
+    id: ID,
+    description: String,
+    ruleName: String,
+    ruleDescription: String,
+    severity: Severity,
+    tool: String
+}

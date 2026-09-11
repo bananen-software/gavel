@@ -1,4 +1,4 @@
 package software.bananen.gavel.infrastructure.graphql;
 
-public record AuthorReadModel(String name, String email) {
+public record AuthorReadModel(Long id, String name, String email) {
 }

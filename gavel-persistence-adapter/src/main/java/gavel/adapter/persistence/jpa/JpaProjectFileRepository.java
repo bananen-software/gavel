@@ -7,7 +7,7 @@ import java.util.Optional;
 
 @Repository
 public interface JpaProjectFileRepository
-        extends JpaRepository<JpaProjectFileEntity, Long> {
+        extends JpaRepository<JpaFileEntity, Long> {
 
-    Optional<JpaProjectFileEntity> findByProjectAndPath(JpaProjectEntity project, String path);
+    Optional<JpaFileEntity> findByProjectAndPath(JpaProjectEntity project, String path);
 }

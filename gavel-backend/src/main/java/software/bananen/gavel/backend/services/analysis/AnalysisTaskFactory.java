@@ -1,6 +1,10 @@
 package software.bananen.gavel.backend.services.analysis;
 
+import gavel.adapter.persistence.jpa.JpaChangeCouplingRepository;
+import gavel.adapter.persistence.jpa.JpaClassFindingRepository;
+import gavel.adapter.persistence.jpa.JpaClassRepository;
 import gavel.adapter.persistence.jpa.JpaProjectEntity;
+import gavel.adapter.persistence.jpa.JpaProjectRepository;
 import gavel.staticanalysis.adapter.owaspdependencycheck.OWASPDependencyCheckAdapter;
 import gavel.staticanalysis.adapter.pmd.PMDAdapter;
 import gavel.staticanalysis.adapter.spotbugs.SpotbugsAdapter;
@@ -8,10 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.bananen.gavel.backend.services.domain.*;
 import software.bananen.gavel.contextloader.ProjectContext;
-import gavel.adapter.persistence.jpa.JpaChangeCouplingRepository;
-import gavel.adapter.persistence.jpa.JpaClassFindingRepository;
-import gavel.adapter.persistence.jpa.JpaProjectRepository;
-import software.bananen.gavel.staticanalysis.*;
+import software.bananen.gavel.staticanalysis.ComponentDependencyMetricsService;
+import software.bananen.gavel.staticanalysis.ComponentVisibilityMetricsService;
+import software.bananen.gavel.staticanalysis.CumulativeComponentDependencyMetricsService;
+import software.bananen.gavel.staticanalysis.DepthOfInheritanceTreeMetricsService;
+import software.bananen.gavel.staticanalysis.LCOM4MetricsService;
+import software.bananen.gavel.staticanalysis.RelationalCohesionMetricsService;
 
 import java.util.Collection;
 import java.util.List;
@@ -51,13 +57,14 @@ public class AnalysisTaskFactory {
     private final ClassComplexityService classComplexityService;
     private final PackageComplexityService packageComplexityService;
     private final PackageLinesOfCodeService packageLinesOfCodeService;
-    private final ProjectFileService projectFileService;
+    private final FileService projectFileService;
     private final PMDAdapter pmdAdapter;
     private final SpotbugsAdapter spotbugsAdapter;
     private final OWASPDependencyCheckAdapter owaspDependencyCheckAdapter;
     private final JpaClassFindingRepository classFindingRepository;
     private final JpaChangeCouplingRepository changeCouplingRepository;
     private final JpaProjectRepository jpaProjectRepository;
+    private final JpaClassRepository jpaClassRepository;
 
     public AnalysisTaskFactory(@Autowired final ProjectService projectService,
                                @Autowired final AuthorService authorService,
@@ -73,13 +80,14 @@ public class AnalysisTaskFactory {
                                @Autowired final ClassComplexityService classComplexityService,
                                @Autowired final PackageComplexityService packageComplexityService,
                                @Autowired final PackageLinesOfCodeService packageLinesOfCodeService,
-                               @Autowired final ProjectFileService projectFileService,
+                               @Autowired final FileService projectFileService,
                                @Autowired final PMDAdapter pmdAdapter,
                                @Autowired final SpotbugsAdapter spotbugsAdapter,
                                @Autowired final OWASPDependencyCheckAdapter owaspDependencyCheckAdapter,
                                @Autowired final JpaClassFindingRepository classFindingRepository,
                                @Autowired final JpaChangeCouplingRepository changeCouplingRepository,
-                               @Autowired final JpaProjectRepository jpaProjectRepository) {
+                               @Autowired final JpaProjectRepository jpaProjectRepository,
+                               @Autowired final JpaClassRepository jpaClassRepository) {
         this.projectService = projectService;
         this.authorService = authorService;
         this.packageService = packageService;
@@ -101,6 +109,7 @@ public class AnalysisTaskFactory {
         this.classFindingRepository = classFindingRepository;
         this.changeCouplingRepository = changeCouplingRepository;
         this.jpaProjectRepository = jpaProjectRepository;
+        this.jpaClassRepository = jpaClassRepository;
     }
 
     /**
@@ -124,7 +133,8 @@ public class AnalysisTaskFactory {
                         packageLinesOfCodeService,
                         projectFileService,
                         changeCouplingRepository,
-                        jpaProjectRepository
+                        jpaProjectRepository,
+                        jpaClassRepository
                 ),
                 new RunStaticCodeAnalysisStep(
                         pmdAdapter,
@@ -133,18 +143,18 @@ public class AnalysisTaskFactory {
                         classService,
                         classFindingRepository
                 ),
-                new RunStaticCodeAnalysisStep(
+                /*new RunStaticCodeAnalysisStep(
                         spotbugsAdapter,
                         project,
                         packageService,
                         classService,
                         classFindingRepository
-                ),
-                new RunDependencyCheckStep(
+                ),*/
+                /*new RunDependencyCheckStep(
                         project,
                         projectService,
                         owaspDependencyCheckAdapter
-                ),
+                ),*/
                 new AnalyzeLCOM4MetricStep(
                         new LCOM4MetricsService(),
                         projectContext,

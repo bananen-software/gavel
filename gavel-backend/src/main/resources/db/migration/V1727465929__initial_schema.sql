@@ -1,4 +1,5 @@
 -- This is still a WIP I may update it at any time when I feel like it
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Create metadata tables
 create table "programming_languages"
@@ -21,6 +22,15 @@ create table "workspaces"
     primary key ("id")
 );
 
+create table "authors"
+(
+    "id"    bigint GENERATED ALWAYS AS IDENTITY,
+    "name"  text not null,
+    "email" text not null,
+
+    primary key ("id")
+);
+
 create table "projects"
 (
     "id"                              bigint GENERATED ALWAYS AS IDENTITY,
@@ -35,27 +45,65 @@ create table "projects"
     primary key ("id")
 );
 
+create table "files"
+(
+    "id"                  uuid                     not null default uuid_generate_v4(),
+    "path"                text                     not null,
+    "project"             bigint references "projects" ("id"),
+    "number_of_authors"   int                      not null default (0),
+    "number_of_changes"   int                      not null default (0),
+    "total_lines_of_code" int                      not null default (0),
+    "complexity"          int                      not null default (0),
+    "content_type"        text                     not null,
+    "created"             timestamp with time zone not null,
+    "last_modified"       timestamp with time zone not null,
+    "status"              int                      not null,
+
+    primary key ("id")
+);
+
+create table "file_history"
+(
+    "id"                  bigint GENERATED ALWAYS AS IDENTITY,
+    "file"                uuid                     not null references "files" ("id"),
+    "timestamp"           timestamp with time zone not null,
+    "vcs_identifier"      text                     not null,
+    "author"              int                      not null references "authors" ("id"),
+    "complexity"          int                      not null default (0),
+    "added_complexity"    int                      not null default (0),
+    "total_lines_of_code" int                      not null default (0),
+    "added_lines_of_code" int                      not null default (0),
+    "number_of_authors"   int                      not null default (0),
+
+    primary key ("id")
+);
+
 create table "packages"
 (
     "id"                                   bigint GENERATED ALWAYS AS IDENTITY,
-    "package"                              text             not null,
+    "package"                              text                     not null,
     "project"                              bigint references projects ("id"),
-    "size"                                 int              not null,
-    "complexity_rating"                    int              not null,
-    "number_of_types"                      int              not null,
-    "complexity"                           int              not null,
-    "lines_of_code"                        int              not null,
-    "lines_of_comments"                    int              not null,
-    "comment_to_code_ratio"                double precision not null default (0),
-    "comment_to_code_rating"               int              not null default (0),
-    "number_of_low_complexity_types"       int              not null default (0),
-    "number_of_medium_complexity_types"    int              not null default (0),
-    "number_of_high_complexity_types"      int              not null default (0),
-    "number_of_very_high_complexity_types" int              not null default (0),
-    "total_number_of_findings"             int              not null default (0),
-    "number_of_high_priority_findings"     int              not null default (0),
-    "defect_density"                       double precision not null default (0),
-    "high_defect_density"                  double precision not null default (0),
+    "created"                              timestamp with time zone not null,
+    "last_modified"                        timestamp with time zone not null,
+    "size"                                 int                      not null,
+    "complexity_rating"                    int                      not null,
+    "number_of_types"                      int                      not null,
+    "complexity"                           int                      not null,
+    "lines_of_code"                        int                      not null,
+    "lines_of_comments"                    int                      not null,
+    "comment_to_code_ratio"                double precision         not null default (0),
+    "comment_to_code_rating"               int                      not null default (0),
+    "number_of_low_complexity_types"       int                      not null default (0),
+    "number_of_medium_complexity_types"    int                      not null default (0),
+    "number_of_high_complexity_types"      int                      not null default (0),
+    "number_of_very_high_complexity_types" int                      not null default (0),
+    "total_number_of_findings"             int                      not null default (0),
+    "number_of_high_priority_findings"     int                      not null default (0),
+    "defect_density"                       double precision         not null default (0),
+    "high_defect_density"                  double precision         not null default (0),
+    "stratum"                              int                      not null default (0),
+    "number_of_authors"                    int                      not null default (0),
+    "number_of_changes"                    int                      not null default (0),
 
     primary key ("id")
 );
@@ -66,6 +114,7 @@ create table "classes"
 (
     "id"                               bigint GENERATED ALWAYS AS IDENTITY,
     "name"                             text                     not null,
+    "file"                             uuid references files ("id"),
     "package"                          bigint references packages ("id"),
     "programming_language"             bigint references "programming_languages" ("id"),
     "created"                          timestamp with time zone not null,
@@ -85,6 +134,7 @@ create table "classes"
     "number_of_high_priority_findings" int                      not null default (0),
     "defect_density"                   double precision         not null default (0),
     "high_defect_density"              double precision         not null default (0),
+    "stratum"                          int                      not null default (0),
 
     primary key ("id")
 );
@@ -98,16 +148,6 @@ create table "class_findings"
     "rule_description" text   not null,
     "severity"         int    not null,
     "tool"             text   not null,
-
-    primary key ("id")
-);
-
-create table "project_files"
-(
-    "id"      bigint GENERATED ALWAYS AS IDENTITY,
-    "path"    text not null,
-    "project" bigint references "projects" ("id"),
-    "class"   bigint references "classes" ("id"),
 
     primary key ("id")
 );
@@ -175,15 +215,6 @@ create table "visibility_metrics"
     "relative_visibility"         double precision not null default (0),
     "average_relative_visibility" double precision not null default (0),
     "global_relative_visibility"  double precision not null default (0),
-
-    primary key ("id")
-);
-
-create table "authors"
-(
-    "id"    bigint GENERATED ALWAYS AS IDENTITY,
-    "name"  text not null,
-    "email" text not null,
 
     primary key ("id")
 );
@@ -294,6 +325,46 @@ create table "method_lines_of_code"
     "contribution"        bigint not null references "method_contributions" ("id"),
     "total_lines_of_code" int    not null default (0),
     "added_lines_of_code" int    not null default (0),
+
+    primary key ("id")
+);
+
+create table "code_units"
+(
+    "id"                    uuid                     not null default uuid_generate_v4(),
+    "file"                  uuid                     not null references "files" ("id"),
+    "name"                  text                     not null,
+    "type"                  int                      not null,
+    "status"                int                      not null,
+    "parent"                uuid references "code_units" ("id"),
+    "created"               timestamp with time zone not null,
+    "last_modified"         timestamp with time zone not null,
+    "hash"                  text                     not null,
+    "child_count"           int                      not null default (0),
+    "change_count"          int                      not null default (0),
+    "author_count"          int                      not null default (0),
+    "defect_count"          int                      not null default (0),
+    "high_defect_count"     int                      not null default (0),
+    "loc"                   int                      not null default (0),
+    "loc_comments"          int                      not null default (0),
+    "loc_relative"          double precision         not null default (0),
+    "comment_to_code_ratio" double precision         not null default (0),
+    "complexity"            int                      not null default (0),
+    "relative_complexity"   double precision         not null default (0),
+
+    primary key ("id")
+);
+
+create table "code_unit_contributions"
+(
+    "id"                 uuid                     not null default uuid_generate_v4(),
+    "code_unit"          uuid                     not null references "code_units" ("id"),
+    "timestamp"          timestamp with time zone not null,
+    "vcs_identifier"     text                     not null,
+    "author"             int                      not null references "authors" ("id"),
+    "added_loc"          int                      not null default (0),
+    "added_loc_comments" int                      not null default (0),
+    "added_complexity"   int                      not null default (0),
 
     primary key ("id")
 );

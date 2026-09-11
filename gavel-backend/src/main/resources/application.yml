@@ -1,0 +1,107 @@
+spring:
+  application:
+    name: gavel-backend
+
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5432/postgres
+    username: postgres
+    password: mysecretpassword
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      # Performance: let the tx manager decide when to commit
+      auto-commit: false
+
+  jpa:
+    show-sql: false
+    open-in-view: true
+
+  jooq:
+    sql-dialect: Postgres
+
+  graphql:
+    graphiql:
+      enabled: true
+    cors:
+      allowed-origins: http://localhost:4200
+
+# ---------------------------------------------------------------------------
+# Gavel specific settings
+# ---------------------------------------------------------------------------
+gavel:
+  spotbugs:
+    enabled: true
+    java-home: /home/dennis/.gradle/jdks/adoptium-17-x64-hotspot-linux/jdk-17.0.5+8/
+  pmd:
+    enabled: true
+  owasp:
+    dependencycheck:
+      enabled: true
+      autoupdate:
+        enabled: true
+      pnpm:
+        enabled: false
+      yarn:
+        enabled: false
+      data-directory: /home/dennis/.dependency-check-data/
+      nvd-api-key: f15c1d9a-2261-48cd-881d-255e30805455
+
+# ---------------------------------------------------------------------------
+# Actuator, metrics and tracing
+# ---------------------------------------------------------------------------
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      # histogram buckets -> real p95/p99 in Grafana
+      percentiles-histogram:
+        http.server.requests: true
+        spring.data.repository.invocations: true
+      slo:
+        http.server.requests: 50ms,100ms,250ms,500ms,1s,2s
+
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0     # 100% locally; lower this in production
+
+  otlp:
+    tracing:
+      endpoint: http://localhost:4318/v1/traces
+      # transport: grpc    # then switch the endpoint to http://localhost:4317
+
+  opentelemetry:
+    resource-attributes:
+      service.name: ${spring.application.name}
+      deployment.environment: local
+
+# ---------------------------------------------------------------------------
+# Logging
+# ---------------------------------------------------------------------------
+logging:
+  level:
+    org.springframework.jdbc.core: INFO
+    org.springframework.jdbc.core.JdbcTemplate: INFO
+    org.springframework.jdbc.core.StatementCreatorUtils: INFO
+    org.hibernate: INFO
+    org.hibernate.SQL: INFO
+    org.hibernate.type.descriptor.sql.BasicBinder: INFO
+    org.hibernate.orm.jdbc.bind: INFO
+  # Spring Boot 3.2+ already appends traceId/spanId automatically once the
+  # tracing bridge is on the classpath. Uncomment only if you want to control
+  # the format yourself.
+  # pattern:
+  #   level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"

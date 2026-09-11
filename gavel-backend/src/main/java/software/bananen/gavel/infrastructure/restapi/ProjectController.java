@@ -1,7 +1,12 @@
 package software.bananen.gavel.infrastructure.restapi;
 
+import io.micrometer.observation.annotation.Observed;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import software.bananen.gavel.ports.usecases.ScheduleProjectAnalysisRequest;
 import software.bananen.gavel.ports.usecases.ScheduleProjectAnalysisResponseModel;
@@ -22,6 +27,7 @@ public class ProjectController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("{projectId}")
+    @Observed
     public void scheduleAnalysis(@PathVariable Long projectId) {
         final var response =
                 scheduleAnalysisUseCase.scheduleProjectAnalysis(new ScheduleProjectAnalysisRequest(projectId));

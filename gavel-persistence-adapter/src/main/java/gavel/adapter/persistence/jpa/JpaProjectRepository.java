@@ -13,4 +13,6 @@ public interface JpaProjectRepository extends JpaRepository<JpaProjectEntity, Lo
     Optional<JpaProjectEntity> findByWorkspaceAndName(JpaWorkspaceEntity workspace, String name);
 
     Collection<JpaProjectEntity> findByAnalysisStatus(AnalysisStatus status);
+
+    Collection<JpaProjectEntity> findByWorkspaceId(Long id);
 }

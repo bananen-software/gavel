@@ -3,11 +3,11 @@ package software.bananen.gavel.backend.services.domain;
 import gavel.adapter.persistence.jpa.JpaClassContributionEntity;
 import gavel.adapter.persistence.jpa.JpaClassEntity;
 import gavel.adapter.persistence.jpa.JpaClassLinesOfCodeEntity;
+import gavel.adapter.persistence.jpa.JpaClassLinesOfCodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.bananen.gavel.domain.service.RateClassSizeService;
 import software.bananen.gavel.domain.service.RateCommentToCodeRatioService;
-import gavel.adapter.persistence.jpa.JpaClassLinesOfCodeRepository;
 
 import java.util.Optional;
 
@@ -42,8 +42,7 @@ public class ClassLinesOfCodeService {
                         .map(JpaClassLinesOfCodeEntity::getTotalLinesOfComment)
                         .orElse(0);
 
-        final Integer addedLinesOfComments =
-                commentLines - latestLinesOfComments;
+        final Integer addedLinesOfComments = commentLines - latestLinesOfComments;
 
         final var size = new RateClassSizeService().rate(totalLines);
 

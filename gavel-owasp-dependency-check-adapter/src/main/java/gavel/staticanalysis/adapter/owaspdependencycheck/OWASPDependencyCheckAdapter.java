@@ -1,6 +1,11 @@
 package gavel.staticanalysis.adapter.owaspdependencycheck;
 
-import io.github.jeremylong.openvulnerability.client.nvd.*;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV2;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV2Data;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV3;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV3Data;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV4;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV4Data;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -36,20 +41,22 @@ public final class OWASPDependencyCheckAdapter implements VulnerabilityCheckPort
     /**
      * Creates a new instance.
      *
-     * @param dataDirectory The path to the directory that data should be stored in.
-     * @param nvdApiKey     The API key for the NVD API.
-     * @param enableYarn    A flag that enables the yarn integration.
-     * @param enablePnpm    A flag that enables the pnpm integration.
+     * @param dataDirectory    The path to the directory that data should be stored in.
+     * @param nvdApiKey        The API key for the NVD API.
+     * @param enableYarn       A flag that enables the yarn integration.
+     * @param enablePnpm       A flag that enables the pnpm integration.
+     * @param enableAutoUpdate A flag that enables the autoupdate.
      */
     public OWASPDependencyCheckAdapter(final String dataDirectory,
                                        final String nvdApiKey,
                                        final boolean enableYarn,
-                                       final boolean enablePnpm) {
+                                       final boolean enablePnpm,
+                                       final boolean enableAutoUpdate) {
         settings = new Settings();
 
         settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
         settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, "org.h2.Driver");
-        settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, false);
+        settings.setBooleanIfNotNull(Settings.KEYS.AUTO_UPDATE, enableAutoUpdate);
 
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED, enableYarn);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PNPM_AUDIT_ENABLED, enablePnpm);

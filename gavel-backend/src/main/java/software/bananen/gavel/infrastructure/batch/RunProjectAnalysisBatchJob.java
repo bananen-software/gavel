@@ -40,8 +40,7 @@ public class RunProjectAnalysisBatchJob implements Runnable {
     public void run() {
         LOGGER.debug("Starting background task");
 
-        for (final JpaProjectEntity project :
-                projectService.findProjectsPendingForAnalysis()) {
+        for (final JpaProjectEntity project : projectService.findProjectsPendingForAnalysis()) {
             try {
                 LOGGER.info("Starting analysis for project {}[{}]",
                         project.getName(),
@@ -58,8 +57,7 @@ public class RunProjectAnalysisBatchJob implements Runnable {
                 final ProjectContext projectContext =
                         projectContextLoader.loadProjectContext(projectContextData);
 
-                analysisTaskFactory.assembleSteps(projectContext, project)
-                        .forEach(Runnable::run);
+                analysisTaskFactory.assembleSteps(projectContext, project).forEach(Runnable::run);
 
                 project.setAnalysisStatus(AnalysisStatus.COMPLETED);
                 project.setLastAnalyzed(LocalDateTime.now());

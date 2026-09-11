@@ -1,14 +1,16 @@
 package software.bananen.gavel.backend.services.domain;
 
 import gavel.adapter.persistence.jpa.JpaPackageEntity;
+import gavel.adapter.persistence.jpa.JpaPackageRepository;
 import gavel.adapter.persistence.jpa.JpaProjectEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.bananen.gavel.domain.model.CommentToCodeRating;
 import software.bananen.gavel.domain.model.PackageComplexityRating;
 import software.bananen.gavel.domain.model.Size;
-import gavel.adapter.persistence.jpa.JpaPackageRepository;
+import software.bananen.gavel.domain.model.Stratum;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
@@ -60,6 +62,11 @@ public class PackageService {
         pkg.setNumberOfHighPriorityFindings(0);
         pkg.setDefectDensity(0.0);
         pkg.setHighDefectDensity(0.0);
+        pkg.setCreated(LocalDateTime.now());
+        pkg.setLastModified(LocalDateTime.now());
+        pkg.setStratum(Stratum.NONE);
+        pkg.setNumberOfAuthors(0);
+        pkg.setNumberOfChanges(0);
 
         pkg.setProject(project);
         project.getPackages().add(pkg);

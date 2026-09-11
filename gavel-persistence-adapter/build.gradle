@@ -1,14 +1,14 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.3.4'
-    id 'io.spring.dependency-management' version '1.1.6'
+    id 'org.springframework.boot' version '3.5.4'
+    id 'io.spring.dependency-management' version '1.1.7'
 }
 
 
 dependencies {
     implementation project(':gavel-domain')
 
-    implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.9.11'
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.10.3'
 
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.flywaydb:flyway-database-postgresql'

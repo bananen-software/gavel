@@ -15,6 +15,13 @@ public final class ReadModelMappingUtils {
         // Private constructor to prevent instantiation
     }
 
+    public static Function<JpaWorkspaceEntity, WorkspaceReadModel> toWorkspaceReadModel() {
+        return e -> new WorkspaceReadModel(
+                e.getId(),
+                e.getName()
+        );
+    }
+
     public static Function<JpaComponentDependencyMetricEntity, ComponentDependencyReadModel> toComponentDependencyReadModel() {
         return e -> new ComponentDependencyReadModel(
                 e.getAfferentCoupling(),
@@ -54,7 +61,9 @@ public final class ReadModelMappingUtils {
                 pkg.getTotalNumberOfFindings(),
                 pkg.getSize().name(),
                 pkg.getNumberOfTypes(),
-                pkg.getComplexityRating().ordinal()
+                pkg.getComplexityRating().ordinal(),
+                pkg.getStratum().name(),
+                pkg.getStratum().ordinal()
         );
     }
 
@@ -79,6 +88,7 @@ public final class ReadModelMappingUtils {
                 c.getLastModified().toString(),
                 c.getNumberOfChanges(),
                 c.getNumberOfAuthors(),
+                c.getSize().name(),
                 c.getComplexity(),
                 c.getComplexityRating().name(),
                 c.getTotalLinesOfCode(),
@@ -89,7 +99,8 @@ public final class ReadModelMappingUtils {
                 c.getTotalNumberOfFindings(),
                 c.getNumberOfHighPriorityFindings(),
                 c.getDefectDensity(),
-                c.getHighDefectDensity()
+                c.getHighDefectDensity(),
+                c.getStratum().name()
         );
     }
 
@@ -104,8 +115,7 @@ public final class ReadModelMappingUtils {
     }
 
     public static Function<JpaAuthorEntity, AuthorReadModel> toAuthorReadModel() {
-        return author -> new AuthorReadModel(
-                author.getName(), author.getEmail()
+        return author -> new AuthorReadModel(author.getId(), author.getName(), author.getEmail()
         );
     }
 
@@ -120,6 +130,7 @@ public final class ReadModelMappingUtils {
 
     public static Function<JpaClassFindingEntity, FindingReadModel> toFindingReadModel() {
         return finding -> new FindingReadModel(
+                finding.getId(),
                 finding.getDescription(),
                 finding.getRuleName(),
                 finding.getRuleDescription(),

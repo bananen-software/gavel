@@ -2,10 +2,7 @@ package gavel.adapter.persistence.jpa;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
-import software.bananen.gavel.domain.model.ClassComplexityRating;
-import software.bananen.gavel.domain.model.ClassStatus;
-import software.bananen.gavel.domain.model.CommentToCodeRating;
-import software.bananen.gavel.domain.model.Size;
+import software.bananen.gavel.domain.model.*;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
@@ -24,15 +21,19 @@ public class JpaClassEntity {
     @Column(name = "name", nullable = false, length = Integer.MAX_VALUE)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "package")
     private JpaPackageEntity packageField;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "file")
+    private JpaFileEntity file;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "programming_language")
     private JpaProgrammingLanguageEntity programmingLanguage;
 
-    @OneToMany(mappedBy = CLASS_FIELD, cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = CLASS_FIELD, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<JpaMethodEntity> methods = new LinkedHashSet<>();
 
     @Column(name = "created", nullable = false)
@@ -41,10 +42,10 @@ public class JpaClassEntity {
     @Column(name = "last_modified", nullable = false)
     private LocalDateTime lastModified;
 
-    @OneToMany(mappedBy = CLASS_FIELD, cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = CLASS_FIELD, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<JpaClassContributionEntity> classContributionEntities = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = CLASS_FIELD, cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = CLASS_FIELD, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<JpaClassCohesionEntity> classCohesionEntities = new LinkedHashSet<>();
 
     @ColumnDefault("0")
@@ -84,7 +85,7 @@ public class JpaClassEntity {
     @Column(name = "status", nullable = false)
     private ClassStatus status;
 
-    @OneToMany(mappedBy = CLASS_FIELD, cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = CLASS_FIELD, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<JpaClassFindingEntity> classFindingEntities = new LinkedHashSet<>();
 
     @ColumnDefault("0")
@@ -105,6 +106,9 @@ public class JpaClassEntity {
 
     @Column(name = "comment_to_code_rating", nullable = false)
     private CommentToCodeRating commentToCodeRating;
+
+    @Column(name = "stratum", nullable = false)
+    private Stratum stratum;
 
     public double getHighDefectDensity() {
         return highDefectDensity;
@@ -304,5 +308,21 @@ public class JpaClassEntity {
 
     public void setCreated(LocalDateTime created) {
         this.created = created;
+    }
+
+    public Stratum getStratum() {
+        return stratum;
+    }
+
+    public void setStratum(Stratum stratum) {
+        this.stratum = stratum;
+    }
+
+    public JpaFileEntity getFile() {
+        return file;
+    }
+
+    public void setFile(JpaFileEntity file) {
+        this.file = file;
     }
 }

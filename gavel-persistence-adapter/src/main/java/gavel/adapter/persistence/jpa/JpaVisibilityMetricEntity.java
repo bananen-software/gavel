@@ -11,7 +11,7 @@ public class JpaVisibilityMetricEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "package", nullable = false)
     private JpaPackageEntity packageField;
 

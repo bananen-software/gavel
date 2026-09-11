@@ -24,14 +24,14 @@ public class JpaClassContributionEntity {
     @Column(name = "vcs_identifier", nullable = false, length = Integer.MAX_VALUE)
     private String vcsIdentifier;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "author", nullable = false)
     private JpaAuthorEntity author;
 
-    @OneToMany(mappedBy = "contribution", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "contribution", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<JpaClassComplexityEntity> classComplexities = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "contribution", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "contribution", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<JpaClassLinesOfCodeEntity> classLinesOfCodes = new LinkedHashSet<>();
 
     public Long getId() {

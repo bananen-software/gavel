@@ -50,11 +50,11 @@ public class JpaMethodEntity {
     @Column(name = "status", nullable = false)
     private ClassStatus status;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "class")
     private JpaClassEntity classField;
 
-    @OneToMany(mappedBy = "method", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "method", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Collection<JpaMethodContributionEntity> contributions = new LinkedHashSet<>();
 
     public Long getId() {

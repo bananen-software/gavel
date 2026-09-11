@@ -18,6 +18,8 @@ public record PackageReadModel(int id,
                                Integer totalNumberOfFindings,
                                String size,
                                Integer numberOfTypes,
-                               int complexityOrdinal) {
+                               int complexityOrdinal,
+                               String stratum,
+                               int stratumOrdinal) {
 
 }

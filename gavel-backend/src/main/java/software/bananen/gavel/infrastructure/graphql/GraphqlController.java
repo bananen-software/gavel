@@ -21,6 +21,7 @@ public class GraphqlController {
 
     private static final String PACKAGE_TYPE_NAME = "Package";
 
+    private final JpaWorkspaceRepository workspaceRepository;
     private final JpaProjectRepository projectRepository;
     private final JpaPackageRepository packageRepository;
     private final JpaClassRepository classRepository;
@@ -31,7 +32,8 @@ public class GraphqlController {
     private final JpaClassComplexityRepository classComplexityRepository;
     private final JpaClassFindingRepository classFindingRepository;
 
-    public GraphqlController(@Autowired JpaProjectRepository projectRepository,
+    public GraphqlController(@Autowired JpaWorkspaceRepository workspaceRepository,
+                             @Autowired JpaProjectRepository projectRepository,
                              @Autowired JpaPackageRepository packageRepository,
                              @Autowired JpaClassRepository classRepository,
                              @Autowired JpaRelationalCohesionRepository relationalCohesionRepository,
@@ -40,6 +42,7 @@ public class GraphqlController {
                              @Autowired JpaAuthorRepository authorRepository,
                              @Autowired JpaClassComplexityRepository classComplexityRepository,
                              @Autowired JpaClassFindingRepository classFindingRepository) {
+        this.workspaceRepository = workspaceRepository;
         this.projectRepository = projectRepository;
         this.packageRepository = packageRepository;
         this.classRepository = classRepository;
@@ -49,6 +52,31 @@ public class GraphqlController {
         this.authorRepository = authorRepository;
         this.classComplexityRepository = classComplexityRepository;
         this.classFindingRepository = classFindingRepository;
+    }
+
+    @QueryMapping
+    public Collection<WorkspaceReadModel> workspaces() {
+        return workspaceRepository.findAll().stream().map(toWorkspaceReadModel()).toList();
+    }
+
+    @QueryMapping
+    public WorkspaceReadModel workspaceById(@Argument Integer id) {
+        return workspaceRepository.findById((long) id)
+                .map(toWorkspaceReadModel())
+                .orElse(null);
+    }
+
+    @QueryMapping
+    public Collection<ProjectReadModel> projects() {
+        return projectRepository.findAll().stream().map(toProjectReadModel()).toList();
+    }
+
+    @QueryMapping
+    public List<ProjectReadModel> projectsByWorkspace(@Argument Long id) {
+        return projectRepository.findByWorkspaceId(id)
+                .stream()
+                .map(toProjectReadModel())
+                .toList();
     }
 
     @QueryMapping
@@ -86,6 +114,11 @@ public class GraphqlController {
                 .stream()
                 .map(toClassReadModel())
                 .toList();
+    }
+
+    @SchemaMapping(field = "projects", typeName = "Workspace")
+    public List<ProjectReadModel> workspaceToProjects(final WorkspaceReadModel workspace) {
+        return projectsByWorkspace(workspace.id());
     }
 
     @SchemaMapping(field = "packages", typeName = "Project")

@@ -1,13 +1,13 @@
 package software.bananen.gavel.backend.services.domain;
 
 import gavel.adapter.persistence.jpa.JpaClassComplexityEntity;
+import gavel.adapter.persistence.jpa.JpaClassComplexityRepository;
 import gavel.adapter.persistence.jpa.JpaClassContributionEntity;
 import gavel.adapter.persistence.jpa.JpaClassEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.bananen.gavel.domain.model.ClassComplexityRating;
 import software.bananen.gavel.domain.service.RateClassComplexityService;
-import gavel.adapter.persistence.jpa.JpaClassComplexityRepository;
 
 import java.util.Optional;
 
@@ -29,8 +29,7 @@ public class ClassComplexityService {
                         .map(JpaClassComplexityEntity::getComplexity)
                         .orElse(0);
 
-        final Integer addedComplexity =
-                complexity - latestComplexity;
+        final Integer addedComplexity = complexity - latestComplexity;
 
         final JpaClassComplexityEntity measuredComplexity =
                 repository.findByContribution(classContributionEntity).orElse(new JpaClassComplexityEntity());
@@ -40,8 +39,7 @@ public class ClassComplexityService {
 
         measuredComplexity.setComplexity(complexity);
         measuredComplexity.setContribution(classContributionEntity);
-        measuredComplexity.setComplexityRating(
-                complexityRating);
+        measuredComplexity.setComplexityRating(complexityRating);
         measuredComplexity.setAddedComplexity(addedComplexity);
 
         final JpaClassEntity classEntity = classContributionEntity.getClassField();

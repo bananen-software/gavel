@@ -22,7 +22,7 @@ public class JpaProjectEntity {
     @JoinColumn(name = "workspace")
     private JpaWorkspaceEntity workspace;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<JpaPackageEntity> packages = new LinkedHashSet<>();
 
     @Column(name = "path", nullable = false, length = Integer.MAX_VALUE)

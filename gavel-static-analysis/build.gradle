@@ -1,4 +1,4 @@
 dependencies {
-    api 'com.tngtech.archunit:archunit-junit5:1.4.0'
+    api 'com.tngtech.archunit:archunit-junit5:1.5.0'
     implementation 'org.jgrapht:jgrapht-core:1.5.2'
 }

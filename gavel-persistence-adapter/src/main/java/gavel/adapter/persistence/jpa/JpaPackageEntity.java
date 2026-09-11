@@ -2,11 +2,9 @@ package gavel.adapter.persistence.jpa;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
-import software.bananen.gavel.domain.model.ClassStatus;
-import software.bananen.gavel.domain.model.CommentToCodeRating;
-import software.bananen.gavel.domain.model.PackageComplexityRating;
-import software.bananen.gavel.domain.model.Size;
+import software.bananen.gavel.domain.model.*;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -24,29 +22,35 @@ public class JpaPackageEntity {
     @Column(name = "package", nullable = false, length = Integer.MAX_VALUE)
     private String packageName;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "project")
     private JpaProjectEntity project;
 
-    @OneToMany(mappedBy = PACKAGE_FIELD, cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @Column(name = "created", nullable = false)
+    private LocalDateTime created;
+
+    @Column(name = "last_modified", nullable = false)
+    private LocalDateTime lastModified;
+
+    @OneToMany(mappedBy = PACKAGE_FIELD, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<JpaClassEntity> classes = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = PACKAGE_FIELD, cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = PACKAGE_FIELD, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<JpaComponentDependencyMetricEntity> componentDependencyMetrics = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = PACKAGE_FIELD, cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = PACKAGE_FIELD, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<JpaCumulativeComponentDependencyEntity> cumulativeComponentDependencies = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = PACKAGE_FIELD, cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = PACKAGE_FIELD, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<JpaRelationalCohesionMetricEntity> relationalCohesionMetrics = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = PACKAGE_FIELD, cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = PACKAGE_FIELD, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<JpaVisibilityMetricEntity> visibilityMetrics = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = PACKAGE_FIELD, cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = PACKAGE_FIELD, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<JpaPackageComplexityEntity> packageComplexityEntities = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = PACKAGE_FIELD, cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = PACKAGE_FIELD, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<JpaPackageLinesOfCodeEntity> packageLinesOfCodeEntities = new LinkedHashSet<>();
 
     @Column(name = "size")
@@ -100,6 +104,17 @@ public class JpaPackageEntity {
 
     @Column(name = "comment_to_code_rating", nullable = false)
     private CommentToCodeRating commentToCodeRating;
+
+    @Column(name = "stratum", nullable = false)
+    private Stratum stratum;
+
+    @ColumnDefault("0")
+    @Column(name = "number_of_changes", nullable = false)
+    private Integer numberOfChanges;
+
+    @ColumnDefault("0")
+    @Column(name = "number_of_authors", nullable = false)
+    private Integer numberOfAuthors;
 
     public double getHighDefectDensity() {
         return highDefectDensity;
@@ -314,5 +329,45 @@ public class JpaPackageEntity {
 
     public void setCommentToCodeRating(CommentToCodeRating commentToCodeRating) {
         this.commentToCodeRating = commentToCodeRating;
+    }
+
+    public LocalDateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(LocalDateTime created) {
+        this.created = created;
+    }
+
+    public LocalDateTime getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(LocalDateTime lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    public Stratum getStratum() {
+        return stratum;
+    }
+
+    public void setStratum(Stratum stratum) {
+        this.stratum = stratum;
+    }
+
+    public Integer getNumberOfChanges() {
+        return numberOfChanges;
+    }
+
+    public void setNumberOfChanges(Integer numberOfChanges) {
+        this.numberOfChanges = numberOfChanges;
+    }
+
+    public Integer getNumberOfAuthors() {
+        return numberOfAuthors;
+    }
+
+    public void setNumberOfAuthors(Integer numberOfAuthors) {
+        this.numberOfAuthors = numberOfAuthors;
     }
 }

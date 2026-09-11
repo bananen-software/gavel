@@ -1,11 +1,11 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.3.4'
-    id 'io.spring.dependency-management' version '1.1.6'
+    id 'org.springframework.boot' version '3.5.4'
+    id 'io.spring.dependency-management' version '1.1.7'
 }
 
 ext {
-    set('springAiVersion', "1.0.0-M6")
+    set('springAiVersion', "1.0.1")
 }
 
 dependencies {
@@ -16,10 +16,13 @@ dependencies {
     implementation project(':gavel-pmd-adapter')
     implementation project(':gavel-spotbugs-adapter')
 
+    implementation project(':gavel-language-adapter-generic')
+    implementation project(':gavel-language-adapter-java')
+
     implementation project(':gavel-application')
     implementation project(':gavel-domain')
 
-    implementation group: 'net.sourceforge.pmd', name: 'pmd-core', version: '7.15.0'
+    implementation "net.sourceforge.pmd:pmd-core:7.27.0"
 
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-graphql'

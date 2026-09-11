@@ -1,5 +1,6 @@
 package software.bananen.gavel;
 
+import gavel.adapter.persistence.WorkspaceRepositoryAdapter;
 import gavel.staticanalysis.adapter.owaspdependencycheck.OWASPDependencyCheckAdapter;
 import gavel.staticanalysis.adapter.pmd.PMDAdapter;
 import gavel.staticanalysis.adapter.spotbugs.SpotbugsAdapter;
@@ -14,7 +15,6 @@ import software.bananen.gavel.domain.ports.driven.ProjectRepository;
 import software.bananen.gavel.domain.service.MeasureWhitespaceComplexityService;
 import software.bananen.gavel.domain.service.WorkspaceService;
 import software.bananen.gavel.infrastructure.git.GitLocateProjectsInWorkspaceService;
-import software.bananen.gavel.infrastructure.persistence.adapter.WorkspaceRepositoryAdapter;
 import software.bananen.gavel.ports.usecases.CreateWorkspaceUseCase;
 import software.bananen.gavel.ports.usecases.LocateProjectsInWorkspaceUseCase;
 import software.bananen.gavel.ports.usecases.ScheduleProjectAnalysisUseCase;
@@ -36,6 +36,18 @@ public class GavelConfiguration {
     @Value("${gavel.owasp.dependencycheck.pnpm.enabled}")
     boolean enablePnpm;
 
+    @Value("${gavel.owasp.dependencycheck.autoupdate.enabled}")
+    boolean enableAutoupdate;
+
+    @Value("${gavel.owasp.dependencycheck.enabled}")
+    boolean enableOwaspDependencyCheck;
+
+    @Value("${gavel.pmd.enabled}")
+    boolean enablePmd;
+
+    @Value("${gavel.spotbugs.enabled}")
+    boolean enableSpotbugs;
+
     @Autowired
     private WorkspaceRepositoryAdapter workspaceRepository;
 
@@ -54,7 +66,7 @@ public class GavelConfiguration {
 
     @Bean
     public OWASPDependencyCheckAdapter owaspDependencyCheckAdapter() {
-        return new OWASPDependencyCheckAdapter(dataDirectory, nvdApiKey, enableYarn, enablePnpm);
+        return new OWASPDependencyCheckAdapter(dataDirectory, nvdApiKey, enableYarn, enablePnpm, enableAutoupdate);
     }
 
     @Bean

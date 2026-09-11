@@ -1,0 +1,43 @@
+:root {
+  /* Chrome: deliberately near-monochrome so saturated colour always means data. */
+  --ink: #14202e;
+  --ink-2: #4a5a6b;
+  --ink-3: #8496a6;
+  --line: #dce3ea;
+  --line-soft: #eaeff4;
+  --surface: #ffffff;
+  --canvas: #f1f4f7;
+
+  /* The single interactive accent. Cool and desaturated so it can never be
+     mistaken for a rating on the warm ramp below. */
+  --accent: #0e6e8c;
+  --accent-hover: #12839f;
+  --accent-bg: #e4f0f4;
+
+  /* Ordinal rating ramp. Descends in lightness as well as hue, so it still
+     reads as a scale in greyscale and for red-green colour blindness. */
+  --rate-none: #8496a6;
+  --rate-low: #3d7f6b;
+  --rate-medium: #c9a227;
+  --rate-high: #d2712c;
+  --rate-very-high: #b03a2e;
+
+  --rate-none-bg: #eef1f4;
+  --rate-low-bg: #e8f2ee;
+  --rate-medium-bg: #faf2dc;
+  --rate-high-bg: #fbede2;
+  --rate-very-high-bg: #f8e7e4;
+
+  /* Stratum is categorical, not a judgement: one hue, four depths. */
+  --stratum-surface: #7fa8c9;
+  --stratum-intermediate: #4d7fa6;
+  --stratum-deep: #2b5a7d;
+  --stratum-sediment: #163a54;
+
+  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  --radius: 6px;
+  --rail-width: 288px;
+  --bar-height: 56px;
+}
